@@ -7,21 +7,34 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RenderDragonEgg extends LivingEntityRenderer<EntityDragonEgg, ModelDragonEgg<EntityDragonEgg>> {
 
-    public static final ResourceLocation EGG_RED = new ResourceLocation("iceandfire:textures/models/firedragon/egg_red.png");
-    public static final ResourceLocation EGG_GREEN = new ResourceLocation("iceandfire:textures/models/firedragon/egg_green.png");
-    public static final ResourceLocation EGG_BRONZE = new ResourceLocation("iceandfire:textures/models/firedragon/egg_bronze.png");
-    public static final ResourceLocation EGG_GREY = new ResourceLocation("iceandfire:textures/models/firedragon/egg_gray.png");
-    public static final ResourceLocation EGG_BLUE = new ResourceLocation("iceandfire:textures/models/icedragon/egg_blue.png");
-    public static final ResourceLocation EGG_WHITE = new ResourceLocation("iceandfire:textures/models/icedragon/egg_white.png");
-    public static final ResourceLocation EGG_SAPPHIRE = new ResourceLocation("iceandfire:textures/models/icedragon/egg_sapphire.png");
-    public static final ResourceLocation EGG_SILVER = new ResourceLocation("iceandfire:textures/models/icedragon/egg_silver.png");
-    public static final ResourceLocation EGG_ELECTRIC = new ResourceLocation("iceandfire:textures/models/lightningdragon/egg_electric.png");
-    public static final ResourceLocation EGG_AMYTHEST = new ResourceLocation("iceandfire:textures/models/lightningdragon/egg_amythest.png");
-    public static final ResourceLocation EGG_BLACK = new ResourceLocation("iceandfire:textures/models/lightningdragon/egg_black.png");
-    public static final ResourceLocation EGG_COPPER = new ResourceLocation("iceandfire:textures/models/lightningdragon/egg_copper.png");
+    public static final ResourceLocation EGG_RED = new ResourceLocation(
+            "iceandfire:textures/models/firedragon/egg_red.png");
+    public static final ResourceLocation EGG_GREEN = new ResourceLocation(
+            "iceandfire:textures/models/firedragon/egg_green.png");
+    public static final ResourceLocation EGG_BRONZE = new ResourceLocation(
+            "iceandfire:textures/models/firedragon/egg_bronze.png");
+    public static final ResourceLocation EGG_GREY = new ResourceLocation(
+            "iceandfire:textures/models/firedragon/egg_gray.png");
+    public static final ResourceLocation EGG_BLUE = new ResourceLocation(
+            "iceandfire:textures/models/icedragon/egg_blue.png");
+    public static final ResourceLocation EGG_WHITE = new ResourceLocation(
+            "iceandfire:textures/models/icedragon/egg_white.png");
+    public static final ResourceLocation EGG_SAPPHIRE = new ResourceLocation(
+            "iceandfire:textures/models/icedragon/egg_sapphire.png");
+    public static final ResourceLocation EGG_SILVER = new ResourceLocation(
+            "iceandfire:textures/models/icedragon/egg_silver.png");
+    public static final ResourceLocation EGG_ELECTRIC = new ResourceLocation(
+            "iceandfire:textures/models/lightningdragon/egg_electric.png");
+    public static final ResourceLocation EGG_AMYTHEST = new ResourceLocation(
+            "iceandfire:textures/models/lightningdragon/egg_amythest.png");
+    public static final ResourceLocation EGG_BLACK = new ResourceLocation(
+            "iceandfire:textures/models/lightningdragon/egg_black.png");
+    public static final ResourceLocation EGG_COPPER = new ResourceLocation(
+            "iceandfire:textures/models/lightningdragon/egg_copper.png");
+    public static final ResourceLocation EGG_GOLD = new ResourceLocation(
+            "iceandfire:textures/models/golddragon/egg_gold.png");
 
     public RenderDragonEgg(EntityRendererProvider.Context context) {
         super(context, new ModelDragonEgg(), 0.3F);
@@ -31,7 +44,6 @@ public class RenderDragonEgg extends LivingEntityRenderer<EntityDragonEgg, Model
     protected boolean shouldShowName(EntityDragonEgg entity) {
         return entity.shouldShowName() && entity.hasCustomName();
     }
-
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(EntityDragonEgg entity) {
@@ -60,6 +72,8 @@ public class RenderDragonEgg extends LivingEntityRenderer<EntityDragonEgg, Model
                 return EGG_COPPER;
             case BLACK:
                 return EGG_BLACK;
+            case GOLD:
+                return EGG_GOLD;
 
         }
     }

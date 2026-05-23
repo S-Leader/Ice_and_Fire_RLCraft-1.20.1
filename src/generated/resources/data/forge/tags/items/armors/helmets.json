@@ -13,6 +13,7 @@
     "iceandfire:dragonsteel_fire_helmet",
     "iceandfire:dragonsteel_ice_helmet",
     "iceandfire:dragonsteel_lightning_helmet",
+    "iceandfire:dragonsteel_gold_helmet",
     "iceandfire:armor_red_helmet",
     "iceandfire:armor_bronze_helmet",
     "iceandfire:armor_green_helmet",
@@ -34,6 +35,18 @@
     "iceandfire:tide_teal_helmet",
     "iceandfire:forest_troll_leather_helmet",
     "iceandfire:frost_troll_leather_helmet",
-    "iceandfire:mountain_troll_leather_helmet"
+    "iceandfire:mountain_troll_leather_helmet",
+    "iceandfire:blooded_fire_red_helmet",
+    "iceandfire:blooded_fire_bronze_helmet",
+    "iceandfire:blooded_fire_green_helmet",
+    "iceandfire:blooded_fire_gray_helmet",
+    "iceandfire:blooded_ice_blue_helmet",
+    "iceandfire:blooded_ice_white_helmet",
+    "iceandfire:blooded_ice_sapphire_helmet",
+    "iceandfire:blooded_ice_silver_helmet",
+    "iceandfire:blooded_lightning_electric_helmet",
+    "iceandfire:blooded_lightning_amethyst_helmet",
+    "iceandfire:blooded_lightning_copper_helmet",
+    "iceandfire:blooded_lightning_black_helmet"
   ]
 }

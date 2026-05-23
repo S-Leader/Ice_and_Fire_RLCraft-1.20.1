@@ -1,20 +1,14 @@
 package com.github.alexthe666.iceandfire.item.blooded;
 
-import com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedFireArmor;
-import com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedIceArmor;
-import com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedLightningArmor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -45,30 +39,9 @@ public class ItemBloodedArmor extends ArmorItem {
         };
     }
 
-    public HumanoidModel<?> getArmorModel(LivingEntity entity, EquipmentSlot slot) {
-        boolean inner = slot == EquipmentSlot.LEGS || slot == EquipmentSlot.HEAD;
-        return switch (dragonType.getElement()) {
-            case FIRE -> new ModelBloodedFireArmor(inner);
-            case ICE -> new ModelBloodedIceArmor(inner);
-            case LIGHTNING -> new ModelBloodedLightningArmor(inner);
-        };
-    }
-
     @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-            @Override
-            public @NotNull HumanoidModel<?> getHumanoidArmorModel(
-                    LivingEntity living, ItemStack stack, EquipmentSlot slot,
-                    HumanoidModel<?> defaultModel) {
-                boolean inner = slot == EquipmentSlot.LEGS || slot == EquipmentSlot.HEAD;
-                return switch (dragonType.getElement()) {
-                    case FIRE -> new ModelBloodedFireArmor(inner);
-                    case ICE -> new ModelBloodedIceArmor(inner);
-                    case LIGHTNING -> new ModelBloodedLightningArmor(inner);
-                };
-            }
-        });
+    public void initializeClient(Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new ClientExtensions());
     }
 
     @Override
@@ -89,12 +62,11 @@ public class ItemBloodedArmor extends ArmorItem {
 
         tooltip.add(Component.translatable("dragon." + dragonType.getColorName())
                 .withStyle(dragonType.getColor()));
-
         tooltip.add(Component.translatable("item.blooded_armor.desc")
                 .withStyle(elementColor));
-
         tooltip.add(Component.empty());
-        int wornCount = countWornPieces(level);
+
+        int wornCount = countWornPiecesClient(level);
         boolean fullSet = wornCount >= 4;
 
         tooltip.add(Component.translatable("item.iceandfire.blooded_set.title")
@@ -106,24 +78,22 @@ public class ItemBloodedArmor extends ArmorItem {
             case ICE -> "item.iceandfire.blooded_set.ice";
             case LIGHTNING -> "item.iceandfire.blooded_set.lightning";
         };
-
         tooltip.add(
                 Component.literal(wornCount + "/4: ").append(Component.translatable(effectKey)).withStyle(descColor));
     }
 
-    private int countWornPieces(@Nullable Level level) {
-        if (level == null)
-            return 0;
+    /** Counts how many blooded armor pieces of the same element the local player is wearing (client-side only). */
+    private int countWornPiecesClient(@Nullable Level level) {
+        if (level == null || !level.isClientSide()) return 0;
         try {
-            Player player = net.minecraft.client.Minecraft.getInstance().player;
-            if (player == null)
-                return 0;
-
+            net.minecraft.world.entity.player.Player player =
+                    net.minecraft.client.Minecraft.getInstance().player;
+            if (player == null) return 0;
             BloodedDragonType.DragonElement myElement = dragonType.getElement();
             int count = 0;
-            for (EquipmentSlot slot : new EquipmentSlot[] {
+            for (EquipmentSlot slot : new EquipmentSlot[]{
                     EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                    EquipmentSlot.LEGS, EquipmentSlot.FEET }) {
+                    EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
                 ItemStack equipped = player.getItemBySlot(slot);
                 if (equipped.getItem() instanceof ItemBloodedArmor armor
                         && armor.getDragonType().getElement() == myElement) {
@@ -131,23 +101,50 @@ public class ItemBloodedArmor extends ArmorItem {
                 }
             }
             return count;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return 0;
         }
     }
 
+    /** Checks if the given entity is wearing a full set of blooded armor of the specified element. Safe for server-side. */
     public static boolean hasFullArmorSet(LivingEntity entity, BloodedDragonType.DragonElement element) {
-        if (entity == null)
-            return false;
+        if (entity == null) return false;
         int count = 0;
-        for (EquipmentSlot slot : new EquipmentSlot[] {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
                 EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                EquipmentSlot.LEGS, EquipmentSlot.FEET }) {
+                EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack stack = entity.getItemBySlot(slot);
-            if (stack.getItem() instanceof ItemBloodedArmor armor && armor.getDragonType().getElement() == element) {
+            if (stack.getItem() instanceof ItemBloodedArmor armor
+                    && armor.getDragonType().getElement() == element) {
                 count++;
             }
         }
         return count == 4;
+    }
+
+    /**
+     * Client armor model extensions. Must NOT store any state from constructor parameters — Forge/ModernFix
+     * may bypass initializeClient and create instances via reflection. All data must come from method args.
+     */
+    private static class ClientExtensions
+            implements net.minecraftforge.client.extensions.common.IClientItemExtensions {
+
+        @Override
+        public @NotNull net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(
+                LivingEntity living, ItemStack stack, EquipmentSlot slot,
+                net.minecraft.client.model.HumanoidModel<?> defaultModel) {
+            if (!(stack.getItem() instanceof ItemBloodedArmor armor)) {
+                return defaultModel;
+            }
+            boolean inner = slot == EquipmentSlot.LEGS || slot == EquipmentSlot.HEAD;
+            return switch (armor.getDragonType().getElement()) {
+                case FIRE ->
+                        new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedFireArmor(inner);
+                case ICE ->
+                        new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedIceArmor(inner);
+                case LIGHTNING ->
+                        new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedLightningArmor(inner);
+            };
+        }
     }
 }

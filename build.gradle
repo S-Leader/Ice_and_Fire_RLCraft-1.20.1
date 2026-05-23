@@ -45,7 +45,7 @@ repositories {
 def build_snapshot = System.getenv("BUILD_SNAPSHOT") == "true"
 def build_id = System.getenv("BUILD_ID")
 
-version = '2.1.13-1.20.1'
+version = '1.1'
 
 if (build_snapshot) {
     version += '-SNAPSHOT'
@@ -63,7 +63,7 @@ if (build_id != null) {
 }
 
 group = 'com.github.alexthe667' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'iceandfire'
+archivesBaseName = 'Ice_and_Fire_RLCraft-1.20.1'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -144,6 +144,10 @@ dependencies {
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge-15.2.0.25")
     // TODO: Properly implement citadels pathfinding related code
     implementation fg.deobf("curse.maven:citadel-331936:5075402")
+    
+    // 软依赖污秽之地，以使编译通过及生成书龙相关的功能
+    compileOnly fg.deobf(files("E:/JMixin/run/mods/defiledlands-forge-1.3-1.20.1.jar"))
+    
     // TODO: Reimplement for 1.20.2 and onwards
     //implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.2"))
     //implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:0.3.2")) {

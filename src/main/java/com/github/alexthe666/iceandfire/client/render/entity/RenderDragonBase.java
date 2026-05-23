@@ -28,7 +28,8 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
     private final Map<String, ResourceLocation> LAYERED_TEXTURE_CACHE = Maps.newHashMap();
     private final int dragonType;
 
-    public RenderDragonBase(EntityRendererProvider.Context context, AdvancedEntityModel<EntityDragonBase> model, int dragonType) {
+    public RenderDragonBase(EntityRendererProvider.Context context, AdvancedEntityModel<EntityDragonBase> model,
+            int dragonType) {
         super(context, model, 0.15F);
         this.addLayer(new LayerDragonEyes(this));
         this.addLayer(new LayerDragonRider(this, false));
@@ -39,7 +40,8 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
 
     private Vec3 getPosition(LivingEntity LivingEntityIn, double p_177110_2_, float p_177110_4_) {
         double d0 = LivingEntityIn.xOld + (LivingEntityIn.getX() - LivingEntityIn.xOld) * (double) p_177110_4_;
-        double d1 = p_177110_2_ + LivingEntityIn.yOld + (LivingEntityIn.getY() - LivingEntityIn.yOld) * (double) p_177110_4_;
+        double d1 = p_177110_2_ + LivingEntityIn.yOld
+                + (LivingEntityIn.getY() - LivingEntityIn.yOld) * (double) p_177110_4_;
         double d2 = LivingEntityIn.zOld + (LivingEntityIn.getZ() - LivingEntityIn.zOld) * (double) p_177110_4_;
         return new Vec3(d0, d1, d2);
     }
@@ -54,12 +56,17 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(EntityDragonBase entity) {
-        String baseTexture = entity.getVariantName(entity.getVariant()) + entity.getDragonStage() + entity.isModelDead() + entity.isMale() + entity.isSkeletal() + entity.isSleeping() + entity.isBlinking();
+        String baseTexture = entity.getVariantName(entity.getVariant()) + entity.getDragonStage() + entity.isModelDead()
+                + entity.isMale() + entity.isSkeletal() + entity.isSleeping() + entity.isBlinking();
         ResourceLocation resourcelocation = LAYERED_TEXTURE_CACHE.get(baseTexture);
         if (resourcelocation == null) {
             resourcelocation = new ResourceLocation("iceandfire:" + "dragon_texture_" + baseTexture);
             List<String> tex = new ArrayList<String>();
-            tex.add(EnumDragonTextures.getTextureFromDragon(entity).toString());
+            if (dragonType == 3) {
+                tex.add(com.github.alexthe666.iceandfire.enums.GoldDragonTextures.getTexture(entity).toString());
+            } else {
+                tex.add(EnumDragonTextures.getTextureFromDragon(entity).toString());
+            }
             if (entity.isMale() && !entity.isSkeletal()) {
                 if (dragonType == 0) {
                     tex.add(EnumDragonTextures.getDragonEnum(entity).FIRE_MALE_OVERLAY.toString());
@@ -67,10 +74,11 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
                     tex.add(EnumDragonTextures.getDragonEnum(entity).ICE_MALE_OVERLAY.toString());
                 } else if (dragonType == 2) {
                     tex.add(EnumDragonTextures.getDragonEnum(entity).LIGHTNING_MALE_OVERLAY.toString());
+                } else if (dragonType == 3) {
+                    tex.add(com.github.alexthe666.iceandfire.enums.GoldDragonTextures.MALE_OVERLAY.toString());
                 }
             } else {
                 tex.add(EnumDragonTextures.Armor.EMPTY.FIRETEXTURE.toString());
-
             }
             ArrayLayeredTexture layeredBase = new ArrayLayeredTexture(tex);
             Minecraft.getInstance().getTextureManager().register(resourcelocation, layeredBase);

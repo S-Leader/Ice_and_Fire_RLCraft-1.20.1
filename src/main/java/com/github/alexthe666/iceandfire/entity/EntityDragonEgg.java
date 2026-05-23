@@ -36,9 +36,12 @@ import java.util.UUID;
 
 public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromStatues, IDeadMob {
 
-    protected static final EntityDataAccessor<java.util.Optional<UUID>> OWNER_UNIQUE_ID = SynchedEntityData.defineId(EntityDragonEgg.class, EntityDataSerializers.OPTIONAL_UUID);
-    private static final EntityDataAccessor<Integer> DRAGON_TYPE = SynchedEntityData.defineId(EntityDragonEgg.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DRAGON_AGE = SynchedEntityData.defineId(EntityDragonEgg.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<java.util.Optional<UUID>> OWNER_UNIQUE_ID = SynchedEntityData
+            .defineId(EntityDragonEgg.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Integer> DRAGON_TYPE = SynchedEntityData.defineId(EntityDragonEgg.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DRAGON_AGE = SynchedEntityData.defineId(EntityDragonEgg.class,
+            EntityDataSerializers.INT);
 
     public EntityDragonEgg(EntityType type, Level worldIn) {
         super(type, worldIn);
@@ -46,10 +49,10 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
 
     public static AttributeSupplier.Builder bakeAttributes() {
         return Mob.createMobAttributes()
-            //HEALTH
-            .add(Attributes.MAX_HEALTH, 10.0D)
-            //SPEED
-            .add(Attributes.MOVEMENT_SPEED, 0D);
+                // HEALTH
+                .add(Attributes.MAX_HEALTH, 10.0D)
+                // SPEED
+                .add(Attributes.MOVEMENT_SPEED, 0D);
     }
 
     @Override
@@ -146,7 +149,8 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
 
             if (state.is(Blocks.WATER) && getRandom().nextInt(500) == 0) {
                 level().setBlockAndUpdate(blockPosition(), IafBlockRegistry.EGG_IN_ICE.get().defaultBlockState());
-                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.GLASS_BREAK, getSoundSource(), 2.5F, 1.0F, false);
+                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.GLASS_BREAK,
+                        getSoundSource(), 2.5F, 1.0F, false);
 
                 if (level().getBlockEntity(blockPosition()) instanceof TileEntityEggInIce eggInIce) {
                     eggInIce.type = getEggType();
@@ -157,9 +161,24 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
             }
         } else if (dragonType == DragonType.LIGHTNING) {
             BlockPos.MutableBlockPos mutablePosition = new BlockPos.MutableBlockPos(getX(), getY(), getZ());
-            boolean isRainingAt = level().isRainingAt(mutablePosition) || level().isRainingAt(mutablePosition.set(getX(), getY() + (double) getBbHeight(), getZ()));
+            boolean isRainingAt = level().isRainingAt(mutablePosition)
+                    || level().isRainingAt(mutablePosition.set(getX(), getY() + (double) getBbHeight(), getZ()));
 
             if (level().canSeeSky(blockPosition().above()) && isRainingAt) {
+                setDragonAge(getDragonAge() + 1);
+            }
+        } else if (dragonType == DragonType.GOLD) {
+            // 金龙蛋孵化条件：以蛋为中心 ±5 范围内有 ≥15 个书架
+            BlockPos eggPos = blockPosition();
+            int bookshelves = 0;
+            for (BlockPos pos : BlockPos.betweenClosed(eggPos.offset(-5, -5, -5), eggPos.offset(5, 5, 5))) {
+                if (level().getBlockState(pos).is(Blocks.BOOKSHELF)) {
+                    bookshelves++;
+                    if (bookshelves >= 15)
+                        break;
+                }
+            }
+            if (bookshelves >= 15) {
                 setDragonAge(getDragonAge() + 1);
             }
         }
@@ -174,6 +193,8 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
 
             if (dragonType == DragonType.LIGHTNING) {
                 dragon.setVariant(getEggType().ordinal() - 8);
+            } else if (dragonType == DragonType.GOLD) {
+                dragon.setVariant(0);
             } else {
                 dragon.setVariant(getEggType().ordinal());
             }
@@ -202,12 +223,15 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
                     level().addFreshEntity(bolt);
                 }
 
-                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, getSoundSource(), 2.5F, 1.0F, false);
+                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER,
+                        getSoundSource(), 2.5F, 1.0F, false);
             } else if (dragonType == DragonType.FIRE) {
-                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.FIRE_EXTINGUISH, getSoundSource(), 2.5F, 1.0F, false);
+                level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), SoundEvents.FIRE_EXTINGUISH,
+                        getSoundSource(), 2.5F, 1.0F, false);
             }
 
-            level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), IafSoundRegistry.EGG_HATCH, getSoundSource(), 2.5F, 1.0F, false);
+            level().playLocalSound(getX(), getY() + getEyeHeight(), getZ(), IafSoundRegistry.EGG_HATCH,
+                    getSoundSource(), 2.5F, 1.0F, false);
             remove(Entity.RemovalReason.DISCARDED);
         }
     }
@@ -257,6 +281,7 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
             case 9 -> new ItemStack(IafItemRegistry.DRAGONEGG_AMYTHEST.get());
             case 10 -> new ItemStack(IafItemRegistry.DRAGONEGG_COPPER.get());
             case 11 -> new ItemStack(IafItemRegistry.DRAGONEGG_BLACK.get());
+            case 12 -> new ItemStack(IafItemRegistry.DRAGONEGG_GOLD.get());
         };
     }
 

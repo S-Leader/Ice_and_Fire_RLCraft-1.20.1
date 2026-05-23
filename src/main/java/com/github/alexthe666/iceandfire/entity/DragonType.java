@@ -6,6 +6,7 @@ public class DragonType {
     public static final DragonType FIRE = new DragonType("fire");
     public static final DragonType ICE = new DragonType("ice").setPiscivore();
     public static final DragonType LIGHTNING = new DragonType("lightning");
+    public static final DragonType GOLD = new DragonType("gold");
 
     private String name;
     private boolean piscivore;
@@ -14,18 +15,22 @@ public class DragonType {
         this.name = name;
     }
 
-    public static String getNameFromInt(int type){
-        if(type == 2){
+    public static String getNameFromInt(int type) {
+        if (type == 3) {
+            return "gold";
+        } else if (type == 2) {
             return "lightning";
-        }else if (type == 1){
+        } else if (type == 1) {
             return "ice";
-        }else{
+        } else {
             return "fire";
         }
     }
 
     public int getIntFromType() {
-        if (this == LIGHTNING) {
+        if (this == GOLD) {
+            return 3;
+        } else if (this == LIGHTNING) {
             return 2;
         } else if (this == ICE) {
             return 1;
@@ -35,12 +40,13 @@ public class DragonType {
     }
 
     public EntityType<? extends EntityDragonBase> getEntity() {
-        if (this == LIGHTNING) {
+        if (this == GOLD) {
+            return IafEntityRegistry.GOLD_DRAGON.get();
+        } else if (this == LIGHTNING) {
             return IafEntityRegistry.LIGHTNING_DRAGON.get();
         } else if (this == ICE) {
             return IafEntityRegistry.ICE_DRAGON.get();
         }
-
         return IafEntityRegistry.FIRE_DRAGON.get();
     }
 

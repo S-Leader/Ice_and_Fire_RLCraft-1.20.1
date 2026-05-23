@@ -33,6 +33,9 @@ public class ItemDragonFlesh extends ItemGenericFood {
                 livingEntity.setSecondsOnFire(5);
             } else if (dragonType == 1) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
+            } else if (dragonType == 3) {
+                // 金龙肉：食用获得幸运V 30秒
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.LUCK, 600, 4));
             } else {
                 if (!livingEntity.level().isClientSide) {
                     LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(livingEntity.level());

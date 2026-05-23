@@ -11,6 +11,7 @@
     "iceandfire:dragonsteel_fire_boots",
     "iceandfire:dragonsteel_ice_boots",
     "iceandfire:dragonsteel_lightning_boots",
+    "iceandfire:dragonsteel_gold_boots",
     "iceandfire:armor_red_boots",
     "iceandfire:armor_bronze_boots",
     "iceandfire:armor_green_boots",
@@ -32,6 +33,18 @@
     "iceandfire:tide_teal_boots",
     "iceandfire:forest_troll_leather_boots",
     "iceandfire:frost_troll_leather_boots",
-    "iceandfire:mountain_troll_leather_boots"
+    "iceandfire:mountain_troll_leather_boots",
+    "iceandfire:blooded_fire_red_boots",
+    "iceandfire:blooded_fire_bronze_boots",
+    "iceandfire:blooded_fire_green_boots",
+    "iceandfire:blooded_fire_gray_boots",
+    "iceandfire:blooded_ice_blue_boots",
+    "iceandfire:blooded_ice_white_boots",
+    "iceandfire:blooded_ice_sapphire_boots",
+    "iceandfire:blooded_ice_silver_boots",
+    "iceandfire:blooded_lightning_electric_boots",
+    "iceandfire:blooded_lightning_amethyst_boots",
+    "iceandfire:blooded_lightning_copper_boots",
+    "iceandfire:blooded_lightning_black_boots"
   ]
 }

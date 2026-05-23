@@ -29,10 +29,14 @@ import javax.annotation.Nullable;
 
 public class EntityDragonSkull extends Animal implements IBlacklistedFromStatues, IDeadMob {
 
-    private static final EntityDataAccessor<Integer> DRAGON_TYPE = SynchedEntityData.defineId(EntityDragonSkull.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DRAGON_AGE = SynchedEntityData.defineId(EntityDragonSkull.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DRAGON_STAGE = SynchedEntityData.defineId(EntityDragonSkull.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DRAGON_DIRECTION = SynchedEntityData.defineId(EntityDragonSkull.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DRAGON_TYPE = SynchedEntityData.defineId(EntityDragonSkull.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DRAGON_AGE = SynchedEntityData.defineId(EntityDragonSkull.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DRAGON_STAGE = SynchedEntityData.defineId(EntityDragonSkull.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DRAGON_DIRECTION = SynchedEntityData
+            .defineId(EntityDragonSkull.class, EntityDataSerializers.FLOAT);
 
     public final float minSize = 0.3F;
     public final float maxSize = 8.58F;
@@ -50,10 +54,10 @@ public class EntityDragonSkull extends Animal implements IBlacklistedFromStatues
 
     public static AttributeSupplier.Builder bakeAttributes() {
         return Mob.createMobAttributes()
-            //HEALTH
-            .add(Attributes.MAX_HEALTH, 10)
-            //SPEED
-            .add(Attributes.MOVEMENT_SPEED, 0D);
+                // HEALTH
+                .add(Attributes.MAX_HEALTH, 10)
+                // SPEED
+                .add(Attributes.MOVEMENT_SPEED, 0D);
     }
 
     @Override
@@ -155,6 +159,8 @@ public class EntityDragonSkull extends Animal implements IBlacklistedFromStatues
                 return IafItemRegistry.DRAGON_SKULL_ICE.get();
             case 2:
                 return IafItemRegistry.DRAGON_SKULL_LIGHTNING.get();
+            case 3:
+                return IafItemRegistry.DRAGON_SKULL_GOLD.get();
             default:
                 return IafItemRegistry.DRAGON_SKULL_FIRE.get();
         }

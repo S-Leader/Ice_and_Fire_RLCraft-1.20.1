@@ -33,7 +33,9 @@ public class ItemDragonSkull extends Item {
     }
 
     private static String getType(int type) {
-        if (type == 2) {
+        if (type == 3) {
+            return "gold";
+        } else if (type == 2) {
             return "lightning";
         } else if (type == 1) {
             return "ice";

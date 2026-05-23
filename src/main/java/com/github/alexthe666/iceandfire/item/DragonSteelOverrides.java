@@ -57,6 +57,10 @@ public interface DragonSteelOverrides<T extends TieredItem> {
         return tier == DragonSteelTier.DRAGONSTEEL_TIER_LIGHTNING;
     }
 
+    default boolean isDragonsteelGold(Tier tier) {
+        return tier == DragonSteelTier.DRAGONSTEEL_TIER_GOLD;
+    }
+
     default void hurtEnemy(T item, ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (item.getTier() == IafItemRegistry.SILVER_TOOL_MATERIAL) {
             if (target.getMobType() == MobType.UNDEAD) {
@@ -87,6 +91,18 @@ public interface DragonSteelOverrides<T extends TieredItem> {
                         getAttackDamage(item));
             }
         }
+        // 金龙钢：圣铭之力 — 魔法伤害，正面效果增伤
+        if (isDragonsteelGold(item.getTier())) {
+            float baseDamage = getAttackDamage(item);
+            float bonusDamage = 0;
+            // 目标有正面效果时增伤
+            if (target.getActiveEffects().stream().anyMatch(e -> e.getEffect().isBeneficial())) {
+                bonusDamage = baseDamage * 0.3F;
+            }
+            target.hurt(attacker.level().damageSources().magic(), baseDamage * 0.5F + bonusDamage);
+            // 附加短暂发光效果
+            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60, 0));
+        }
 
     }
 
@@ -106,6 +122,9 @@ public interface DragonSteelOverrides<T extends TieredItem> {
         }
         if (isDragonsteelLightning(tier) && IafConfig.dragonWeaponLightningAbility) {
             tooltip.add(Component.translatable("dragon_sword_lightning.hurt2").withStyle(ChatFormatting.DARK_PURPLE));
+        }
+        if (isDragonsteelGold(tier)) {
+            tooltip.add(Component.translatable("dragon_sword_gold.hurt2").withStyle(ChatFormatting.GOLD));
         }
     }
 }

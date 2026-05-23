@@ -25,3 +25,9 @@ side = "BOTH"
     mandatory = true
     versionRange="[40.1.37,)"
     side="BOTH"
+[[dependencies.iceandfire]]
+    modId = "defiledlands"
+    mandatory = false
+    versionRange = "[1.0,)"
+    ordering = "AFTER"
+    side = "BOTH"

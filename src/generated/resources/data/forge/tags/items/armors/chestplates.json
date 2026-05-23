@@ -11,6 +11,7 @@
     "iceandfire:dragonsteel_fire_chestplate",
     "iceandfire:dragonsteel_ice_chestplate",
     "iceandfire:dragonsteel_lightning_chestplate",
+    "iceandfire:dragonsteel_gold_chestplate",
     "iceandfire:armor_red_chestplate",
     "iceandfire:armor_bronze_chestplate",
     "iceandfire:armor_green_chestplate",
@@ -32,6 +33,18 @@
     "iceandfire:tide_teal_chestplate",
     "iceandfire:forest_troll_leather_chestplate",
     "iceandfire:frost_troll_leather_chestplate",
-    "iceandfire:mountain_troll_leather_chestplate"
+    "iceandfire:mountain_troll_leather_chestplate",
+    "iceandfire:blooded_fire_red_chestplate",
+    "iceandfire:blooded_fire_bronze_chestplate",
+    "iceandfire:blooded_fire_green_chestplate",
+    "iceandfire:blooded_fire_gray_chestplate",
+    "iceandfire:blooded_ice_blue_chestplate",
+    "iceandfire:blooded_ice_white_chestplate",
+    "iceandfire:blooded_ice_sapphire_chestplate",
+    "iceandfire:blooded_ice_silver_chestplate",
+    "iceandfire:blooded_lightning_electric_chestplate",
+    "iceandfire:blooded_lightning_amethyst_chestplate",
+    "iceandfire:blooded_lightning_copper_chestplate",
+    "iceandfire:blooded_lightning_black_chestplate"
   ]
 }

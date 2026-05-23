@@ -40,7 +40,8 @@ public class IafItemRegistry {
             new int[] { 1, 3, 4, 2 }, 15, SoundEvents.ARMOR_EQUIP_GOLD, 0);
     public static CustomArmorMaterial BLINDFOLD_ARMOR_MATERIAL = new IafArmorMaterial("blindfold", 5,
             new int[] { 1, 1, 1, 1 }, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 0);
-    public static CustomArmorMaterial SHEEP_ARMOR_MATERIAL = new IafArmorMaterial("sheep", 5, new int[] { 1, 3, 2, 1 },
+    public static CustomArmorMaterial SHEEP_ARMOR_MATERIAL = new IafArmorMaterial("sheep", 5,
+            new int[] { 1, 3, 2, 1 },
             15, SoundEvents.ARMOR_EQUIP_LEATHER, 0);
     public static CustomArmorMaterial MYRMEX_DESERT_ARMOR_MATERIAL = new IafArmorMaterial("myrmexdesert", 20,
             new int[] { 3, 5, 8, 4 }, 15, SoundEvents.ARMOR_EQUIP_LEATHER, 0);
@@ -60,12 +61,14 @@ public class IafItemRegistry {
             new int[] { 2, 5, 7, 3 }, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 1F);
     public static CustomArmorMaterial TROLL_FROST_ARMOR_MATERIAL = new IafArmorMaterial("frost troll", 20,
             new int[] { 2, 5, 7, 3 }, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 1F);
-    public static CustomArmorMaterial DRAGONSTEEL_FIRE_ARMOR_MATERIAL = new DragonsteelArmorMaterial("dragonsteel_fire",
+    public static CustomArmorMaterial DRAGONSTEEL_FIRE_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_fire",
             (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
             new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
                     IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
             30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
-    public static CustomArmorMaterial DRAGONSTEEL_ICE_ARMOR_MATERIAL = new DragonsteelArmorMaterial("dragonsteel_ice",
+    public static CustomArmorMaterial DRAGONSTEEL_ICE_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_ice",
             (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
             new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
                     IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
@@ -75,33 +78,50 @@ public class IafItemRegistry {
             new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
                     IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
             30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
-    public static CustomToolMaterial SILVER_TOOL_MATERIAL = new CustomToolMaterial("silver", 2, 460, 1.0F, 11.0F, 18);
-    public static CustomToolMaterial COPPER_TOOL_MATERIAL = new CustomToolMaterial("copper", 2, 300, 0.0F, 0.7F, 10);
+    public static CustomArmorMaterial DRAGONSTEEL_GOLD_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_gold", (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
+            new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
+                    IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
+            30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
+    public static CustomToolMaterial SILVER_TOOL_MATERIAL = new CustomToolMaterial("silver", 2, 460, 1.0F, 11.0F,
+            18);
+    public static CustomToolMaterial COPPER_TOOL_MATERIAL = new CustomToolMaterial("copper", 2, 300, 0.0F, 0.7F,
+            10);
     public static CustomToolMaterial DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial("Dragonbone", 3, 1660, 4.0F,
             10.0F, 22);
-    public static CustomToolMaterial FIRE_DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial("FireDragonbone", 3, 2000,
+    public static CustomToolMaterial FIRE_DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial("FireDragonbone", 3,
+            2000,
             5.5F, 10F, 22);
     public static CustomToolMaterial ICE_DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial("IceDragonbone", 3, 2000,
             5.5F, 10F, 22);
-    public static CustomToolMaterial LIGHTNING_DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial("LightningDragonbone",
+    public static CustomToolMaterial LIGHTNING_DRAGONBONE_TOOL_MATERIAL = new CustomToolMaterial(
+            "LightningDragonbone",
             3, 2000, 5.5F, 10F, 22);
-    public static CustomToolMaterial TROLL_WEAPON_TOOL_MATERIAL = new CustomToolMaterial("trollWeapon", 2, 300, 1F, 10F,
+    public static CustomToolMaterial TROLL_WEAPON_TOOL_MATERIAL = new CustomToolMaterial("trollWeapon", 2, 300, 1F,
+            10F,
             1);
-    public static CustomToolMaterial MYRMEX_CHITIN_TOOL_MATERIAL = new CustomToolMaterial("MyrmexChitin", 3, 600, 1.0F,
+    public static CustomToolMaterial MYRMEX_CHITIN_TOOL_MATERIAL = new CustomToolMaterial("MyrmexChitin", 3, 600,
+            1.0F,
             6.0F, 8);
-    public static CustomToolMaterial HIPPOGRYPH_SWORD_TOOL_MATERIAL = new CustomToolMaterial("HippogryphSword", 2, 500,
+    public static CustomToolMaterial HIPPOGRYPH_SWORD_TOOL_MATERIAL = new CustomToolMaterial("HippogryphSword", 2,
+            500,
             2.5F, 10F, 10);
-    public static CustomToolMaterial STYMHALIAN_SWORD_TOOL_MATERIAL = new CustomToolMaterial("StymphalianSword", 2, 500,
+    public static CustomToolMaterial STYMHALIAN_SWORD_TOOL_MATERIAL = new CustomToolMaterial("StymphalianSword", 2,
+            500,
             2, 10.0F, 10);
-    public static CustomToolMaterial AMPHITHERE_SWORD_TOOL_MATERIAL = new CustomToolMaterial("AmphithereSword", 2, 500,
+    public static CustomToolMaterial AMPHITHERE_SWORD_TOOL_MATERIAL = new CustomToolMaterial("AmphithereSword", 2,
+            500,
             1F, 10F, 10);
     public static CustomToolMaterial HIPPOCAMPUS_SWORD_TOOL_MATERIAL = new CustomToolMaterial("HippocampusSword", 0,
             500, -2F, 0F, 50);
-    public static CustomToolMaterial DREAD_SWORD_TOOL_MATERIAL = new CustomToolMaterial("DreadSword", 0, 100, 1F, 10F,
+    public static CustomToolMaterial DREAD_SWORD_TOOL_MATERIAL = new CustomToolMaterial("DreadSword", 0, 100, 1F,
+            10F,
             0);
-    public static CustomToolMaterial DREAD_KNIGHT_TOOL_MATERIAL = new CustomToolMaterial("DreadKnightSword", 0, 1200,
+    public static CustomToolMaterial DREAD_KNIGHT_TOOL_MATERIAL = new CustomToolMaterial("DreadKnightSword", 0,
+            1200,
             13F, 0F, 10);
-    public static CustomToolMaterial GHOST_SWORD_TOOL_MATERIAL = new CustomToolMaterial("GhostSword", 2, 3000, 5, 10.0F,
+    public static CustomToolMaterial GHOST_SWORD_TOOL_MATERIAL = new CustomToolMaterial("GhostSword", 2, 3000, 5,
+            10.0F,
             25);
 
     public static DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, IceAndFire.MODID);
@@ -176,6 +196,8 @@ public class IafItemRegistry {
             () -> new ItemDragonEgg(EnumDragonEgg.AMYTHEST));
     public static final RegistryObject<Item> DRAGONEGG_COPPER = registerItem("dragonegg_copper",
             () -> new ItemDragonEgg(EnumDragonEgg.COPPER));
+    public static final RegistryObject<Item> DRAGONEGG_GOLD = registerItem("dragonegg_gold",
+            () -> new ItemDragonEgg(EnumDragonEgg.GOLD));
     public static final RegistryObject<Item> DRAGONEGG_BLACK = registerItem("dragonegg_black",
             () -> new ItemDragonEgg(EnumDragonEgg.BLACK));
     public static final RegistryObject<Item> DRAGONSCALES_RED = registerItem("dragonscales_red",
@@ -200,6 +222,8 @@ public class IafItemRegistry {
             () -> new ItemDragonScales(EnumDragonEgg.AMYTHEST));
     public static final RegistryObject<Item> DRAGONSCALES_COPPER = registerItem("dragonscales_copper",
             () -> new ItemDragonScales(EnumDragonEgg.COPPER));
+    public static final RegistryObject<Item> DRAGONSCALES_GOLD = registerItem("dragonscales_gold",
+            () -> new ItemDragonScales(EnumDragonEgg.GOLD));
     public static final RegistryObject<Item> DRAGONSCALES_BLACK = registerItem("dragonscales_black",
             () -> new ItemDragonScales(EnumDragonEgg.BLACK));
     public static final RegistryObject<Item> DRAGON_BONE = registerItem("dragonbone", () -> new ItemDragonBone());
@@ -232,6 +256,8 @@ public class IafItemRegistry {
             () -> new ItemDragonSkull(1));
     public static final RegistryObject<Item> DRAGON_SKULL_LIGHTNING = registerItem(ItemDragonSkull.getName(2),
             () -> new ItemDragonSkull(2));
+    public static final RegistryObject<Item> DRAGON_SKULL_GOLD = registerItem("dragon_skull_gold",
+            () -> new ItemDragonSkull(3));
     public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_IRON_0 = registerItem(
             "dragonarmor_iron_" + ItemDragonArmor.getNameForSlot(0),
             () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.IRON, 0));
@@ -337,24 +363,38 @@ public class IafItemRegistry {
             () -> new ItemDragonFlesh(0));
     public static final RegistryObject<Item> ICE_DRAGON_FLESH = registerItem(ItemDragonFlesh.getNameForType(1),
             () -> new ItemDragonFlesh(1));
-    public static final RegistryObject<Item> LIGHTNING_DRAGON_FLESH = registerItem(ItemDragonFlesh.getNameForType(2),
+    public static final RegistryObject<Item> LIGHTNING_DRAGON_FLESH = registerItem(
+            ItemDragonFlesh.getNameForType(2),
             () -> new ItemDragonFlesh(2));
-    public static final RegistryObject<Item> FIRE_DRAGON_HEART = registerItem("fire_dragon_heart", ItemGeneric::new);
+    public static final RegistryObject<Item> GOLD_DRAGON_FLESH = registerItem("gold_dragon_flesh",
+            () -> new ItemDragonFlesh(3));
+    public static final RegistryObject<Item> FIRE_DRAGON_HEART = registerItem("fire_dragon_heart",
+            ItemGeneric::new);
     public static final RegistryObject<Item> ICE_DRAGON_HEART = registerItem("ice_dragon_heart", ItemGeneric::new);
     public static final RegistryObject<Item> LIGHTNING_DRAGON_HEART = registerItem("lightning_dragon_heart",
             ItemGeneric::new);
-    public static final RegistryObject<Item> FIRE_DRAGON_BLOOD = registerItem("fire_dragon_blood", ItemGeneric::new);
+    public static final RegistryObject<Item> GOLD_DRAGON_HEART = registerItem("gold_dragon_heart",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> FIRE_DRAGON_BLOOD = registerItem("fire_dragon_blood",
+            ItemGeneric::new);
     public static final RegistryObject<Item> ICE_DRAGON_BLOOD = registerItem("ice_dragon_blood", ItemGeneric::new);
     public static final RegistryObject<Item> LIGHTNING_DRAGON_BLOOD = registerItem("lightning_dragon_blood",
             ItemGeneric::new);
-    public static final RegistryObject<Item> DRAGON_STAFF = registerItem("dragon_stick", () -> new ItemDragonStaff());
+    public static final RegistryObject<Item> GOLD_DRAGON_BLOOD = registerItem("gold_dragon_blood",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGON_STAFF = registerItem("dragon_stick",
+            () -> new ItemDragonStaff());
     public static final RegistryObject<Item> DRAGON_HORN = registerItem("dragon_horn", () -> new ItemDragonHorn());
-    public static final RegistryObject<Item> DRAGON_FLUTE = registerItem("dragon_flute", () -> new ItemDragonFlute());
+    public static final RegistryObject<Item> DRAGON_FLUTE = registerItem("dragon_flute",
+            () -> new ItemDragonFlute());
     public static final RegistryObject<Item> SUMMONING_CRYSTAL_FIRE = registerItem("summoning_crystal_fire",
             () -> new ItemSummoningCrystal());
     public static final RegistryObject<Item> SUMMONING_CRYSTAL_ICE = registerItem("summoning_crystal_ice",
             () -> new ItemSummoningCrystal());
-    public static final RegistryObject<Item> SUMMONING_CRYSTAL_LIGHTNING = registerItem("summoning_crystal_lightning",
+    public static final RegistryObject<Item> SUMMONING_CRYSTAL_LIGHTNING = registerItem(
+            "summoning_crystal_lightning",
+            () -> new ItemSummoningCrystal());
+    public static final RegistryObject<Item> SUMMONING_CRYSTAL_GOLD = registerItem("summoning_crystal_gold",
             () -> new ItemSummoningCrystal());
     public static final RegistryObject<Item> HIPPOGRYPH_EGG = registerItem("hippogryph_egg",
             () -> new ItemHippogryphEgg());
@@ -369,7 +409,8 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> HIPPOGRYPH_SWORD = registerItem("hippogryph_sword",
             () -> new ItemHippogryphSword());
     public static final RegistryObject<Item> GORGON_HEAD = registerItem("gorgon_head", () -> new ItemGorgonHead());
-    public static final RegistryObject<Item> STONE_STATUE = registerItem("stone_statue", () -> new ItemStoneStatue());
+    public static final RegistryObject<Item> STONE_STATUE = registerItem("stone_statue",
+            () -> new ItemStoneStatue());
     public static final RegistryObject<Item> BLINDFOLD = registerItem("blindfold", () -> new ItemBlindfold());
     public static final RegistryObject<Item> PIXIE_DUST = registerItem("pixie_dust", () -> new ItemPixieDust());
     public static final RegistryObject<Item> PIXIE_WINGS = registerItem("pixie_wings", () -> new ItemGeneric(1));
@@ -401,7 +442,8 @@ public class IafItemRegistry {
             ItemGeneric::new);
     public static final RegistryObject<Item> DEATHWORM_YELLOW_HELMET = registerItem("deathworm_yellow_helmet",
             () -> new ItemDeathwormArmor(DEATHWORM_0_ARMOR_MATERIAL, ArmorItem.Type.HELMET));
-    public static final RegistryObject<Item> DEATHWORM_YELLOW_CHESTPLATE = registerItem("deathworm_yellow_chestplate",
+    public static final RegistryObject<Item> DEATHWORM_YELLOW_CHESTPLATE = registerItem(
+            "deathworm_yellow_chestplate",
             () -> new ItemDeathwormArmor(DEATHWORM_0_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE));
     public static final RegistryObject<Item> DEATHWORM_YELLOW_LEGGINGS = registerItem("deathworm_yellow_leggings",
             () -> new ItemDeathwormArmor(DEATHWORM_0_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS));
@@ -436,7 +478,8 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> DEATHWORM_GAUNTLET_RED = registerItem("deathworm_gauntlet_red",
             () -> new ItemDeathwormGauntlet());
     public static final RegistryObject<Item> ROTTEN_EGG = registerItem("rotten_egg", () -> new ItemRottenEgg());
-    public static final RegistryObject<Item> COCKATRICE_EYE = registerItem("cockatrice_eye", () -> new ItemGeneric(1));
+    public static final RegistryObject<Item> COCKATRICE_EYE = registerItem("cockatrice_eye",
+            () -> new ItemGeneric(1));
     public static final RegistryObject<Item> ITEM_COCKATRICE_SCEPTER = registerItem("cockatrice_scepter",
             () -> new ItemCockatriceScepter());
     public static final RegistryObject<Item> STYMPHALIAN_BIRD_FEATHER = registerItem("stymphalian_bird_feather",
@@ -509,7 +552,8 @@ public class IafItemRegistry {
             () -> new ItemMyrmexSwarm(false));
     public static final RegistryObject<Item> MYRMEX_JUNGLE_SWARM = registerItem("myrmex_jungle_swarm",
             () -> new ItemMyrmexSwarm(true));
-    public static final RegistryObject<Item> AMPHITHERE_FEATHER = registerItem("amphithere_feather", ItemGeneric::new);
+    public static final RegistryObject<Item> AMPHITHERE_FEATHER = registerItem("amphithere_feather",
+            ItemGeneric::new);
     public static final RegistryObject<Item> AMPHITHERE_ARROW = registerItem("amphithere_arrow",
             () -> new ItemAmphithereArrow());
     public static final RegistryObject<Item> AMPHITHERE_MACUAHUITL = registerItem("amphithere_macuahuitl",
@@ -519,7 +563,8 @@ public class IafItemRegistry {
             () -> new ItemSeaSerpentArrow());
     public static final RegistryObject<Item> TIDE_TRIDENT_INVENTORY = registerItem("tide_trident_inventory",
             () -> new ItemGeneric(0, true));
-    public static final RegistryObject<Item> TIDE_TRIDENT = registerItem("tide_trident", () -> new ItemTideTrident());
+    public static final RegistryObject<Item> TIDE_TRIDENT = registerItem("tide_trident",
+            () -> new ItemTideTrident());
     public static final RegistryObject<Item> CHAIN = registerItem("chain", () -> new ItemChain(false));
     public static final RegistryObject<Item> CHAIN_STICKY = registerItem("chain_sticky", () -> new ItemChain(true));
     public static final RegistryObject<Item> DRAGONSTEEL_FIRE_INGOT = registerItem("dragonsteel_fire_ingot",
@@ -536,7 +581,8 @@ public class IafItemRegistry {
             () -> new ItemModHoe(DRAGONSTEEL_TIER_FIRE));
     public static final RegistryObject<Item> DRAGONSTEEL_FIRE_HELMET = registerItem("dragonsteel_fire_helmet",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
-    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_CHESTPLATE = registerItem("dragonsteel_fire_chestplate",
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_CHESTPLATE = registerItem(
+            "dragonsteel_fire_chestplate",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
     public static final RegistryObject<Item> DRAGONSTEEL_FIRE_LEGGINGS = registerItem("dragonsteel_fire_leggings",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
@@ -563,28 +609,58 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> DRAGONSTEEL_ICE_BOOTS = registerItem("dragonsteel_ice_boots",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_ICE_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
 
-    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_INGOT = registerItem("dragonsteel_lightning_ingot",
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_INGOT = registerItem(
+            "dragonsteel_lightning_ingot",
             ItemGeneric::new);
-    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SWORD = registerItem("dragonsteel_lightning_sword",
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SWORD = registerItem(
+            "dragonsteel_lightning_sword",
             () -> new ItemModSword(DRAGONSTEEL_TIER_LIGHTNING));
     public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_PICKAXE = registerItem(
             "dragonsteel_lightning_pickaxe", () -> new ItemModPickaxe(DRAGONSTEEL_TIER_LIGHTNING));
     public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_AXE = registerItem("dragonsteel_lightning_axe",
             () -> new ItemModAxe(DRAGONSTEEL_TIER_LIGHTNING));
-    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SHOVEL = registerItem("dragonsteel_lightning_shovel",
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SHOVEL = registerItem(
+            "dragonsteel_lightning_shovel",
             () -> new ItemModShovel(DRAGONSTEEL_TIER_LIGHTNING));
     public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_HOE = registerItem("dragonsteel_lightning_hoe",
             () -> new ItemModHoe(DRAGONSTEEL_TIER_LIGHTNING));
-    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_HELMET = registerItem("dragonsteel_lightning_helmet",
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_HELMET = registerItem(
+            "dragonsteel_lightning_helmet",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
     public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_CHESTPLATE = registerItem(
             "dragonsteel_lightning_chestplate",
-            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 1,
+                    ArmorItem.Type.CHESTPLATE));
     public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_LEGGINGS = registerItem(
             "dragonsteel_lightning_leggings",
-            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
-    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_BOOTS = registerItem("dragonsteel_lightning_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 2,
+                    ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_BOOTS = registerItem(
+            "dragonsteel_lightning_boots",
             () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
+
+    // 金龙铭钢
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_INGOT = registerItem("dragonsteel_gold_ingot",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_SWORD = registerItem("dragonsteel_gold_sword",
+            () -> new ItemModSword(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_PICKAXE = registerItem("dragonsteel_gold_pickaxe",
+            () -> new ItemModPickaxe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_AXE = registerItem("dragonsteel_gold_axe",
+            () -> new ItemModAxe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_SHOVEL = registerItem("dragonsteel_gold_shovel",
+            () -> new ItemModShovel(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_HOE = registerItem("dragonsteel_gold_hoe",
+            () -> new ItemModHoe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_HELMET = registerItem("dragonsteel_gold_helmet",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_CHESTPLATE = registerItem(
+            "dragonsteel_gold_chestplate",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_LEGGINGS = registerItem("dragonsteel_gold_leggings",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_BOOTS = registerItem("dragonsteel_gold_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
 
     public static final RegistryObject<Item> WEEZER_BLUE_ALBUM = registerItem("weezer_blue_album",
             () -> new ItemGeneric(1, true));
@@ -613,17 +689,22 @@ public class IafItemRegistry {
             () -> new BannerPatternItem(BannerPatternTagGenerator.FIRE_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_ICE = registerItem("banner_pattern_ice",
             () -> new BannerPatternItem(BannerPatternTagGenerator.ICE_BANNER_PATTERN, unstackable()));
-    public static final RegistryObject<BannerPatternItem> PATTERN_LIGHTNING = registerItem("banner_pattern_lightning",
+    public static final RegistryObject<BannerPatternItem> PATTERN_LIGHTNING = registerItem(
+            "banner_pattern_lightning",
             () -> new BannerPatternItem(BannerPatternTagGenerator.LIGHTNING_BANNER_PATTERN, unstackable()));
-    public static final RegistryObject<BannerPatternItem> PATTERN_FIRE_HEAD = registerItem("banner_pattern_fire_head",
+    public static final RegistryObject<BannerPatternItem> PATTERN_FIRE_HEAD = registerItem(
+            "banner_pattern_fire_head",
             () -> new BannerPatternItem(BannerPatternTagGenerator.FIRE_HEAD_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_ICE_HEAD = registerItem("banner_pattern_ice_head",
             () -> new BannerPatternItem(BannerPatternTagGenerator.ICE_HEAD_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_LIGHTNING_HEAD = registerItem(
             "banner_pattern_lightning_head",
-            () -> new BannerPatternItem(BannerPatternTagGenerator.LIGHTNING_HEAD_BANNER_PATTERN, unstackable()));
-    public static final RegistryObject<BannerPatternItem> PATTERN_AMPHITHERE = registerItem("banner_pattern_amphithere",
-            () -> new BannerPatternItem(BannerPatternTagGenerator.AMPHITHERE_BANNER_PATTERN, unstackable()));
+            () -> new BannerPatternItem(BannerPatternTagGenerator.LIGHTNING_HEAD_BANNER_PATTERN,
+                    unstackable()));
+    public static final RegistryObject<BannerPatternItem> PATTERN_AMPHITHERE = registerItem(
+            "banner_pattern_amphithere",
+            () -> new BannerPatternItem(BannerPatternTagGenerator.AMPHITHERE_BANNER_PATTERN,
+                    unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_BIRD = registerItem("banner_pattern_bird",
             () -> new BannerPatternItem(BannerPatternTagGenerator.BIRD_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_EYE = registerItem("banner_pattern_eye",
@@ -636,15 +717,18 @@ public class IafItemRegistry {
             () -> new BannerPatternItem(BannerPatternTagGenerator.GORGON_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_HIPPOCAMPUS = registerItem(
             "banner_pattern_hippocampus",
-            () -> new BannerPatternItem(BannerPatternTagGenerator.HIPPOCAMPUS_BANNER_PATTERN, unstackable()));
+            () -> new BannerPatternItem(BannerPatternTagGenerator.HIPPOCAMPUS_BANNER_PATTERN,
+                    unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_HIPPOGRYPH_HEAD = registerItem(
             "banner_pattern_hippogryph_head",
-            () -> new BannerPatternItem(BannerPatternTagGenerator.HIPPOGRYPH_HEAD_BANNER_PATTERN, unstackable()));
+            () -> new BannerPatternItem(BannerPatternTagGenerator.HIPPOGRYPH_HEAD_BANNER_PATTERN,
+                    unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_MERMAID = registerItem("banner_pattern_mermaid",
             () -> new BannerPatternItem(BannerPatternTagGenerator.MERMAID_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_SEA_SERPENT = registerItem(
             "banner_pattern_sea_serpent",
-            () -> new BannerPatternItem(BannerPatternTagGenerator.SEA_SERPENT_BANNER_PATTERN, unstackable()));
+            () -> new BannerPatternItem(BannerPatternTagGenerator.SEA_SERPENT_BANNER_PATTERN,
+                    unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_TROLL = registerItem("banner_pattern_troll",
             () -> new BannerPatternItem(BannerPatternTagGenerator.TROLL_BANNER_PATTERN, unstackable()));
     public static final RegistryObject<BannerPatternItem> PATTERN_WEEZER = registerItem("banner_pattern_weezer",
@@ -694,6 +778,7 @@ public class IafItemRegistry {
         registerItem("spawn_egg_fire_dragon", () -> new ForgeSpawnEggItem(IafEntityRegistry.FIRE_DRAGON, 0X340000, 0XA52929, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
         registerItem("spawn_egg_ice_dragon", () -> new ForgeSpawnEggItem(IafEntityRegistry.ICE_DRAGON, 0XB5DDFB, 0X7EBAF0, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
         registerItem("spawn_egg_lightning_dragon", () -> new ForgeSpawnEggItem(IafEntityRegistry.LIGHTNING_DRAGON, 0X422367, 0X725691, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
+        registerItem("spawn_egg_gold_dragon", () -> new ForgeSpawnEggItem(IafEntityRegistry.GOLD_DRAGON, 0XFFD700, 0XDAA520, new Item.Properties()));
         registerItem("spawn_egg_hippogryph", () -> new ForgeSpawnEggItem(IafEntityRegistry.HIPPOGRYPH, 0XD8D8D8, 0XD1B55D, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
         registerItem("spawn_egg_gorgon", () -> new ForgeSpawnEggItem(IafEntityRegistry.GORGON, 0XD0D99F, 0X684530, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
         registerItem("spawn_egg_pixie", () -> new ForgeSpawnEggItem(IafEntityRegistry.PIXIE, 0XFF7F89, 0XE2CCE2, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/));
