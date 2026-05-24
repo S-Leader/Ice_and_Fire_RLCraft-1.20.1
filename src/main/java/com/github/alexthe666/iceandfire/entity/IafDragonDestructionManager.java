@@ -3,6 +3,7 @@ package com.github.alexthe666.iceandfire.entity;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.api.event.DragonFireDamageWorldEvent;
 import com.github.alexthe666.iceandfire.block.*;
+import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforgeInput;
 import com.github.alexthe666.iceandfire.entity.util.BlockLaunchExplosion;
@@ -34,15 +35,19 @@ public class IafDragonDestructionManager {
         int statusDuration;
         float damageScale;
 
+        DragonForgeType forgeType;
         if (dragon.dragonType == DragonType.FIRE) {
             statusDuration = 5 + dragon.getDragonStage() * 5;
             damageScale = (float) IafConfig.dragonAttackDamageFire;
+            forgeType = DragonForgeType.FIRE;
         } else if (dragon.dragonType == DragonType.ICE) {
             statusDuration = 50 * dragon.getDragonStage();
             damageScale = (float) IafConfig.dragonAttackDamageIce;
+            forgeType = DragonForgeType.ICE;
         } else if (dragon.dragonType == DragonType.LIGHTNING) {
             statusDuration = 3;
             damageScale = (float) IafConfig.dragonAttackDamageLightning;
+            forgeType = DragonForgeType.LIGHTNING;
         } else {
             return;
         }
@@ -53,7 +58,7 @@ public class IafDragonDestructionManager {
         if (dragon.getDragonStage() <= 3) {
             BlockPos.betweenClosedStream(center.offset(-1, -1, -1), center.offset(1, 1, 1)).forEach(position -> {
                 if (level.getBlockEntity(position) instanceof TileEntityDragonforgeInput forge) {
-                    forge.onHitWithFlame();
+                    forge.onHitWithFlame(forgeType);
                     return;
                 }
 
@@ -73,7 +78,7 @@ public class IafDragonDestructionManager {
 
             BlockPos.betweenClosedStream(center.offset(-x, -y, -z), center.offset(x, y, z)).forEach(position -> {
                 if (level.getBlockEntity(position) instanceof TileEntityDragonforgeInput forge) {
-                    forge.onHitWithFlame();
+                    forge.onHitWithFlame(forgeType);
                     return;
                 }
 

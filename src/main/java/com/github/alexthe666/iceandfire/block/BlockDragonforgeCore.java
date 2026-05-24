@@ -1,7 +1,6 @@
 package com.github.alexthe666.iceandfire.block;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
-import com.github.alexthe666.iceandfire.entity.DragonType;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
@@ -13,12 +12,16 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,12 +31,19 @@ import javax.annotation.Nullable;
 
 import static com.github.alexthe666.iceandfire.entity.tile.IafTileEntityRegistry.DRAGONFORGE_CORE;
 
+/**
+ * 龙锻炉核心 - 统一方块，通过BlockState属性区分类型和激活状态
+ * ACTIVE: 组装完成且正在工作时为true
+ * TYPE: 当前龙类型（龙吐息时动态设置）
+ */
 public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProof, INoTab {
-    private static boolean keepInventory;
-    private final int isFire;
-    private final boolean activated;
 
-    public BlockDragonforgeCore(int isFire, boolean activated) {
+    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    public static final EnumProperty<DragonForgeType> TYPE = EnumProperty.create("type", DragonForgeType.class);
+
+    private static boolean keepInventory;
+
+    public BlockDragonforgeCore() {
         super(
             Properties
                 .of()
@@ -41,44 +51,25 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
                 .dynamicShape()
                 .strength(40, 500)
                 .sound(SoundType.METAL)
-                .lightLevel((state) -> activated ? 15 : 0)
+                .lightLevel(state -> state.getValue(ACTIVE) ? 15 : 0)
         );
-
-        this.isFire = isFire;
-        this.activated = activated;
+        this.registerDefaultState(this.getStateDefinition().any()
+            .setValue(ACTIVE, Boolean.FALSE)
+            .setValue(TYPE, DragonForgeType.NONE));
     }
 
-    static String name(int dragonType, boolean activated) {
-        return "dragonforge_%s_core%s".formatted(DragonType.getNameFromInt(dragonType), activated ? "": "_disabled");
-    }
-
-    public static void setState(int dragonType, boolean active, Level worldIn, BlockPos pos) {
+    /**
+     * 设置Core的类型和激活状态（通过BlockState属性切换，不替换方块）
+     */
+    public static void setState(DragonForgeType type, boolean active, Level worldIn, BlockPos pos) {
         BlockEntity tileentity = worldIn.getBlockEntity(pos);
         keepInventory = true;
 
-        if (active) {
-            if (dragonType == 0) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_FIRE_CORE.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_FIRE_CORE.get().defaultBlockState(), 3);
-            } else if (dragonType == 1) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_ICE_CORE.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_ICE_CORE.get().defaultBlockState(), 3);
-            } else if (dragonType == 2) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE.get().defaultBlockState(), 3);
-            }
-        } else {
-            if (dragonType == 0) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_FIRE_CORE_DISABLED.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_FIRE_CORE_DISABLED.get().defaultBlockState(), 3);
-            } else if(dragonType == 1) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_ICE_CORE_DISABLED.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_ICE_CORE_DISABLED.get().defaultBlockState(), 3);
-            }else if(dragonType == 2) {
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE_DISABLED.get().defaultBlockState(), 3);
-                worldIn.setBlock(pos, IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE_DISABLED.get().defaultBlockState(), 3);
-            }
-        }
+        BlockState newState = IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState()
+            .setValue(ACTIVE, active)
+            .setValue(TYPE, type != null ? type : DragonForgeType.NONE);
+
+        worldIn.setBlock(pos, newState, 3);
 
         keepInventory = false;
 
@@ -99,9 +90,9 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
             if (worldIn.isClientSide) {
                 IceAndFire.PROXY.setRefrencedTE(worldIn.getBlockEntity(pos));
             } else {
-                MenuProvider inamedcontainerprovider = this.getMenuProvider(state, worldIn, pos);
-                if (inamedcontainerprovider != null) {
-                    player.openMenu(inamedcontainerprovider);
+                MenuProvider provider = this.getMenuProvider(state, worldIn, pos);
+                if (provider != null) {
+                    player.openMenu(provider);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -110,16 +101,7 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
     }
 
     public ItemStack getItem(Level worldIn, BlockPos pos, BlockState state) {
-        if (isFire == 0) {
-            return new ItemStack(IafBlockRegistry.DRAGONFORGE_FIRE_CORE_DISABLED.get().asItem());
-        }
-        if (isFire == 1) {
-            return new ItemStack(IafBlockRegistry.DRAGONFORGE_ICE_CORE_DISABLED.get().asItem());
-        }
-        if (isFire == 2) {
-            return new ItemStack(IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE_DISABLED.get().asItem());
-        }
-        return new ItemStack(IafBlockRegistry.DRAGONFORGE_FIRE_CORE_DISABLED.get().asItem());
+        return new ItemStack(IafBlockRegistry.DRAGONFORGE_CORE.get().asItem());
     }
 
     @Override
@@ -129,11 +111,13 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
 
     @Override
     public void onRemove(@NotNull BlockState state, Level worldIn, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityDragonforge) {
-            Containers.dropContents(worldIn, pos, (TileEntityDragonforge) tileentity);
-            worldIn.updateNeighbourForOutputSignal(pos, this);
-            worldIn.removeBlockEntity(pos);
+        if (!keepInventory) {
+            BlockEntity tileentity = worldIn.getBlockEntity(pos);
+            if (tileentity instanceof TileEntityDragonforge) {
+                Containers.dropContents(worldIn, pos, (TileEntityDragonforge) tileentity);
+                worldIn.updateNeighbourForOutputSignal(pos, this);
+                worldIn.removeBlockEntity(pos);
+            }
         }
     }
 
@@ -147,10 +131,14 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
         return true;
     }
 
-
     @Override
     public boolean shouldBeInTab() {
-        return !activated;
+        return true;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(ACTIVE, TYPE);
     }
 
     @Nullable
@@ -162,6 +150,6 @@ public class BlockDragonforgeCore extends BaseEntityBlock implements IDragonProo
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new TileEntityDragonforge(pos, state, isFire);
+        return new TileEntityDragonforge(pos, state);
     }
 }

@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "active=false,type=none": { "model": "iceandfire:block/dragonforge_fire_input" },
+    "active=false,type=fire": { "model": "iceandfire:block/dragonforge_fire_input" },
+    "active=false,type=ice": { "model": "iceandfire:block/dragonforge_ice_input" },
+    "active=false,type=lightning": { "model": "iceandfire:block/dragonforge_lightning_input" },
+    "active=true,type=none": { "model": "iceandfire:block/dragonforge_fire_input" },
+    "active=true,type=fire": { "model": "iceandfire:block/dragonforge_fire_input_active" },
+    "active=true,type=ice": { "model": "iceandfire:block/dragonforge_ice_input_active" },
+    "active=true,type=lightning": { "model": "iceandfire:block/dragonforge_lightning_input_active" }
+  }
+}

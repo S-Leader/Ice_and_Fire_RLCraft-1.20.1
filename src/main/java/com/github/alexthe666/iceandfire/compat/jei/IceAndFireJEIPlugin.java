@@ -109,9 +109,10 @@ public class IceAndFireJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
-        registry.addRecipeCatalyst(new ItemStack(IafBlockRegistry.DRAGONFORGE_FIRE_CORE.get()), FIRE_DRAGON_FORGE_RECIPE_TYPE);
-        registry.addRecipeCatalyst(new ItemStack(IafBlockRegistry.DRAGONFORGE_ICE_CORE.get()), ICE_DRAGON_FORGE_RECIPE_TYPE);
-        registry.addRecipeCatalyst(new ItemStack(IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE.get()), LIGHTNING_DRAGON_FORGE_RECIPE_TYPE);
+        ItemStack forgeCore = new ItemStack(IafBlockRegistry.DRAGONFORGE_CORE.get());
+        registry.addRecipeCatalyst(forgeCore, FIRE_DRAGON_FORGE_RECIPE_TYPE);
+        registry.addRecipeCatalyst(forgeCore, ICE_DRAGON_FORGE_RECIPE_TYPE);
+        registry.addRecipeCatalyst(forgeCore, LIGHTNING_DRAGON_FORGE_RECIPE_TYPE);
     }
 
     @Override

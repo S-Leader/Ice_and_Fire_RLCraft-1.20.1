@@ -9,6 +9,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -82,27 +84,38 @@ public class ItemBloodedArmor extends ArmorItem {
                 Component.literal(wornCount + "/4: ").append(Component.translatable(effectKey)).withStyle(descColor));
     }
 
-    /** Counts how many blooded armor pieces of the same element the local player is wearing (client-side only). */
+    /**
+     * 计算本地玩家穿戴同元素浴血甲的件数（仅客户端有效）
+     * 使用 DistExecutor 隔离客户端类引用，避免服务端类加载 LocalPlayer
+     */
     private int countWornPiecesClient(@Nullable Level level) {
         if (level == null || !level.isClientSide()) return 0;
-        try {
-            net.minecraft.world.entity.player.Player player =
-                    net.minecraft.client.Minecraft.getInstance().player;
-            if (player == null) return 0;
-            BloodedDragonType.DragonElement myElement = dragonType.getElement();
-            int count = 0;
-            for (EquipmentSlot slot : new EquipmentSlot[]{
-                    EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                    EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-                ItemStack equipped = player.getItemBySlot(slot);
-                if (equipped.getItem() instanceof ItemBloodedArmor armor
-                        && armor.getDragonType().getElement() == myElement) {
-                    count++;
+        BloodedDragonType.DragonElement myElement = dragonType.getElement();
+        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT,
+                () -> () -> ClientBloodedHelper.countWornPieces(myElement));
+    }
+
+    /** 客户端专用辅助类 — 服务端永远不会加载此类 */
+    private static class ClientBloodedHelper {
+        static int countWornPieces(BloodedDragonType.DragonElement element) {
+            try {
+                net.minecraft.world.entity.player.Player player =
+                        net.minecraft.client.Minecraft.getInstance().player;
+                if (player == null) return 0;
+                int count = 0;
+                for (EquipmentSlot slot : new EquipmentSlot[]{
+                        EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                        EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+                    ItemStack equipped = player.getItemBySlot(slot);
+                    if (equipped.getItem() instanceof ItemBloodedArmor armor
+                            && armor.getDragonType().getElement() == element) {
+                        count++;
+                    }
                 }
+                return count;
+            } catch (Exception ignored) {
+                return 0;
             }
-            return count;
-        } catch (Exception ignored) {
-            return 0;
         }
     }
 

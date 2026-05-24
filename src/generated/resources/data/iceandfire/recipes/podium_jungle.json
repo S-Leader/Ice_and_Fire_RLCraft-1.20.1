@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": {
+      "item": "minecraft:jungle_planks"
+    },
+    "S": {
+      "item": "minecraft:jungle_slab"
+    }
+  },
+  "pattern": [
+    "SPS",
+    " P ",
+    "SPS"
+  ],
+  "result": {
+    "item": "iceandfire:podium_jungle"
+  },
+  "show_notification": true
+}

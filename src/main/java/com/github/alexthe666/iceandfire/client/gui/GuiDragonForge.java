@@ -1,7 +1,6 @@
 package com.github.alexthe666.iceandfire.client.gui;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
-import com.github.alexthe666.iceandfire.entity.DragonType;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforge;
 import com.github.alexthe666.iceandfire.inventory.ContainerDragonForge;
 import com.github.alexthe666.iceandfire.recipe.DragonForgeRecipe;
@@ -19,24 +18,26 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 龙锻炉GUI - 根据当前龙类型动态切换纹理
+ */
 public class GuiDragonForge extends AbstractContainerScreen<ContainerDragonForge> {
     private static final ResourceLocation TEXTURE_FIRE = new ResourceLocation("iceandfire:textures/gui/dragonforge_fire.png");
     private static final ResourceLocation TEXTURE_ICE = new ResourceLocation("iceandfire:textures/gui/dragonforge_ice.png");
     private static final ResourceLocation TEXTURE_LIGHTNING = new ResourceLocation("iceandfire:textures/gui/dragonforge_lightning.png");
+    private static final ResourceLocation TEXTURE_EMPTY = new ResourceLocation("iceandfire:textures/gui/dragonforge_fire.png");
     private final ContainerDragonForge tileFurnace;
-    private final int dragonType;
 
     public GuiDragonForge(ContainerDragonForge container, Inventory inv, Component name) {
         super(container, inv, name);
         this.tileFurnace = container;
-        this.dragonType = tileFurnace.fireType;
     }
 
     @Override
     protected void renderLabels(GuiGraphics pGuiGraphics, int mouseX, int mouseY) {
         Font font = this.getMinecraft().font;
         if (tileFurnace != null) {
-            String s = I18n.get("block.iceandfire.dragonforge_" + DragonType.getNameFromInt(dragonType) + "_core");
+            String s = I18n.get("block.iceandfire.dragonforge_core");
             pGuiGraphics.drawString(this.font, s, this.imageWidth / 2 - font.width(s) / 2, 6, 4210752, false);
         }
         pGuiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 96 + 2, 4210752, false);
@@ -45,12 +46,14 @@ public class GuiDragonForge extends AbstractContainerScreen<ContainerDragonForge
     @Override
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        ResourceLocation texture = TEXTURE_FIRE;
+
+        ResourceLocation texture = TEXTURE_EMPTY;
+        int dragonType = tileFurnace.fireType;
         if (dragonType == 0) {
             texture = TEXTURE_FIRE;
         } else if (dragonType == 1) {
             texture = TEXTURE_ICE;
-        } else {
+        } else if (dragonType == 2) {
             texture = TEXTURE_LIGHTNING;
         }
 

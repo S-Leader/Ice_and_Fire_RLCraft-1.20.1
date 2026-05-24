@@ -1,7 +1,6 @@
 package com.github.alexthe666.iceandfire.block;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
-import com.github.alexthe666.iceandfire.entity.DragonType;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforge;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforgeBrick;
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -27,12 +27,17 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+/**
+ * 龙锻炉外壳砖 - 统一方块，通过BlockState属性区分类型
+ * GRILL: 是否处于组装态（显示通风口纹理）
+ * TYPE: 当前关联的龙类型（由Core动态设置）
+ */
 public class BlockDragonforgeBricks extends BaseEntityBlock implements IDragonProof {
 
     public static final BooleanProperty GRILL = BooleanProperty.create("grill");
-    private final int isFire;
+    public static final EnumProperty<DragonForgeType> TYPE = EnumProperty.create("type", DragonForgeType.class);
 
-    public BlockDragonforgeBricks(int isFire) {
+    public BlockDragonforgeBricks() {
         super(
             Properties
                 .of()
@@ -40,15 +45,11 @@ public class BlockDragonforgeBricks extends BaseEntityBlock implements IDragonPr
                 .instrument(NoteBlockInstrument.BASEDRUM)
                 .dynamicShape()
                 .strength(40, 500)
-    			.sound(SoundType.METAL)
-		);
-
-        this.isFire = isFire;
-        this.registerDefaultState(this.getStateDefinition().any().setValue(GRILL, Boolean.FALSE));
-    }
-
-    static String name(int dragonType) {
-        return "dragonforge_%s_brick".formatted(DragonType.getNameFromInt(dragonType));
+                .sound(SoundType.METAL)
+        );
+        this.registerDefaultState(this.getStateDefinition().any()
+            .setValue(GRILL, Boolean.FALSE)
+            .setValue(TYPE, DragonForgeType.NONE));
     }
 
     @Override
@@ -58,28 +59,25 @@ public class BlockDragonforgeBricks extends BaseEntityBlock implements IDragonPr
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, BlockHitResult resultIn) {
-        if (this.getConnectedTileEntity(worldIn, resultIn.getBlockPos()) != null) {
-            TileEntityDragonforge forge = this.getConnectedTileEntity(worldIn, resultIn.getBlockPos());
-            if (forge != null && forge.fireType == isFire) {
-                if (worldIn.isClientSide) {
-                    IceAndFire.PROXY.setRefrencedTE(worldIn.getBlockEntity(forge.getBlockPos()));
-                } else {
-                    MenuProvider inamedcontainerprovider = this.getMenuProvider(forge.getBlockState(), worldIn, forge.getBlockPos());
-                    if (inamedcontainerprovider != null) {
-                        player.openMenu(inamedcontainerprovider);
-                    }
+        TileEntityDragonforge forge = getConnectedTileEntity(worldIn, resultIn.getBlockPos());
+        if (forge != null && forge.assembled()) {
+            if (worldIn.isClientSide) {
+                IceAndFire.PROXY.setRefrencedTE(worldIn.getBlockEntity(forge.getBlockPos()));
+            } else {
+                MenuProvider provider = this.getMenuProvider(forge.getBlockState(), worldIn, forge.getBlockPos());
+                if (provider != null) {
+                    player.openMenu(provider);
                 }
-                return InteractionResult.SUCCESS;
             }
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.FAIL;
     }
 
     private TileEntityDragonforge getConnectedTileEntity(Level worldIn, BlockPos pos) {
         for (Direction facing : Direction.values()) {
-            if (worldIn.getBlockEntity(pos.relative(facing)) != null && worldIn.getBlockEntity(pos.relative(facing)) instanceof TileEntityDragonforge) {
-                TileEntityDragonforge forge = (TileEntityDragonforge) worldIn.getBlockEntity(pos.relative(facing));
-                if (forge != null && forge.assembled()) {
+            if (worldIn.getBlockEntity(pos.relative(facing)) instanceof TileEntityDragonforge forge) {
+                if (forge.assembled()) {
                     return forge;
                 }
             }
@@ -89,7 +87,7 @@ public class BlockDragonforgeBricks extends BaseEntityBlock implements IDragonPr
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(GRILL);
+        builder.add(GRILL, TYPE);
     }
 
     @Override

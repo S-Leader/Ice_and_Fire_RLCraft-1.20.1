@@ -1,6 +1,7 @@
 package com.github.alexthe666.iceandfire.entity.tile;
 
 import com.github.alexthe666.iceandfire.block.BlockDragonforgeInput;
+import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import net.minecraft.core.BlockPos;
@@ -22,6 +23,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+/**
+ * 龙锻炉输入口方块实体 - 吸引龙并接收龙吐息
+ * 统一方块，通过BlockState的TYPE属性区分当前龙类型
+ */
 public class TileEntityDragonforgeInput extends BlockEntity {
     private static final int LURE_DISTANCE = 50;
     private static final Direction[] HORIZONTALS = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
@@ -32,10 +37,52 @@ public class TileEntityDragonforgeInput extends BlockEntity {
         super(IafTileEntityRegistry.DRAGONFORGE_INPUT.get(), pos, state);
     }
 
-    public void onHitWithFlame() {
+    /** 被龙吐息击中时调用，传递能量和龙类型 */
+    public void onHitWithFlame(DragonForgeType type) {
         if (core != null) {
-            core.transferPower(1);
+            core.transferPower(1, type);
+            updateInputType(type);
         }
+    }
+
+    /** 兼容旧调用 */
+    public void onHitWithFlame() {
+        onHitWithFlame(getDragonForgeType());
+    }
+
+    /** 更新输入口BlockState的TYPE属性 */
+    private void updateInputType(DragonForgeType type) {
+        if (level == null) return;
+        BlockState state = level.getBlockState(worldPosition);
+        if (state.getBlock() instanceof BlockDragonforgeInput && type != null) {
+            BlockState newState = state
+                .setValue(BlockDragonforgeInput.TYPE, type)
+                .setValue(BlockDragonforgeInput.ACTIVE, true);
+            if (state != newState) {
+                level.setBlockAndUpdate(worldPosition, newState);
+            }
+        }
+    }
+
+    /** 从BlockState获取当前龙类型 */
+    private DragonForgeType getDragonForgeType() {
+        BlockState state = level.getBlockState(worldPosition);
+        if (state.hasProperty(BlockDragonforgeInput.TYPE)) {
+            return state.getValue(BlockDragonforgeInput.TYPE);
+        }
+        return DragonForgeType.NONE;
+    }
+
+    /** 获取旧式int类型ID（用于龙类型匹配） */
+    private int getDragonType() {
+        DragonForgeType type = getDragonForgeType();
+        if (type.isActive()) {
+            return type.getLegacyId();
+        }
+        if (core != null) {
+            return core.fireType;
+        }
+        return 0;
     }
 
     public static void tick(final Level level, final BlockPos position, final BlockState state, final TileEntityDragonforgeInput forgeInput) {
@@ -49,7 +96,8 @@ public class TileEntityDragonforgeInput extends BlockEntity {
 
         if ((forgeInput.ticksSinceDragonFire == 0 || forgeInput.core == null) && forgeInput.isActive()) {
             BlockEntity tileentity = level.getBlockEntity(position);
-            level.setBlockAndUpdate(position, forgeInput.getDeactivatedState());
+            BlockState deactivated = state.setValue(BlockDragonforgeInput.ACTIVE, false);
+            level.setBlockAndUpdate(position, deactivated);
             if (tileentity != null) {
                 tileentity.clearRemoved();
                 level.setBlockEntity(tileentity);
@@ -76,6 +124,7 @@ public class TileEntityDragonforgeInput extends BlockEntity {
         return this.saveWithFullMetadata();
     }
 
+    /** 吸引附近符合条件的龙（统一方块，吸引所有类型的龙） */
     protected void lureDragons() {
         Vec3 targetPosition = new Vec3(
             this.getBlockPos().getX() + 0.5F,
@@ -95,7 +144,7 @@ public class TileEntityDragonforgeInput extends BlockEntity {
         boolean dragonSelected = false;
 
         for (EntityDragonBase dragon : level.getEntitiesOfClass(EntityDragonBase.class, searchArea)) {
-            if (!dragonSelected && /* Dragon Checks */ getDragonType() == dragon.dragonType.getIntFromType() && (dragon.isChained() || dragon.isTame()) && canSeeInput(dragon, targetPosition)) {
+            if (!dragonSelected && (dragon.isChained() || dragon.isTame()) && canSeeInput(dragon, targetPosition)) {
                 dragon.burningTarget = this.worldPosition;
                 dragonSelected = true;
             } else if (dragon.burningTarget == this.worldPosition) {
@@ -122,29 +171,6 @@ public class TileEntityDragonforgeInput extends BlockEntity {
         }
 
         return false;
-    }
-
-    private BlockState getDeactivatedState() {
-        return switch (getDragonType()) {
-            case 0 -> IafBlockRegistry.DRAGONFORGE_FIRE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.ACTIVE, false);
-            case 1 -> IafBlockRegistry.DRAGONFORGE_ICE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.ACTIVE, false);
-            case 2 -> IafBlockRegistry.DRAGONFORGE_LIGHTNING_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.ACTIVE, false);
-            default -> IafBlockRegistry.DRAGONFORGE_FIRE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.ACTIVE, false);
-        };
-    }
-
-    private int getDragonType() {
-        BlockState state = level.getBlockState(worldPosition);
-
-        if (state.getBlock() == IafBlockRegistry.DRAGONFORGE_FIRE_INPUT.get()) {
-            return 0;
-        } else if (state.getBlock() == IafBlockRegistry.DRAGONFORGE_ICE_INPUT.get()) {
-            return 1;
-        } else if (state.getBlock() == IafBlockRegistry.DRAGONFORGE_LIGHTNING_INPUT.get()) {
-            return 2;
-        }
-
-        return 0;
     }
 
     private boolean isActive() {

@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "iceandfire:summoning_crystal_gold"
+        }
+    ],
+    "result": {
+        "item": "iceandfire:summoning_crystal_gold",
+        "count": 1
+    }
+}

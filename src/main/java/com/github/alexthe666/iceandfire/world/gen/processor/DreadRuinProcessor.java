@@ -1,5 +1,9 @@
 package com.github.alexthe666.iceandfire.world.gen.processor;
 
+import com.github.alexthe666.iceandfire.block.BlockDragonforgeCore;
+import com.github.alexthe666.iceandfire.block.BlockDragonforgeBricks;
+import com.github.alexthe666.iceandfire.block.BlockDragonforgeInput;
+import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
 import com.github.alexthe666.iceandfire.world.IafProcessors;
@@ -10,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -19,11 +24,43 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
+/**
+ * 悚怖陵墓结构处理器 - 负责方块随机化和旧方块ID迁移
+ */
 public class DreadRuinProcessor extends StructureProcessor {
 
     public static final DreadRuinProcessor INSTANCE = new DreadRuinProcessor();
     public static final Codec<DreadRuinProcessor> CODEC = Codec.unit(() -> INSTANCE);
+
+    /** 旧龙锻炉方块ID → 统一方块的映射 */
+    private static final Map<String, BlockState> LEGACY_BLOCK_MAP = Map.ofEntries(
+        Map.entry("iceandfire:dragonforge_fire_brick",
+            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_ice_brick",
+            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_lightning_brick",
+            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_fire_input",
+            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_ice_input",
+            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_lightning_input",
+            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_fire_core",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_ice_core",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_lightning_core",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_fire_core_disabled",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_ice_core_disabled",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+        Map.entry("iceandfire:dragonforge_lightning_core_disabled",
+            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE))
+    );
 
     public DreadRuinProcessor() {
     }
@@ -43,11 +80,20 @@ public class DreadRuinProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo process(@NotNull LevelReader worldReader, @NotNull BlockPos pos, @NotNull BlockPos pos2, StructureTemplate.@NotNull StructureBlockInfo infoIn1, StructureTemplate.StructureBlockInfo infoIn2, StructurePlaceSettings settings, @Nullable StructureTemplate template) {
         RandomSource random = settings.getRandom(infoIn2.pos());
 
-        if (infoIn2.state().getBlock() == IafBlockRegistry.DREAD_STONE_BRICKS.get()) {
+        Block block = infoIn2.state().getBlock();
+        ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(block);
+        if (blockId != null) {
+            BlockState replacement = LEGACY_BLOCK_MAP.get(blockId.toString());
+            if (replacement != null) {
+                return new StructureTemplate.StructureBlockInfo(infoIn2.pos(), replacement, infoIn2.nbt());
+            }
+        }
+
+        if (block == IafBlockRegistry.DREAD_STONE_BRICKS.get()) {
             BlockState state = getRandomCrackedBlock(null, random);
             return new StructureTemplate.StructureBlockInfo(infoIn2.pos(), state, null);
         }
-        if (infoIn2.state().getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
+        if (block == IafBlockRegistry.DREAD_SPAWNER.get()) {
             CompoundTag tag = new CompoundTag();
             CompoundTag spawnData = new CompoundTag();
             ResourceLocation spawnerMobId = ForgeRegistries.ENTITY_TYPES.getKey(getRandomMobForMobSpawner(random));

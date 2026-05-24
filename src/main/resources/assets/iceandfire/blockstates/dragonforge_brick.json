@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "grill=false,type=none": { "model": "iceandfire:block/dragonforge_vent" },
+    "grill=false,type=fire": { "model": "iceandfire:block/dragonforge_vent" },
+    "grill=false,type=ice": { "model": "iceandfire:block/dragonforge_vent" },
+    "grill=false,type=lightning": { "model": "iceandfire:block/dragonforge_vent" },
+    "grill=true,type=none": { "model": "iceandfire:block/dragonforge_vent" },
+    "grill=true,type=fire": { "model": "iceandfire:block/dragonforge_vent_fire" },
+    "grill=true,type=ice": { "model": "iceandfire:block/dragonforge_vent_ice" },
+    "grill=true,type=lightning": { "model": "iceandfire:block/dragonforge_vent_lightning" }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "D": {
+      "item": "iceandfire:dread_stone"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "III",
+    "DDD"
+  ],
+  "result": {
+    "count": 4,
+    "item": "iceandfire:dragonforge_brick"
+  },
+  "show_notification": true
+}

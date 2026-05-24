@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": {
+      "item": "minecraft:spruce_planks"
+    },
+    "S": {
+      "item": "minecraft:spruce_slab"
+    }
+  },
+  "pattern": [
+    "SPS",
+    " P ",
+    "SPS"
+  ],
+  "result": {
+    "item": "iceandfire:podium_spruce"
+  },
+  "show_notification": true
+}

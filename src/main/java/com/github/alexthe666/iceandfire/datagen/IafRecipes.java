@@ -279,29 +279,31 @@ public class IafRecipes extends RecipeProvider {
                                 .unlockedBy("has_item", has(IafItemRegistry.DRAGON_BONE.get()))
                                 .save(consumer);
 
-                forgeBrick(consumer, Items.STONE_BRICKS, IafItemTags.STORAGE_BLOCKS_SCALES_DRAGON_FIRE,
-                                IafBlockRegistry.DRAGONFORGE_FIRE_BRICK.get());
-                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_FIRE_BRICK.get(),
+                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, IafBlockRegistry.DRAGONFORGE_BRICK.get(), 4)
+                                .pattern("DDD")
+                                .pattern("III")
+                                .pattern("DDD")
+                                .define('D', IafBlockRegistry.DREAD_STONE.get())
+                                .define('I', Tags.Items.INGOTS_IRON)
+                                .unlockedBy("has_item", has(IafBlockRegistry.DREAD_STONE.get()))
+                                .save(consumer, new ResourceLocation(IceAndFire.MODID, "dragonforge_vent"));
+                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, IafBlockRegistry.DRAGONFORGE_INPUT.get())
+                                .pattern("DID")
+                                .pattern("I I")
+                                .pattern("DID")
+                                .define('D', IafBlockRegistry.DREAD_STONE.get())
+                                .define('I', Tags.Items.INGOTS_IRON)
+                                .unlockedBy("has_item", has(IafBlockRegistry.DREAD_STONE.get()))
+                                .save(consumer, new ResourceLocation(IceAndFire.MODID, "dragonforge_input"));
+                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_BRICK.get(),
                                 IafItemRegistry.FIRE_DRAGON_HEART.get(),
-                                IafBlockRegistry.DRAGONFORGE_FIRE_CORE_DISABLED.get());
-                forgeInput(consumer, IafBlockRegistry.DRAGONFORGE_FIRE_BRICK.get(), Tags.Items.INGOTS_IRON,
-                                IafBlockRegistry.DRAGONFORGE_FIRE_INPUT.get());
-
-                forgeBrick(consumer, Items.STONE_BRICKS, IafItemTags.STORAGE_BLOCKS_SCALES_DRAGON_ICE,
-                                IafBlockRegistry.DRAGONFORGE_ICE_BRICK.get());
-                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_ICE_BRICK.get(),
+                                IafBlockRegistry.DRAGONFORGE_CORE.get(), "dragonforge_core_fire");
+                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_BRICK.get(),
                                 IafItemRegistry.ICE_DRAGON_HEART.get(),
-                                IafBlockRegistry.DRAGONFORGE_ICE_CORE_DISABLED.get());
-                forgeInput(consumer, IafBlockRegistry.DRAGONFORGE_ICE_BRICK.get(), Tags.Items.INGOTS_IRON,
-                                IafBlockRegistry.DRAGONFORGE_ICE_INPUT.get());
-
-                forgeBrick(consumer, Items.STONE_BRICKS, IafItemTags.STORAGE_BLOCKS_SCALES_DRAGON_LIGHTNING,
-                                IafBlockRegistry.DRAGONFORGE_LIGHTNING_BRICK.get());
-                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_LIGHTNING_BRICK.get(),
+                                IafBlockRegistry.DRAGONFORGE_CORE.get(), "dragonforge_core_ice");
+                forgeCore(consumer, IafBlockRegistry.DRAGONFORGE_BRICK.get(),
                                 IafItemRegistry.LIGHTNING_DRAGON_HEART.get(),
-                                IafBlockRegistry.DRAGONFORGE_LIGHTNING_CORE_DISABLED.get());
-                forgeInput(consumer, IafBlockRegistry.DRAGONFORGE_LIGHTNING_BRICK.get(), Tags.Items.INGOTS_IRON,
-                                IafBlockRegistry.DRAGONFORGE_LIGHTNING_INPUT.get());
+                                IafBlockRegistry.DRAGONFORGE_CORE.get(), "dragonforge_core_lightning");
 
                 podium(consumer, Blocks.OAK_PLANKS, Blocks.OAK_SLAB, IafBlockRegistry.PODIUM_OAK.get());
                 podium(consumer, Blocks.BIRCH_PLANKS, Blocks.BIRCH_SLAB, IafBlockRegistry.PODIUM_BIRCH.get());
@@ -428,7 +430,6 @@ public class IafRecipes extends RecipeProvider {
                                 IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_2.get(),
                                 IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_3.get());
 
-                // 金龙铭钢
                 toolSet(consumer, IafItemRegistry.DRAGONSTEEL_GOLD_INGOT.get(), IafItemTags.BONES_WITHER,
                                 IafItemRegistry.DRAGONSTEEL_GOLD_SWORD.get(),
                                 IafItemRegistry.DRAGONSTEEL_GOLD_PICKAXE.get(),
@@ -1049,6 +1050,19 @@ public class IafRecipes extends RecipeProvider {
                                 .save(consumer);
         }
 
+        /** 带自定义配方名称的版本（避免同输出方块的配方ID冲突） */
+        private void forgeBrick(@NotNull final Consumer<FinishedRecipe> consumer, final ItemLike brick,
+                        final TagKey<Item> scales, final ItemLike result, final String recipeName) {
+                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result, 4)
+                                .pattern("SBS")
+                                .pattern("BSB")
+                                .pattern("SBS")
+                                .define('S', Ingredient.of(scales))
+                                .define('B', brick)
+                                .unlockedBy("has_item", has(brick.asItem()))
+                                .save(consumer, new ResourceLocation(IceAndFire.MODID, recipeName));
+        }
+
         private void forgeCore(@NotNull final Consumer<FinishedRecipe> consumer, final ItemLike brick,
                         final ItemLike heart, final ItemLike result) {
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result)
@@ -1059,6 +1073,19 @@ public class IafRecipes extends RecipeProvider {
                                 .define('B', brick)
                                 .unlockedBy("has_item", has(brick.asItem()))
                                 .save(consumer);
+        }
+
+        /** 带自定义配方名称的版本 */
+        private void forgeCore(@NotNull final Consumer<FinishedRecipe> consumer, final ItemLike brick,
+                        final ItemLike heart, final ItemLike result, final String recipeName) {
+                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result)
+                                .pattern("BBB")
+                                .pattern("BHB")
+                                .pattern("BBB")
+                                .define('H', heart)
+                                .define('B', brick)
+                                .unlockedBy("has_item", has(brick.asItem()))
+                                .save(consumer, new ResourceLocation(IceAndFire.MODID, recipeName));
         }
 
         private void forgeInput(@NotNull final Consumer<FinishedRecipe> consumer, final ItemLike brick,

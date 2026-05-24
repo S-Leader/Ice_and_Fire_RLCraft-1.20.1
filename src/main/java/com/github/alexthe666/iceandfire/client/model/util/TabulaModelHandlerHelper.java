@@ -11,16 +11,45 @@ import java.util.zip.ZipInputStream;
 public class TabulaModelHandlerHelper {
 
     public static TabulaModelContainer loadTabulaModel(String path) throws IOException {
-        if (!path.startsWith("/")) {
-            path = "/" + path;
+        String normalizedPath = path;
+
+        if (normalizedPath.startsWith("/")) {
+            normalizedPath = normalizedPath.substring(1);
         }
 
-        if (!path.endsWith(".tbl")) {
-            path = path + ".tbl";
+        if (!normalizedPath.endsWith(".tbl")) {
+            normalizedPath = normalizedPath + ".tbl";
         }
 
-        InputStream stream = TabulaModelHandler.INSTANCE.getClass().getClassLoader().getResourceAsStream(path);
-        return TabulaModelHandler.INSTANCE.loadTabulaModel(getModelJsonStream(path, stream));
+        InputStream stream = null;
+
+        ClassLoader contextCl = Thread.currentThread().getContextClassLoader();
+        if (contextCl != null) {
+            stream = contextCl.getResourceAsStream(normalizedPath);
+        }
+
+        if (stream == null) {
+            stream = TabulaModelHandlerHelper.class.getClassLoader().getResourceAsStream(normalizedPath);
+        }
+
+        if (stream == null) {
+            stream = TabulaModelHandler.INSTANCE.getClass().getClassLoader().getResourceAsStream(normalizedPath);
+        }
+
+        if (stream == null) {
+            String classPath = path.startsWith("/") ? path : "/" + path;
+            if (!classPath.endsWith(".tbl")) {
+                classPath = classPath + ".tbl";
+            }
+            stream = TabulaModelHandlerHelper.class.getResourceAsStream(classPath);
+        }
+
+        if (stream == null) {
+            throw new IOException("找不到 Tabula 模型资源: " + normalizedPath
+                    + " (已尝试 ContextClassLoader / IaF ClassLoader / Citadel ClassLoader / Class.getResource)");
+        }
+
+        return TabulaModelHandler.INSTANCE.loadTabulaModel(getModelJsonStream(normalizedPath, stream));
     }
 
     private static InputStream getModelJsonStream(String name, InputStream file) throws IOException {

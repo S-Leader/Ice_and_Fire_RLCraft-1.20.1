@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "iceandfire:dragonscales_gold"
+        },
+        {
+            "item": "defiledlands:scale_chestplate"
+        }
+    ],
+    "result": {
+        "item": "defiledlands:scale_golden_chestplate"
+    }
+}
