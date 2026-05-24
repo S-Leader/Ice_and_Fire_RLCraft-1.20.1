@@ -462,5 +462,6 @@ public abstract class DragonTabulaModelAnimator<T extends EntityDragonBase> exte
             this.rotate(model.llibAnimator, model.getCube("Neck2"), -18, 0, 0);
             model.llibAnimator.endKeyframe();
         }
+        model.llibAnimator.update(null);
     }
 }

@@ -165,6 +165,7 @@ public class ModelSiren extends ModelDragonBase<EntitySiren> {
             animator.resetKeyframe(5);
             animator.endKeyframe();
         }
+        animator.update(null);
     }
 
     @Override

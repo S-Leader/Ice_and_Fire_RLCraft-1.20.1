@@ -174,6 +174,7 @@ public class ModelGhost extends ModelBipedBase<EntityGhost> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
     @Override

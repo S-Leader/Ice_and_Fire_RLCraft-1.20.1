@@ -141,6 +141,7 @@ public class ModelDreadGhoul extends ModelBipedBase<EntityDreadGhoul> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
 }

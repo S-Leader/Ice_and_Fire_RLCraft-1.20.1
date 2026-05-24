@@ -255,6 +255,7 @@ public class ModelDreadScuttler extends ModelDragonBase<EntityDreadScuttler> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.github.alexthe666.iceandfire.entity.ai;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.entity.EntityPixie;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
+import com.github.alexthe666.iceandfire.misc.IafTagRegistry;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -69,7 +70,8 @@ public class PixieAISteal extends Goal {
 
             for (int i = 0; i < this.temptingPlayer.getInventory().getContainerSize(); i++) {
                 ItemStack targetStack = this.temptingPlayer.getInventory().getItem(i);
-                if (!Inventory.isHotbarSlot(i) && !targetStack.isEmpty() && targetStack.isStackable()) {
+                if (!Inventory.isHotbarSlot(i) && !targetStack.isEmpty() && targetStack.isStackable()
+                    && !targetStack.is(IafTagRegistry.PIXIE_STOLEN_BLACKLIST)) {
                     slotlist.add(i);
                 }
             }

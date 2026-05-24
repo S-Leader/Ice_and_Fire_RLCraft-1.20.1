@@ -46,6 +46,7 @@ public class HippogryphAIWander extends Goal {
         } else {
             this.xPosition = Vector3d.x;
             this.yPosition = Vector3d.y;
+            this.yPosition += this.hippo.getRandom().nextIntBetweenInclusive(-4, 2);
             this.zPosition = Vector3d.z;
             this.mustUpdate = false;
 

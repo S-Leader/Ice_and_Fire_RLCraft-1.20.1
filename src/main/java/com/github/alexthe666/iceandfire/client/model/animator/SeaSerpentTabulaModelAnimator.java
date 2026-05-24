@@ -121,5 +121,6 @@ public class SeaSerpentTabulaModelAnimator extends IceAndFireTabulaModelAnimator
             model.llibAnimator.resetKeyframe(10);
         }
 
+        model.llibAnimator.update(null);
     }
 }

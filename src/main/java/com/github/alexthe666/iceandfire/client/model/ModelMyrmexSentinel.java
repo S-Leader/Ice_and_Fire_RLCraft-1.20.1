@@ -361,6 +361,7 @@ public class ModelMyrmexSentinel extends ModelMyrmexBase {
             animator.resetKeyframe(5);
         }
 
+        animator.update(null);
     }
 
     @Override

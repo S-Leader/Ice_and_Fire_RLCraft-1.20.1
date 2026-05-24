@@ -368,6 +368,7 @@ public class ModelCockatrice extends ModelDragonBase<EntityCockatrice> {
             animator.resetKeyframe(5);
         }
 
+        animator.update(null);
     }
 
     private void jumpPos() {

@@ -238,6 +238,7 @@ public class ModelHippocampus extends ModelDragonBase<EntityHippocampus> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
     @Override

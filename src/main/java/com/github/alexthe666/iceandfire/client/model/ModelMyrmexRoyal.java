@@ -307,6 +307,7 @@ public class ModelMyrmexRoyal extends ModelMyrmexBase {
             animator.resetKeyframe(10);
         }
 
+        animator.update(null);
     }
 
     @Override

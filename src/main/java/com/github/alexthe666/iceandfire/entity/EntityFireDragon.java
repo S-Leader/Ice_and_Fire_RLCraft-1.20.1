@@ -465,7 +465,7 @@ public class EntityFireDragon extends EntityDragonBase {
         double d2 = burnX - headPos.x;
         double d3 = burnY - headPos.y;
         double d4 = burnZ - headPos.z;
-        double distance = Math.max(2.5F * this.distanceToSqr(burnX, burnY, burnZ), 0);
+        double distance = Math.max(2.5F * Math.sqrt(this.distanceToSqr(burnX, burnY, burnZ)), 0);
         double conqueredDistance = burnProgress / 40D * distance;
         int increment = (int) Math.ceil(conqueredDistance / 100);
         int particleCount = this.getDragonStage() <= 3 ? 6 : 3;

@@ -272,6 +272,7 @@ public class ModelMyrmexWorker extends ModelMyrmexBase {
             animator.endKeyframe();
             animator.resetKeyframe(10);
         }
+        animator.update(null);
     }
 
 

@@ -1,6 +1,9 @@
 package com.github.alexthe666.iceandfire.misc;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public class IafTagRegistry { // FIXME :: Clean up
     public static final ResourceLocation MYRMEX_HARVESTABLES = new ResourceLocation("iceandfire", "myrmex_harvestables");
@@ -15,5 +18,7 @@ public class IafTagRegistry { // FIXME :: Clean up
     public static final ResourceLocation COCKATRICE_TARGETS = new ResourceLocation("iceandfire", "cockatrice_targets");
     public static final ResourceLocation CYCLOPS_UNLIFTABLES = new ResourceLocation("iceandfire", "cyclops_unliftables");
     public static final ResourceLocation BLINDED = new ResourceLocation("iceandfire", "blinded");
+
+    public static final TagKey<Item> PIXIE_STOLEN_BLACKLIST = TagKey.create(Registries.ITEM, new ResourceLocation("iceandfire", "pixie_stolen_blacklist"));
 
 }

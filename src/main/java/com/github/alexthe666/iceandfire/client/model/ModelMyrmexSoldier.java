@@ -274,6 +274,7 @@ public class ModelMyrmexSoldier extends ModelMyrmexBase {
             animator.resetKeyframe(10);
         }
 
+        animator.update(null);
     }
 
     @Override

@@ -72,6 +72,11 @@ public class TileEntityJar extends BlockEntity {
     }
 
     @Override
+    public @NotNull CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
+    }
+
+    @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }

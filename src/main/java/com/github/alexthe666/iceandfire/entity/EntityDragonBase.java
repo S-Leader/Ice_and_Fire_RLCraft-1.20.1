@@ -2749,7 +2749,8 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                     if (this.tickCount % 5 == 0) {
                         this.playSound(IafSoundRegistry.FIREDRAGON_BREATH, 4, 1);
                     }
-                    stimulateFire(this.getX() + distX * this.fireTicks / 40, entity.getY(), this.getZ() + distZ * this.fireTicks / 40, 1);
+                    int breathTicks = Mth.clamp(this.fireTicks, 0, 40);
+                    stimulateFire(this.getX() + distX * breathTicks / 40, entity.getY(), this.getZ() + distZ * breathTicks / 40, 1);
                 }
             } else {
                 this.setBreathingFire(true);

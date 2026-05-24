@@ -45,6 +45,7 @@ abstract class ModelDreadBase<T extends LivingEntity & IAnimatedEntity> extends 
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
 }

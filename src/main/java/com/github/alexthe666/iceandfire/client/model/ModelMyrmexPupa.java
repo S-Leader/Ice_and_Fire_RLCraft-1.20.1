@@ -261,6 +261,7 @@ public class ModelMyrmexPupa extends ModelDragonBase {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
     @Override

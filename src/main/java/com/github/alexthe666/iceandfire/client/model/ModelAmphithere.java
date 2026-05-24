@@ -408,6 +408,7 @@ public class ModelAmphithere extends ModelDragonBase<EntityAmphithere> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
+        animator.update(null);
     }
 
     private void wingBlastPose() {
