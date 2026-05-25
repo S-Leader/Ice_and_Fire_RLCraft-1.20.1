@@ -141,6 +141,9 @@ public class IafConfig {
     public static boolean dragonWeaponLightningAbility = true;
     public static int villagerHouseWeight = 5;
     public static boolean allowAttributeOverriding = true;
+    public static java.util.List<String> frostShatterThresholds = new java.util.ArrayList<>();
+    public static java.util.List<String> voltageDischargeThresholds = new java.util.ArrayList<>();
+
 
     public static void bakeClient(final ModConfig config) {
         try {
@@ -285,6 +288,10 @@ public class IafConfig {
             villagerHouseWeight = ConfigHolder.SERVER.villagerHouseWeight.get();
             allowAttributeOverriding = ConfigHolder.SERVER.allowAttributeOverriding.get();
             pathfindingDebug = ConfigHolder.SERVER.pathfindingDebug.get();
+            frostShatterThresholds = (java.util.List<String>) ConfigHolder.SERVER.frostShatterThresholds.get();
+            voltageDischargeThresholds = (java.util.List<String>) ConfigHolder.SERVER.voltageDischargeThresholds.get();
+            com.github.alexthe666.iceandfire.config.FrostShatterConfig.parse(frostShatterThresholds);
+            com.github.alexthe666.iceandfire.config.VoltageDischargeConfig.parse(voltageDischargeThresholds);
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the common config for Ice and Fire.");
             e.printStackTrace();

@@ -135,6 +135,9 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue dragonWeaponLightningAbility;
     public ForgeConfigSpec.IntValue villagerHouseWeight;
     public ForgeConfigSpec.BooleanValue allowAttributeOverriding;
+    public final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> frostShatterThresholds;
+    public final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> voltageDischargeThresholds;
+
 
     public ServerConfig(final ForgeConfigSpec.Builder builder) {
         builder.push("Generation");
@@ -324,6 +327,50 @@ public class ServerConfig {
         this.dragonPathfindingThreads = buildInt(builder, "Dragon Pathfinding Threads", "all", 3, 1, Integer.MAX_VALUE, "Maximum threads to use for dragon/myrmex pathfinding. Increase this number if pathing is slow and you have many cores.");
         this.maxDragonPathingNodes = buildInt(builder, "Dragon Max Pathfinding Nodes", "all", 5000, 1, Integer.MAX_VALUE, "Maximum nodes for dragons/myrmex to path too. Decrease this is dragon pathfinding is super slow or intensive.");
         this.pathfindingDebug = buildBoolean(builder, "Debug Pathfinding Mode", "all", false, "Enables the option to draw the pathfinding nodes when enabled (use a stick on an entity)");
+        builder.pop();
+
+        builder.push("Effects");
+        this.frostShatterThresholds = builder
+                .comment("Custom frost shatter threshold for each entity type. Format: entity_type,threshold (e.g. minecraft:zombie,3)")
+                .defineList("Frost Shatter Thresholds",
+                        java.util.List.of(
+                                "minecraft:zombie,3",
+                                "minecraft:husk,3",
+                                "minecraft:drowned,3",
+                                "minecraft:skeleton,5",
+                                "minecraft:stray,7",
+                                "minecraft:wither_skeleton,8",
+                                "minecraft:blaze,2",
+                                "minecraft:magma_cube,2",
+                                "minecraft:wither,10",
+                                "minecraft:ender_dragon,10",
+                                "minecraft:warden,10",
+                                "minecraft:iron_golem,8",
+                                "minecraft:ravager,6"
+                        ),
+                        obj -> obj instanceof String
+                );
+        this.voltageDischargeThresholds = builder
+                .comment("Custom voltage discharge threshold for each entity type. Format: entity_type,threshold (e.g. minecraft:zombie,3)")
+                .defineList("Voltage Discharge Thresholds",
+                        java.util.List.of(
+                                "minecraft:zombie,3",
+                                "minecraft:husk,3",
+                                "minecraft:drowned,3",
+                                "minecraft:skeleton,5",
+                                "minecraft:stray,7",
+                                "minecraft:wither_skeleton,8",
+                                "minecraft:blaze,2",
+                                "minecraft:magma_cube,2",
+                                "minecraft:wither,10",
+                                "minecraft:ender_dragon,10",
+                                "minecraft:warden,10",
+                                "minecraft:iron_golem,8",
+                                "minecraft:ravager,6"
+                        ),
+                        obj -> obj instanceof String
+                );
+        builder.pop();
     }
 
     private static ForgeConfigSpec.BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String name, String catagory, boolean defaultValue, String comment){

@@ -54,6 +54,12 @@ public class MobEffectFrostbite extends MobEffect {
             float baseWeaponDamage, int frostbiteStacks) {
         target.removeEffect(IafMobEffects.FROSTBITE.get());
 
+        target.addEffect(new MobEffectInstance(
+                IafMobEffects.FROSTBURN.get(),
+                MobEffectFrostburn.DURATION_TICKS,
+                0,
+                false, true, true));
+
         target.playSound(SoundEvents.GLASS_BREAK, 3.0F, 1.0F);
         if (!target.level().isClientSide()) {
             ((ServerLevel) target.level()).sendParticles(
@@ -74,11 +80,5 @@ public class MobEffectFrostbite extends MobEffect {
         if (MobEffectChaos.tryChaosReaction(target, MobEffectChaos.Element.ICE, attacker, baseWeaponDamage)) {
             return;
         }
-
-        target.addEffect(new MobEffectInstance(
-                IafMobEffects.FROSTBURN.get(),
-                MobEffectFrostburn.DURATION_TICKS,
-                0,
-                false, true, true));
     }
 }
