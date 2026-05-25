@@ -137,6 +137,8 @@ public class ServerConfig {
     public ForgeConfigSpec.BooleanValue allowAttributeOverriding;
     public final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> frostShatterThresholds;
     public final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> voltageDischargeThresholds;
+    public final ForgeConfigSpec.IntValue defaultFrostShatterThreshold;
+    public final ForgeConfigSpec.IntValue defaultVoltageDischargeThreshold;
 
 
     public ServerConfig(final ForgeConfigSpec.Builder builder) {
@@ -330,6 +332,8 @@ public class ServerConfig {
         builder.pop();
 
         builder.push("Effects");
+        this.defaultFrostShatterThreshold = buildInt(builder, "Default Frost Shatter Threshold", "all", 10, 1, 10, "Default freeze stacks required to trigger frost shatter for entities without a custom threshold.");
+        this.defaultVoltageDischargeThreshold = buildInt(builder, "Default Voltage Discharge Threshold", "all", 10, 1, 10, "Default voltage stacks required to trigger discharge for entities without a custom threshold.");
         this.frostShatterThresholds = builder
                 .comment("Custom frost shatter threshold for each entity type. Format: entity_type,threshold (e.g. minecraft:zombie,3)")
                 .defineList("Frost Shatter Thresholds",

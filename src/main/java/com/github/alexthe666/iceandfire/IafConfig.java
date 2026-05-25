@@ -143,6 +143,8 @@ public class IafConfig {
     public static boolean allowAttributeOverriding = true;
     public static java.util.List<String> frostShatterThresholds = new java.util.ArrayList<>();
     public static java.util.List<String> voltageDischargeThresholds = new java.util.ArrayList<>();
+    public static int defaultFrostShatterThreshold = 10;
+    public static int defaultVoltageDischargeThreshold = 10;
 
 
     public static void bakeClient(final ModConfig config) {
@@ -288,10 +290,12 @@ public class IafConfig {
             villagerHouseWeight = ConfigHolder.SERVER.villagerHouseWeight.get();
             allowAttributeOverriding = ConfigHolder.SERVER.allowAttributeOverriding.get();
             pathfindingDebug = ConfigHolder.SERVER.pathfindingDebug.get();
+            defaultFrostShatterThreshold = ConfigHolder.SERVER.defaultFrostShatterThreshold.get();
+            defaultVoltageDischargeThreshold = ConfigHolder.SERVER.defaultVoltageDischargeThreshold.get();
             frostShatterThresholds = (java.util.List<String>) ConfigHolder.SERVER.frostShatterThresholds.get();
             voltageDischargeThresholds = (java.util.List<String>) ConfigHolder.SERVER.voltageDischargeThresholds.get();
-            com.github.alexthe666.iceandfire.config.FrostShatterConfig.parse(frostShatterThresholds);
-            com.github.alexthe666.iceandfire.config.VoltageDischargeConfig.parse(voltageDischargeThresholds);
+            com.github.alexthe666.iceandfire.config.FrostShatterConfig.parse(frostShatterThresholds, defaultFrostShatterThreshold);
+            com.github.alexthe666.iceandfire.config.VoltageDischargeConfig.parse(voltageDischargeThresholds, defaultVoltageDischargeThreshold);
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the common config for Ice and Fire.");
             e.printStackTrace();

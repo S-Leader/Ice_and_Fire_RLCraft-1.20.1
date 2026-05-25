@@ -36,9 +36,9 @@ public class VoltageDischargeConfig {
     public static void load() {
     }
 
-    public static void parse(java.util.List<String> list) {
+    public static void parse(java.util.List<String> list, int defaultVal) {
         THRESHOLDS.clear();
-        defaultThreshold = 10;
+        defaultThreshold = defaultVal;
         if (list == null) {
             return;
         }
@@ -51,11 +51,7 @@ public class VoltageDischargeConfig {
                 String key = parts[0].trim();
                 try {
                     int value = Math.max(1, Math.min(10, Integer.parseInt(parts[1].trim())));
-                    if ("_default".equals(key) || "default".equals(key)) {
-                        defaultThreshold = value;
-                    } else {
-                        THRESHOLDS.put(key, value);
-                    }
+                    THRESHOLDS.put(key, value);
                 } catch (NumberFormatException e) {
                     IceAndFire.LOGGER.warn("[VoltageDischargeConfig] 无法解析配置行: " + line);
                 }
