@@ -2,7 +2,9 @@ package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.message.MessageMultipartInteract;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -202,12 +204,38 @@ public abstract class EntityMutlipartPart extends Entity {
 
     public Entity getParent() {
         UUID id = getParentId();
+        if (id == null) return null;
 
-        if (id != null && level() instanceof ServerLevel serverLevel) {
+        if (level() instanceof ServerLevel serverLevel) {
             return serverLevel.getEntity(id);
         }
-
+        // 客户端通过 ClientLevel 获取 parent，使高亮模组能正确显示
+        if (level() instanceof ClientLevel clientLevel) {
+            for (Entity entity : clientLevel.entitiesForRendering()) {
+                if (id.equals(entity.getUUID())) {
+                    return entity;
+                }
+            }
+        }
         return null;
+    }
+
+    @Override
+    public @NotNull Component getName() {
+        Entity parent = getParent();
+        return parent != null ? parent.getName() : super.getName();
+    }
+
+    @Override
+    public @Nullable Component getCustomName() {
+        Entity parent = getParent();
+        return parent != null ? parent.getCustomName() : super.getCustomName();
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        Entity parent = getParent();
+        return parent != null ? parent.getDisplayName() : super.getDisplayName();
     }
 
     public void setParent(Entity entity) {

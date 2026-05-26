@@ -336,6 +336,12 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     protected abstract boolean shouldTarget(Entity entity);
 
+    @Override
+    public @NotNull Component getName() {
+        Component name = super.getName();
+        return Component.empty().append(name).append(" (Stage ").append(String.valueOf(this.getDragonStage())).append(")");
+    }
+
     public void resetParts(float scale) {
         removeParts();
         headPart = new EntityDragonPart(this, 1.55F * scale, 0, 0.6F * scale, 0.5F * scale, 0.35F * scale, 1.5F);

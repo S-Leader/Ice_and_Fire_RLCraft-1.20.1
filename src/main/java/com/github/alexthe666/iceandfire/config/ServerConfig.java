@@ -139,6 +139,9 @@ public class ServerConfig {
     public final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> voltageDischargeThresholds;
     public final ForgeConfigSpec.IntValue defaultFrostShatterThreshold;
     public final ForgeConfigSpec.IntValue defaultVoltageDischargeThreshold;
+    public final ForgeConfigSpec.BooleanValue enableMeltEffect;
+    public final ForgeConfigSpec.BooleanValue enableFrostbiteEffect;
+    public final ForgeConfigSpec.BooleanValue enableVoltageEffect;
 
 
     public ServerConfig(final ForgeConfigSpec.Builder builder) {
@@ -332,6 +335,9 @@ public class ServerConfig {
         builder.pop();
 
         builder.push("Effects");
+        this.enableMeltEffect = buildBoolean(builder, "Enable Melt Effect", "all", true, "Enable the Melt effect for fire dragon weapons. When disabled, fire weapons will use vanilla fire damage instead.");
+        this.enableFrostbiteEffect = buildBoolean(builder, "Enable Frostbite Effect", "all", true, "Enable the Frostbite/Frostburn effect for ice dragon weapons. When disabled, ice weapons will use the original Ice and Fire freeze effect instead.");
+        this.enableVoltageEffect = buildBoolean(builder, "Enable Voltage Effect", "all", true, "Enable the Voltage effect for lightning dragon weapons. When disabled, chain lightning will deal direct damage without voltage stacking.");
         this.defaultFrostShatterThreshold = buildInt(builder, "Default Frost Shatter Threshold", "all", 10, 1, 10, "Default freeze stacks required to trigger frost shatter for entities without a custom threshold.");
         this.defaultVoltageDischargeThreshold = buildInt(builder, "Default Voltage Discharge Threshold", "all", 10, 1, 10, "Default voltage stacks required to trigger discharge for entities without a custom threshold.");
         this.frostShatterThresholds = builder

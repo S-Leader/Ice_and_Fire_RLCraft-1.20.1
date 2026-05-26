@@ -54,6 +54,12 @@ public class MobEffectMelt extends MobEffect {
 
     public static void applyMelt(LivingEntity target, LivingEntity attacker,
             float weaponDamage, int durationTicks) {
+        // 配置关闭时回退为原版着火
+        if (!com.github.alexthe666.iceandfire.IafConfig.enableMeltEffect) {
+            target.setSecondsOnFire(durationTicks / 20);
+            return;
+        }
+
         if (MobEffectChaos.tryChaosReaction(target, MobEffectChaos.Element.FIRE, attacker, weaponDamage)) {
             return;
         }

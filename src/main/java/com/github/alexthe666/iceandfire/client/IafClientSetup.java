@@ -65,7 +65,7 @@ public class IafClientSetup {
                 EntityRenderers.register(IafEntityRegistry.ICE_DRAGON.get(),
                                 manager -> new RenderDragonBase(manager, ICE_DRAGON_BASE_MODEL, 1));
                 EntityRenderers.register(IafEntityRegistry.LIGHTNING_DRAGON.get(),
-                                manager -> new RenderDragonBase(manager, LIGHTNING_DRAGON_BASE_MODEL, 2));
+                                manager -> new RenderLightningDragon(manager, LIGHTNING_DRAGON_BASE_MODEL, 2));
                 EntityRenderers.register(IafEntityRegistry.GOLD_DRAGON.get(),
                                 manager -> new RenderDragonBase(manager, FIRE_DRAGON_BASE_MODEL, 3));
                 EntityRenderers.register(IafEntityRegistry.DRAGON_EGG.get(), RenderDragonEgg::new);

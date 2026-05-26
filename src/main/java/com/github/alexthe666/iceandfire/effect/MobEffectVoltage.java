@@ -97,6 +97,15 @@ public class MobEffectVoltage extends MobEffect {
     public static void applyVoltage(LivingEntity target, LivingEntity attacker,
             int durationTicks, float baseWeaponDamage) {
 
+        // 配置关闭时回退为直接闪电伤害+击退
+        if (!com.github.alexthe666.iceandfire.IafConfig.enableVoltageEffect) {
+            target.hurt(target.level().damageSources().lightningBolt(), baseWeaponDamage * 0.5f);
+            if (attacker != null) {
+                target.knockback(1F, attacker.getX() - target.getX(), attacker.getZ() - target.getZ());
+            }
+            return;
+        }
+
         if (MobEffectChaos.tryChaosReaction(target, MobEffectChaos.Element.LIGHTNING, attacker, baseWeaponDamage)) {
             return;
         }

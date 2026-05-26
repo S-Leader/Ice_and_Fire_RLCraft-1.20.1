@@ -10,7 +10,9 @@
     "EntityMeltFireMixin",
     "BookWyrmMixin"
   ],
-  "client": [],
+  "client": [
+    "GameRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

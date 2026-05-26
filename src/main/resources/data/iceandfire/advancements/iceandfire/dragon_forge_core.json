@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "iceandfire:dragonforge_fire_core"
+      "item": "iceandfire:dragonforge_core"
     },
     "title": {
       "translate": "advancements.iceandfire.dragon_forge_core.title"
@@ -18,9 +18,7 @@
         "items": [
           {
             "items": [
-              "iceandfire:dragonforge_fire_core_disabled",
-              "iceandfire:dragonforge_ice_core_disabled",
-              "iceandfire:dragonforge_lightning_core_disabled"
+              "iceandfire:dragonforge_core"
             ]
           }
         ]

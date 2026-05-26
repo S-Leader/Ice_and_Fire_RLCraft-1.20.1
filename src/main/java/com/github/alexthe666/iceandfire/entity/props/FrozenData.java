@@ -25,17 +25,27 @@ public class FrozenData {
                 return;
             }
 
-            net.minecraft.world.effect.MobEffectInstance frostbite = entity
-                    .getEffect(com.github.alexthe666.iceandfire.effect.IafMobEffects.FROSTBITE.get());
-            if (frostbite != null) {
-                if (!isFrozen) {
-                    entity.playSound(SoundEvents.GLASS_PLACE, 1, 1);
-                    isFrozen = true;
-                    triggerClientUpdate = true;
+            // 配置关闭时用内部计时器驱动，不依赖 FROSTBITE 药水效果
+            if (!com.github.alexthe666.iceandfire.IafConfig.enableFrostbiteEffect) {
+                if (isFrozen && frozenTicks > 0) {
+                    frozenTicks--;
+                    if (frozenTicks <= 0) {
+                        clearFrozen(entity);
+                    }
                 }
-                frozenTicks = frostbite.getDuration();
-            } else if (isFrozen) {
-                clearFrozen(entity);
+            } else {
+                net.minecraft.world.effect.MobEffectInstance frostbite = entity
+                        .getEffect(com.github.alexthe666.iceandfire.effect.IafMobEffects.FROSTBITE.get());
+                if (frostbite != null) {
+                    if (!isFrozen) {
+                        entity.playSound(SoundEvents.GLASS_PLACE, 1, 1);
+                        isFrozen = true;
+                        triggerClientUpdate = true;
+                    }
+                    frozenTicks = frostbite.getDuration();
+                } else if (isFrozen) {
+                    clearFrozen(entity);
+                }
             }
         }
 
@@ -94,7 +104,9 @@ public class FrozenData {
         isFrozen = true;
         triggerClientUpdate = true;
 
-        if (!target.level().isClientSide()) {
+        // 配置关闭时不添加 FROSTBITE 药水效果，避免显示"霜寒X"图标
+        if (!target.level().isClientSide()
+                && com.github.alexthe666.iceandfire.IafConfig.enableFrostbiteEffect) {
             target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     com.github.alexthe666.iceandfire.effect.IafMobEffects.FROSTBITE.get(), duration, 9, false, true,
                     true));

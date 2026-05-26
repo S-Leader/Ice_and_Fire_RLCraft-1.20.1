@@ -22,6 +22,13 @@ public class MobEffectFrostbite extends MobEffect {
 
     public static void applyFrostbite(LivingEntity target, LivingEntity attacker,
             int durationTicks, float baseWeaponDamage) {
+        // 配置关闭时回退为原版冰与火冻结效果
+        if (!com.github.alexthe666.iceandfire.IafConfig.enableFrostbiteEffect) {
+            com.github.alexthe666.iceandfire.entity.props.EntityDataProvider.getCapability(target)
+                    .ifPresent(data -> data.frozenData.setFrozen(target, durationTicks));
+            return;
+        }
+
         if (target.hasEffect(IafMobEffects.FROSTBURN.get())) {
             return;
         }

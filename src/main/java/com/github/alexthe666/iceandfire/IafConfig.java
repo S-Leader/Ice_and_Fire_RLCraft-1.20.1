@@ -145,6 +145,9 @@ public class IafConfig {
     public static java.util.List<String> voltageDischargeThresholds = new java.util.ArrayList<>();
     public static int defaultFrostShatterThreshold = 10;
     public static int defaultVoltageDischargeThreshold = 10;
+    public static boolean enableMeltEffect = true;
+    public static boolean enableFrostbiteEffect = true;
+    public static boolean enableVoltageEffect = true;
 
 
     public static void bakeClient(final ModConfig config) {
@@ -296,6 +299,9 @@ public class IafConfig {
             voltageDischargeThresholds = (java.util.List<String>) ConfigHolder.SERVER.voltageDischargeThresholds.get();
             com.github.alexthe666.iceandfire.config.FrostShatterConfig.parse(frostShatterThresholds, defaultFrostShatterThreshold);
             com.github.alexthe666.iceandfire.config.VoltageDischargeConfig.parse(voltageDischargeThresholds, defaultVoltageDischargeThreshold);
+            enableMeltEffect = ConfigHolder.SERVER.enableMeltEffect.get();
+            enableFrostbiteEffect = ConfigHolder.SERVER.enableFrostbiteEffect.get();
+            enableVoltageEffect = ConfigHolder.SERVER.enableVoltageEffect.get();
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the common config for Ice and Fire.");
             e.printStackTrace();
