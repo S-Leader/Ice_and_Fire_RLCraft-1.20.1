@@ -6,6 +6,7 @@ import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
+import com.github.alexthe666.iceandfire.entity.ai.HippogryphAIAirTarget;
 import com.github.alexthe666.iceandfire.entity.ai.HippogryphAIMate;
 import com.github.alexthe666.iceandfire.entity.ai.HippogryphAITarget;
 import com.github.alexthe666.iceandfire.entity.ai.HippogryphAITargetItems;
@@ -87,6 +88,7 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
     public float flyProgress;
     public int spacebarTicks;
     public int airBorneCounter;
+    public BlockPos airTarget;
     public BlockPos homePos;
     public boolean hasHomePosition = false;
     public int feedings = 0;
@@ -159,9 +161,10 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(4, new HippogryphAIMate(this, 1.0D));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, Ingredient.of(IafItemTags.TEMPT_HIPPOGRYPH), false));
+        this.goalSelector.addGoal(6, new HippogryphAIAirTarget(this));
         //TODO: This doesn't gurantee the hippogryph will fly, it can still and is likely to path on the ground
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomFlyingGoal(this, 1D));
-        this.goalSelector.addGoal(7, new HippogryphAIWander(this, 1.0D));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomFlyingGoal(this, 1D));
+        this.goalSelector.addGoal(8, new HippogryphAIWander(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, LivingEntity.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -203,6 +206,12 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
 
     @Override
     protected void checkFallDamage(double y, boolean onGroundIn, @NotNull BlockState state, @NotNull BlockPos pos) {
+    }
+
+    // 兜底保护：飞行生物不应受摔落伤害
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+        return false;
     }
 
     @Override
@@ -854,7 +863,8 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
             }
             hasChestVarChanged = false;
         }
-        if (this.isFlying() && this.tickCount % 40 == 0 || this.isFlying() && this.isOrderedToSit()) {
+        // 非骑乘状态下，不在地面且有空中目标时保持飞行
+        if (!this.onGround() && this.airTarget != null) {
             this.setFlying(true);
         }
         if (!this.canMove() && attackTarget != null) {
@@ -863,6 +873,24 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
         if (!this.canMove()) {
             this.getNavigation().stop();
 
+        }
+        // Y轴速度限制，防止无限加速飞天（参考1.12.2 RLC）
+        if (this.getControllingPassenger() != null) {
+            Vec3 motion = this.getDeltaMovement();
+            if (motion.y > 0.5 && (this.isFlying() || this.isHovering())) {
+                this.setDeltaMovement(motion.x, 0.5, motion.z);
+            }
+            if (motion.y < -0.5) {
+                this.setDeltaMovement(motion.x, -0.5, motion.z);
+            }
+        } else {
+            Vec3 motion = this.getDeltaMovement();
+            if (motion.y > 0.5) {
+                this.setDeltaMovement(motion.x, 0.5, motion.z);
+            }
+            if (motion.y < -0.8) {
+                this.setDeltaMovement(motion.x, -0.8, motion.z);
+            }
         }
         AnimationHandler.INSTANCE.updateAnimations(this);
         boolean sitting = isOrderedToSit() && !isHovering() && !isFlying();
@@ -893,13 +921,25 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
         if ((flying || hovering) && !doesWantToLand() && this.getControllingPassenger() == null) {
             double up = isInWater() ? 0.16D : 0.08D;
             this.setDeltaMovement(this.getDeltaMovement().add(0, up, 0));
+        } else if ((flying || hovering) && doesWantToLand() && this.getControllingPassenger() == null && !this.onGround()) {
+            // 想降落但还在空中，施加缓降力防止自由落体
+            this.setDeltaMovement(this.getDeltaMovement().add(0, -0.03D, 0));
         }
         if ((flying || hovering) && tickCount % 20 == 0 && this.isOverAir()) {
             this.playSound(SoundEvents.ENDER_DRAGON_FLAP, this.getSoundVolume() * (IafConfig.dragonFlapNoiseDistance / 2), 0.6F + this.random.nextFloat() * 0.6F * this.getVoicePitch());
         }
         if (this.onGround() && this.doesWantToLand() && (this.isFlying() || this.isHovering())) {
+            this.airTarget = null;
             this.setFlying(false);
             this.setHovering(false);
+        }
+        // 骏鹰在飞行中通过airTarget导航（参考1.12.2 RLC）
+        if (this.isFlying() && this.getControllingPassenger() == null) {
+            if (attackTarget == null) {
+                flyAround();
+            } else {
+                flyTowardsTarget();
+            }
         }
         if (this.isHovering()) {
             if (this.isOrderedToSit()) {
@@ -925,15 +965,23 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
         if (this.isOrderedToSit()) {
             this.getNavigation().stop();
         }
+        // 着地时清除飞行状态
+        if (!this.isFlying() && !this.isHovering() && this.airTarget != null && this.onGround()) {
+            this.airTarget = null;
+        }
+        if (this.isFlying() && this.airTarget == null && this.onGround() && this.getControllingPassenger() == null) {
+            this.setFlying(false);
+        }
         if (this.onGround() && flyTicks != 0) {
             flyTicks = 0;
         }
         if (this.isFlying() && this.doesWantToLand() && this.getControllingPassenger() == null) {
-            this.setHovering(false);
-            if (this.onGround()) {
-                flyTicks = 0;
-            }
+            // 在空中时先切换到hovering缓降（参考1.12.2 RLC）
             this.setFlying(false);
+            this.setHovering(!this.onGround());
+            if (this.onGround()) {
+                this.flyTicks = 0;
+            }
         }
         if (this.isFlying()) {
             this.flyTicks++;
@@ -957,7 +1005,50 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
     }
 
     public boolean doesWantToLand() {
-        return (this.flyTicks > 200 || flyTicks > 40 && this.flyProgress == 0) && !this.isVehicle();
+        // 飞行超时2000tick后降落（参考1.12.2 RLC的2000阈值）
+        return this.flyTicks > 2000 && !this.isVehicle();
+    }
+
+    // 空中巡航导航（移植自1.12.2 RLC）
+    public void flyAround() {
+        if (airTarget != null && this.isFlying()) {
+            if (!isTargetInAir() || flyTicks > 6000 || !this.isFlying()) {
+                airTarget = null;
+            }
+            flyTowardsTarget();
+        }
+    }
+
+    // 向airTarget方向飞行（移植自1.12.2 RLC）
+    public void flyTowardsTarget() {
+        if (airTarget != null && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+            double targetX = airTarget.getX() + 0.5D - this.getX();
+            double targetY = airTarget.getY() + 1D - this.getY();
+            double targetZ = airTarget.getZ() + 0.5D - this.getZ();
+            double speed = IafConfig.hippogryphFlightSpeedMod * 2;
+            Vec3 motion = this.getDeltaMovement();
+            double newMotionX = motion.x + (Math.signum(targetX) * 0.5D - motion.x) * 0.1D * speed;
+            double newMotionY = motion.y + (Math.signum(targetY) * 0.5D - motion.y) * 0.1D * speed;
+            double newMotionZ = motion.z + (Math.signum(targetZ) * 0.5D - motion.z) * 0.1D * speed;
+            this.setDeltaMovement(newMotionX, newMotionY, newMotionZ);
+            float angle = (float) (Math.atan2(newMotionZ, newMotionX) * 180.0D / Math.PI) - 90.0F;
+            float rotation = Mth.wrapDegrees(angle - this.getYRot());
+            this.setYRot(this.getYRot() + rotation);
+            if (!this.isFlying()) {
+                this.setFlying(true);
+            }
+        } else {
+            this.airTarget = null;
+        }
+        if (airTarget != null && this.isFlying() && this.doesWantToLand()) {
+            this.setFlying(false);
+            this.setHovering(true);
+        }
+    }
+
+    // 检查airTarget是否在空气中
+    protected boolean isTargetInAir() {
+        return airTarget != null && level().isEmptyBlock(airTarget);
     }
 
     @Override

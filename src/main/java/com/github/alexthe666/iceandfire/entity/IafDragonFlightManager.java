@@ -1,10 +1,8 @@
 package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IafConfig;
-import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import com.github.alexthe666.iceandfire.entity.util.IFlyingMount;
 import com.github.alexthe666.iceandfire.util.IAFMath;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -19,10 +17,15 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 
+/**
+ * @deprecated 飞行导航已移至EntityDragonBase.flyAround()，
+ * 此类仅保留MoveHelper内部类和工具方法。
+ */
+@Deprecated
 public class IafDragonFlightManager {
     private final EntityDragonBase dragon;
     private Vec3 target;
-    private IafDragonAttacks.Air prevAirAttack;
+    private boolean prevAttackDecision;
     private Vec3 startAttackVec;
     private Vec3 startPreyVec;
     private boolean hasStartedToScorch = false;
@@ -46,88 +49,22 @@ public class IafDragonFlightManager {
         return Math.abs(Mth.wrapDegrees(f2 - f1));
     }
 
+    /**
+     * @deprecated AI飞行已由flyAround()处理，此方法仅保留为向后兼容
+     */
+    @Deprecated
     public void update() {
-
-        if (dragon.getTarget() != null && dragon.getTarget().isAlive()) {
-            if (dragon instanceof EntityIceDragon && dragon.isInWater()) {
-                if (dragon.getTarget() == null) {
-                    dragon.airAttack = IafDragonAttacks.Air.SCORCH_STREAM;
-                } else {
-                    dragon.airAttack = IafDragonAttacks.Air.TACKLE;
-                }
-            }
-            LivingEntity entity = dragon.getTarget();
-            if (dragon.airAttack == IafDragonAttacks.Air.TACKLE) {
-                target = new Vec3(entity.getX(), entity.getY() + entity.getBbHeight(), entity.getZ());
-            }
-            if (dragon.airAttack == IafDragonAttacks.Air.HOVER_BLAST) {
-                float distY = 5 + dragon.getDragonStage() * 2;
-                int randomDist = 20;
-                if (dragon.distanceToSqr(entity.getX(), dragon.getY(), entity.getZ()) < 16 || dragon.distanceToSqr(entity.getX(), dragon.getY(), entity.getZ()) > 900) {
-                    target = new Vec3(entity.getX() + dragon.getRandom().nextInt(randomDist) - randomDist / 2, entity.getY() + distY, entity.getZ() + dragon.getRandom().nextInt(randomDist) - randomDist / 2);
-                }
-                dragon.stimulateFire(entity.getX(), entity.getY(), entity.getZ(), 3);
-            }
-            if (dragon.airAttack == IafDragonAttacks.Air.SCORCH_STREAM && startPreyVec != null && startAttackVec != null) {
-                float distX = (float) (startPreyVec.x - startAttackVec.x);
-                float distY = 5 + dragon.getDragonStage() * 2;
-                float distZ = (float) (startPreyVec.z - startAttackVec.z);
-                target = new Vec3(entity.getX() + distX, entity.getY() + distY, entity.getZ() + distZ);
-                dragon.tryScorchTarget();
-                hasStartedToScorch = true;
-                if (target != null && dragon.distanceToSqr(target.x, target.y, target.z) < 100) {
-                    target = new Vec3(entity.getX() - distX, entity.getY() + distY, entity.getZ() - distZ);
-                }
-            }
-
-        } else if (target == null || dragon.distanceToSqr(target.x, target.y, target.z) < 4
-                || !dragon.level().isEmptyBlock(BlockPos.containing(target.x, target.y, target.z))
-                        && (dragon.isHovering() || dragon.isFlying())
-                || dragon.getCommand() == 2 && dragon.shouldTPtoOwner()) {
-            BlockPos viewBlock = null;
-
-            if (dragon instanceof EntityIceDragon && dragon.isInWater()) {
-                viewBlock = DragonUtils.getWaterBlockInView(dragon);
-            }
-            if (dragon.getCommand() == 2 && dragon.useFlyingPathFinder()) {
-                if (dragon instanceof EntityIceDragon && dragon.isInWater()) {
-                    viewBlock = DragonUtils.getWaterBlockInViewEscort(dragon);
-                } else {
-                    viewBlock = DragonUtils.getBlockInViewEscort(dragon);
-                }
-            } else if (dragon.lookingForRoostAIFlag) {
-                // FIXME :: Unused
-//                double xDist = Math.abs(dragon.getX() - dragon.getRestrictCenter().getX() - 0.5F);
-//                double zDist = Math.abs(dragon.getZ() - dragon.getRestrictCenter().getZ() - 0.5F);
-//                double xzDist = Math.sqrt(xDist * xDist + zDist * zDist);
-                BlockPos upPos = dragon.getRestrictCenter();
-                if (dragon.getDistanceSquared(Vec3.atCenterOf(dragon.getRestrictCenter())) > 200) {
-                    upPos = upPos.above(30);
-                }
-                viewBlock = upPos;
-
-            }else if(viewBlock == null){
-                viewBlock = DragonUtils.getBlockInView(dragon);
-                if (dragon.isInWater()) {
-                    // If the dragon is in water, take off to reach the air target
-                    dragon.setHovering(true);
-                }
-            }
-            if (viewBlock != null) {
-                target = new Vec3(viewBlock.getX() + 0.5, viewBlock.getY() + 0.5, viewBlock.getZ() + 0.5);
-            }
-        }
+        // 飞行导航已由EntityDragonBase.flyAround()处理
+        // 仅保留高度限制逻辑
         if (target != null) {
             if (target.y > IafConfig.maxDragonFlight) {
                 target = new Vec3(target.x, IafConfig.maxDragonFlight, target.z);
             }
             if (target.y >= dragon.getY() && !dragon.isModelDead()) {
                 dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, 0.1D, 0));
-
             }
         }
-
-        this.prevAirAttack = dragon.airAttack;
+        this.prevAttackDecision = dragon.attackDecision;
     }
 
     public Vec3 getFlightTarget() {
@@ -266,7 +203,7 @@ public class IafDragonFlightManager {
                 float atan = (float) Mth.atan2(distZ, distX);
                 float yawTurn = Mth.wrapDegrees(dragon.getYRot() + 90);
                 float yawTurnAtan = Mth.wrapDegrees(atan * 57.295776F);
-                dragon.setYRot(IafDragonFlightManager.approachDegrees(yawTurn, yawTurnAtan, dragon.airAttack == IafDragonAttacks.Air.TACKLE && dragon.getTarget() != null ? 10 : 4.0F) - 90.0F);
+                dragon.setYRot(IafDragonFlightManager.approachDegrees(yawTurn, yawTurnAtan, dragon.attackDecision && dragon.getTarget() != null ? 10 : 4.0F) - 90.0F);
                 dragon.yBodyRot = dragon.getYRot();
                 if (IafDragonFlightManager.degreesDifferenceAbs(yawCopy, dragon.getYRot()) < 3.0F) {
                     speedModifier = IafDragonFlightManager.approach((float) speedModifier, 1.8F, 0.005F * (1.8F / (float) speedModifier));

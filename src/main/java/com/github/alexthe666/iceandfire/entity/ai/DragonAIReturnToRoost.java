@@ -46,8 +46,7 @@ public class DragonAIReturnToRoost extends Goal {
                     if (this.dragon.onGround()) {
                         this.dragon.setFlying(false);
                         this.dragon.setHovering(false);
-                        this.dragon.flightManager.setFlightTarget(
-                            Vec3.upFromBottomCenterOf(this.dragon.getRestrictCenter(), yAddition));
+                        this.dragon.airTarget = this.dragon.getRestrictCenter();
                         this.dragon.getNavigation().moveTo(this.dragon.getRestrictCenter().getX(),
                             this.dragon.getRestrictCenter().getY(), this.dragon.getRestrictCenter().getZ(), 1.0F);
                         return;
@@ -57,8 +56,7 @@ public class DragonAIReturnToRoost extends Goal {
                     this.dragon.setHovering(true);
                 }
                 if (this.dragon.isFlying()) {
-                    this.dragon.flightManager.setFlightTarget(
-                        Vec3.upFromBottomCenterOf(this.dragon.getRestrictCenter(), yAddition));
+                    this.dragon.airTarget = this.dragon.getRestrictCenter().above((int) yAddition);
                     this.dragon.getNavigation().moveTo(this.dragon.getRestrictCenter().getX(),
                         yAddition + this.dragon.getRestrictCenter().getY(), this.dragon.getRestrictCenter().getZ(), 1F);
                 }

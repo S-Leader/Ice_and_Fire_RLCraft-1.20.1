@@ -195,14 +195,13 @@ public class EntityLightningDragon extends EntityDragonBase {
     public boolean doHurtTarget(@NotNull Entity entityIn) {
         this.getLookControl().setLookAt(entityIn, 30.0F, 30.0F);
         if (!this.isPlayingAttackAnimation()) {
-            switch (groundAttack) {
-                case BITE:
+            if (attackDecision) {
+                int rand = getRandom().nextInt(3);
+                if (rand == 0) {
                     this.setAnimation(ANIMATION_BITE);
-                    break;
-                case TAIL_WHIP:
+                } else if (rand == 1) {
                     this.setAnimation(ANIMATION_TAILWHACK);
-                    break;
-                case SHAKE_PREY:
+                } else {
                     boolean flag = false;
                     if (new Random().nextInt(2) == 0 && isDirectPathBetweenPoints(this, this.position().add(0, this.getBbHeight() / 2, 0), entityIn.position().add(0, entityIn.getBbHeight() / 2, 0)) &&
                         entityIn.getBbWidth() < this.getBbWidth() * 0.5F && this.getControllingPassenger() == null && this.getDragonStage() > 1 && !(entityIn instanceof EntityDragonBase) && !DragonUtils.isAnimaniaMob(entityIn)) {
@@ -211,13 +210,11 @@ public class EntityLightningDragon extends EntityDragonBase {
                         entityIn.startRiding(this);
                     }
                     if (!flag) {
-                        groundAttack = IafDragonAttacks.Ground.BITE;
                         this.setAnimation(ANIMATION_BITE);
                     }
-                    break;
-                case WING_BLAST:
-                    this.setAnimation(ANIMATION_WINGBLAST);
-                    break;
+                }
+            } else {
+                this.setAnimation(ANIMATION_WINGBLAST);
             }
         }
         return false;
@@ -231,17 +228,17 @@ public class EntityLightningDragon extends EntityDragonBase {
             if (this.getBoundingBox().inflate(2.5F + this.getRenderSize() * 0.33F, 2.5F + this.getRenderSize() * 0.33F, 2.5F + this.getRenderSize() * 0.33F).intersects(attackTarget.getBoundingBox())) {
                 doHurtTarget(attackTarget);
             }
-            if (this.groundAttack == IafDragonAttacks.Ground.FIRE && (usingGroundAttack || this.onGround())) {
+            if (!this.attackDecision && (this.onGround() || this.isFlying() || this.isHovering())) {
                 shootFireAtMob(attackTarget);
             }
-            if (this.airAttack == IafDragonAttacks.Air.TACKLE && !usingGroundAttack && this.distanceToSqr(attackTarget) < 100) {
+            if (this.attackDecision && this.isFlying() && this.distanceToSqr(attackTarget) < 100) {
                 double difX = attackTarget.getX() - this.getX();
                 double difY = attackTarget.getY() + attackTarget.getBbHeight() - this.getY();
                 double difZ = attackTarget.getZ() - this.getZ();
                 this.setDeltaMovement(this.getDeltaMovement().add(difX * 0.1D, difY * 0.1D, difZ * 0.1D));
                 if (this.getBoundingBox().inflate(1 + this.getRenderSize() * 0.5F, 1 + this.getRenderSize() * 0.5F, 1 + this.getRenderSize() * 0.5F).intersects(attackTarget.getBoundingBox())) {
                     doHurtTarget(attackTarget);
-                    usingGroundAttack = true;
+                    attackDecision = true;
                     randomizeAttacks();
                     setFlying(false);
                     setHovering(false);
@@ -335,8 +332,8 @@ public class EntityLightningDragon extends EntityDragonBase {
     }
 
     private void shootFireAtMob(LivingEntity entity) {
-        if (this.usingGroundAttack && this.groundAttack == IafDragonAttacks.Ground.FIRE || !this.usingGroundAttack && (this.airAttack == IafDragonAttacks.Air.SCORCH_STREAM || this.airAttack == IafDragonAttacks.Air.HOVER_BLAST)) {
-            if (this.usingGroundAttack && this.getRandom().nextInt(5) == 0 || !this.usingGroundAttack && this.airAttack == IafDragonAttacks.Air.HOVER_BLAST) {
+        if (!this.attackDecision) {
+            if (this.getRandom().nextInt(5) == 0) {
                 if (this.getAnimation() != ANIMATION_FIRECHARGE) {
                     this.setAnimation(ANIMATION_FIRECHARGE);
                 } else if (this.getAnimationTick() == 20) {

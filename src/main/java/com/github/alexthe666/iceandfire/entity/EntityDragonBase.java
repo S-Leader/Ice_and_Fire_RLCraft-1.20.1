@@ -192,10 +192,11 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     public double burnParticleY;
     public double burnParticleZ;
     public float prevDragonPitch;
-    public IafDragonAttacks.Air airAttack;
-    public IafDragonAttacks.Ground groundAttack;
-    public boolean usingGroundAttack = true;
-    public IafDragonLogic logic;
+    public boolean attackDecision;
+    public BlockPos airTarget;
+    public DragonAnimationManager animationManager;
+    public DragonServerTickManager serverTickManager;
+    public DragonCombatManager combatManager;
     public int hoverTicks;
     public int tacklingTicks;
     public int ticksStill;
@@ -256,10 +257,12 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         }
         legSolver = new LegSolverQuadruped(0.3F, 0.35F, 0.2F, 1.45F, 1.0F);
         this.flightManager = new IafDragonFlightManager(this);
-        this.logic = createDragonLogic();
+        this.animationManager = new DragonAnimationManager(this);
+        this.serverTickManager = new DragonServerTickManager(this);
+        this.combatManager = new DragonCombatManager(this);
         this.noCulling = true;
         switchNavigator(0);
-        randomizeAttacks();
+        this.attackDecision = true;
         resetParts(1);
     }
 
@@ -305,16 +308,16 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     @Override
     protected void registerGoals() {
-//        this.goalSelector.addGoal(0, new DragonAIRide<>(this));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new DragonAIMate(this, 1.0D));
-        this.goalSelector.addGoal(3, new DragonAIReturnToRoost(this, 1.0D));
+        this.goalSelector.addGoal(3, new DragonAIAttackMelee(this, 1.5D, false));
         this.goalSelector.addGoal(4, new DragonAIEscort(this, 1.0D));
-        this.goalSelector.addGoal(5, new DragonAIAttackMelee(this, 1.5D, false));
+        this.goalSelector.addGoal(5, new DragonAIReturnToRoost(this, 1.0D));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.0D, Ingredient.of(IafItemTags.TEMPT_DRAGON), false));
-        this.goalSelector.addGoal(7, new DragonAIWander(this, 1.0D));
-        this.goalSelector.addGoal(8, new DragonAIWatchClosest(this, LivingEntity.class, 6.0F));
-        this.goalSelector.addGoal(8, new DragonAILookIdle(this));
+        this.goalSelector.addGoal(7, new DragonAIAirTarget(this));
+        this.goalSelector.addGoal(8, new DragonAIWander(this, 1.0D));
+        this.goalSelector.addGoal(9, new DragonAIWatchClosest(this, LivingEntity.class, 6.0F));
+        this.goalSelector.addGoal(9, new DragonAILookIdle(this));
         this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
@@ -722,7 +725,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         compound.putBoolean("Sleeping", this.isSleeping());
         compound.putBoolean("TamedDragon", this.isTame());
         compound.putBoolean("FireBreathing", this.isBreathingFire());
-        compound.putBoolean("AttackDecision", usingGroundAttack);
+        compound.putBoolean("AttackDecision", attackDecision);
         compound.putBoolean("Hovering", this.isHovering());
         compound.putBoolean("Flying", this.isFlying());
         compound.putInt("DeathStage", this.getDeathStage());
@@ -765,7 +768,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         this.setInSittingPose(compound.getBoolean("Sleeping"));
         this.setTame(compound.getBoolean("TamedDragon"));
         this.setBreathingFire(compound.getBoolean("FireBreathing"));
-        this.usingGroundAttack = compound.getBoolean("AttackDecision");
+        this.attackDecision = compound.getBoolean("AttackDecision");
         this.setHovering(compound.getBoolean("Hovering"));
         this.setFlying(compound.getBoolean("Flying"));
         this.setDeathStage(compound.getInt("DeathStage"));
@@ -1093,7 +1096,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         ItemStack stack = player.getItemInHand(hand);
         int lastDeathStage = Math.min(this.getAgeInDays() / 5, 25);
         if (stack.getItem() == IafItemRegistry.DRAGON_DEBUG_STICK.get()) {
-            logic.debug();
+            debug();
             return InteractionResult.SUCCESS;
         }
         if (this.isModelDead() && this.getDeathStage() < lastDeathStage && player.mayBuild()) {
@@ -1149,7 +1152,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         }
 
         if (stack.getItem() == IafItemRegistry.DRAGON_DEBUG_STICK.get()) {
-            logic.debug();
+            debug();
             return InteractionResult.SUCCESS;
         }
         if (!this.isModelDead()) {
@@ -1658,7 +1661,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         this.setInSittingPose(false);
         final double healthStep = (maximumHealth - minimumHealth) / 125;
         this.heal((Math.round(minimumHealth + (healthStep * age))));
-        this.usingGroundAttack = true;
+        this.attackDecision = true;
         this.setHunger(50);
         return spawnDataIn;
     }
@@ -1728,7 +1731,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         level().getProfiler().push("dragonLogic");
         this.setMaxUpStep(getStepHeight());
         isOverAir = isOverAirLogic();
-        logic.updateDragonCommon();
+        animationManager.updateDragonCommon();
         if (this.isModelDead()) {
             if (!level().isClientSide && level().isEmptyBlock(BlockPos.containing(this.getBlockX(), this.getBoundingBox().minY, this.getBlockZ())) && this.getY() > -1) {
                 this.move(MoverType.SELF, new Vec3(0, -0.2F, 0));
@@ -1745,15 +1748,20 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             }
         } else {
             if (level().isClientSide) {
-                logic.updateDragonClient();
+                animationManager.updateDragonClient();
             } else {
-                logic.updateDragonServer();
-                logic.updateDragonAttack();
+                serverTickManager.updateDragonServer();
+                combatManager.updateDragonAttack();
             }
         }
         level().getProfiler().pop();
         level().getProfiler().push("dragonFlight");
-        if (useFlyingPathFinder() && !level().isClientSide /*&& isControlledByLocalInstance()*/) {
+        // 使用1.12.2 RLC的flyAround飞行导航系统
+        if (!level().isClientSide && (this.isFlying() || this.isHovering()) && !this.isModelDead()) {
+            this.flyAround();
+        }
+        // 保留flightManager仅用于骑乘控制模式
+        if (useFlyingPathFinder() && !level().isClientSide && this.getControllingPassenger() != null) {
             this.flightManager.update();
         }
         level().getProfiler().pop();
@@ -1964,9 +1972,94 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         return false;
     }
 
-    // FIXME :: Unused
-    private double getFlySpeed() {
-        return (2 + (this.getAgeInDays() / 125) * 2) * (this.isTackling() ? 2 : 1);
+    // 飞行速度随龙阶段动态增长（移植自1.12.2 RLC）
+    public double getFlySpeed() {
+        double baseSpeed = 2 + ((double) this.getAgeInDays() / 125) * 2;
+        double tackleMultiplier = this.isTackling() ? 2 : 1;
+        return baseSpeed * tackleMultiplier * IafConfig.dragonFlightSpeedMod;
+    }
+
+    // 飞行导航：朝airTarget飞行（移植自1.12.2 RLC）
+    public void flyAround() {
+        if (getControllingPassenger() != null) {
+            airTarget = null;
+            return;
+        }
+        if (airTarget != null && (doesWantToLand() && getTarget() == null)) {
+            airTarget = null;
+        }
+        // 有攻击目标时动态追踪
+        if (getTarget() != null && getTarget().isAlive()) {
+            airTarget = getTarget().blockPosition();
+        }
+        if (airTarget != null) {
+            flyTowardsTarget();
+        }
+    }
+
+    // 向airTarget移动并转向（移植自1.12.2 RLC，适配1.20.1 API）
+    public void flyTowardsTarget() {
+        if (airTarget == null) {
+            return;
+        }
+        int maxFlightHeight = DragonUtils.getMaximumFlightHeightForPos(level(), airTarget);
+        if (airTarget.getY() > maxFlightHeight) {
+            airTarget = new BlockPos(airTarget.getX(), maxFlightHeight, airTarget.getZ());
+        }
+        if (isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+            double y = this.attackDecision ? airTarget.getY() : this.getY();
+
+            double targetX = airTarget.getX() + 0.5D - getX();
+            double targetY = Math.min(y, maxFlightHeight) + 1D - getY();
+            double targetZ = airTarget.getZ() + 0.5D - getZ();
+            Vec3 mot = this.getDeltaMovement();
+            double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * 0.100000000372529 * getFlySpeed();
+            double newMotY = mot.y + (Math.signum(targetY) * 0.5D - mot.y) * 0.100000000372529 * getFlySpeed();
+            double newMotZ = mot.z + (Math.signum(targetZ) * 0.5D - mot.z) * 0.100000000372529 * getFlySpeed();
+            // Y轴速度限制器，防止无限加速飞天
+            newMotY = Mth.clamp(newMotY, -0.5D, 0.5D);
+            this.setDeltaMovement(newMotX, newMotY, newMotZ);
+            this.zza = 0.5F;
+            double d0 = airTarget.getX() + 0.5D - this.getX();
+            double d2 = airTarget.getZ() + 0.5D - this.getZ();
+            double d1 = y + 0.5D - this.getY();
+            double d3 = Mth.sqrt((float)(d0 * d0 + d2 * d2));
+            float f = (float) (Mth.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
+            float f1 = (float) (-(Mth.atan2(d1, d3) * (180D / Math.PI)));
+            this.setXRot(this.updateRotation(this.getXRot(), f1, 30F));
+            this.setYRot(this.updateRotation(this.getYRot(), f, 30F));
+        } else {
+            this.airTarget = null;
+        }
+        if (airTarget != null) {
+            if (!isFlying()) {
+                this.setFlying(true);
+                this.setHovering(false);
+                hoverTicks = 0;
+            }
+            if (this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
+                setFlying(false);
+                setHovering(true);
+            }
+        }
+    }
+
+    // 平滑旋转（移植自1.12.2 RLC）
+    private float updateRotation(float current, float target, float maxChange) {
+        float diff = Mth.wrapDegrees(target - current);
+        if (diff > maxChange) diff = maxChange;
+        if (diff < -maxChange) diff = -maxChange;
+        return current + diff;
+    }
+
+    // 判断airTarget是否在空中
+    protected boolean isTargetInAir() {
+        return this.airTarget != null && isPosInAir(this.airTarget);
+    }
+
+    // 判断某个位置是否为空气
+    public boolean isPosInAir(BlockPos pos) {
+        return level().isEmptyBlock(pos);
     }
 
     public boolean isTackling() {
@@ -2244,7 +2337,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     /**
-     * Rider logic from {@link IafDragonLogic#updateDragonServer()} <br>
+     * Rider logic from {@link DragonServerTickManager#updateDragonServer()} <br>
      * Updates when rider is onboard
      */
     public void updateRider() {
@@ -2315,7 +2408,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                         potentialVictim != rider
                                 && potentialVictim instanceof LivingEntity
                 ));
-                victims.forEach(victim -> logic.attackTarget(victim, rider, this.getDragonStage() * 3));
+                victims.forEach(victim -> combatManager.attackTarget(victim, rider, this.getDragonStage() * 3));
             }
             // Dragon breathe attack
             if (this.isStriking() && this.getControllingPassenger() != null && this.getDragonStage() > 1) {
@@ -2331,7 +2424,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                 }
                 if (target != null && !DragonUtils.hasSameOwner(this, target)) {
                     int damage = (int) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
-                    boolean didDamage = logic.attackTarget(target, rider, damage);
+                    boolean didDamage = combatManager.attackTarget(target, rider, damage);
 
                     if (didDamage && IafConfig.canDragonsHealFromBiting) {
                         heal(damage * 0.1f);
@@ -2382,7 +2475,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                     this.setAnimation(EntityDragonBase.ANIMATION_BITE);
                 }
                 if (target != null && !DragonUtils.hasSameOwner(this, target)) {
-                    logic.attackTarget(target, ridingPlayer, (int) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
+                    combatManager.attackTarget(target, ridingPlayer, (int) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
                 }
             }
             if (this.getControllingPassenger() != null && this.getControllingPassenger().isShiftKeyDown()) {
@@ -2397,7 +2490,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             } else {
                 if (this.isHovering() && this.getControllingPassenger() != null && !this.onGround() && Math.max(Math.abs(this.getDeltaMovement().x()), Math.abs(this.getDeltaMovement().z())) > 0.1F) {
                     this.setFlying(true);
-                    this.usingGroundAttack = false;
+                    this.attackDecision = false;
                     this.setHovering(false);
                 }
             }
@@ -2733,10 +2826,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     public abstract void stimulateFire(double burnX, double burnY, double burnZ, int syncType);
 
+    // 随机化攻击决策（简化自1.12.2 RLC的布尔方式）
     public void randomizeAttacks() {
-        this.airAttack = IafDragonAttacks.Air.values()[getRandom().nextInt(IafDragonAttacks.Air.values().length)];
-        this.groundAttack = IafDragonAttacks.Ground.values()[getRandom().nextInt(IafDragonAttacks.Ground.values().length)];
-
+        this.attackDecision = getRandom().nextBoolean();
     }
 
     @Override
@@ -2765,9 +2857,13 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     @Override
-    public void setTarget(@Nullable LivingEntity LivingEntityIn) {
-        super.setTarget(LivingEntityIn);
-        this.flightManager.onSetAttackTarget(LivingEntityIn);
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        // 有攻击目标时，设置airTarget为目标位置（移植自1.12.2 RLC）
+        if (target != null) {
+            this.airTarget = target.blockPosition();
+        }
+        this.flightManager.onSetAttackTarget(target);
     }
 
     @Override
@@ -2879,8 +2975,36 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                 this.getAnimation() == ANIMATION_TAILWHACK;
     }
 
-    protected IafDragonLogic createDragonLogic() {
-        return new IafDragonLogic(this);
+    public DragonAnimationManager getAnimationManager() {
+        return animationManager;
+    }
+
+    public DragonServerTickManager getServerTickManager() {
+        return serverTickManager;
+    }
+
+    public DragonCombatManager getCombatManager() {
+        return combatManager;
+    }
+
+    public void debug() {
+        String side = level().isClientSide ? "CLIENT" : "SERVER";
+        String owner = getOwner() == null ? "null" : getOwner().getName().getString();
+        String attackTarget = getTarget() == null ? "null" : getTarget().getName().getString();
+        IceAndFire.LOGGER.warn("DRAGON DEBUG[" + side + "]:"
+                + "\nStage: " + getDragonStage()
+                + "\nAge: " + getAgeInDays()
+                + "\nVariant: " + getVariantName(getVariant())
+                + "\nOwner: " + owner
+                + "\nAttack Target: " + attackTarget
+                + "\nFlying: " + isFlying()
+                + "\nHovering: " + isHovering()
+                + "\nHovering Time: " + hoverTicks
+                + "\nWidth: " + getBbWidth()
+                + "\nMoveHelper: " + getMoveControl()
+                + "\nAttack Decision: " + attackDecision
+                + "\nTackling: " + isTackling()
+        );
     }
 
     protected int getFlightChancePerTick() {

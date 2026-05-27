@@ -32,14 +32,37 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DragonUtils {
+    // 获取位置的最大飞行高度（移植自1.12.2 RLC）
+    public static int getMaximumFlightHeightForPos(Level world, BlockPos pos) {
+        int maxFlight = IafConfig.maxDragonFlight;
+        int seaLevel = world.getSeaLevel();
+        int allowableHeightFromGround = maxFlight - seaLevel;
+        int groundHeight = world.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
+        return Math.max(maxFlight, groundHeight + allowableHeightFromGround);
+    }
+
     public static BlockPos getBlockInViewEscort(EntityDragonBase dragon) {
-        BlockPos escortPos = dragon.getEscortPosition();
+        BlockPos escortPos;
+        LivingEntity owner = dragon.getOwner();
+        if (owner != null) {
+            Vec3 ownerVel = new Vec3(owner.getX() - owner.xo, owner.getY() - owner.yo, owner.getZ() - owner.zo);
+            double projectedX = owner.getX() + ownerVel.x * 15;
+            double projectedY = owner.getY() + ownerVel.y * 15;
+            double projectedZ = owner.getZ() + ownerVel.z * 15;
+            escortPos = BlockPos.containing(projectedX, projectedY, projectedZ);
+        } else {
+            escortPos = dragon.getEscortPosition();
+        }
+
         BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, escortPos);
         int distFromGround = escortPos.getY() - ground.getY();
+        
+        int wanderDist = Math.max(5, IafConfig.dragonWanderFromHomeDistance / 2);
         for (int i = 0; i < 10; i++) {
-            BlockPos pos = new BlockPos(escortPos.getX() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance) - IafConfig.dragonWanderFromHomeDistance / 2,
-                (distFromGround > 16 ? escortPos.getY() : escortPos.getY() + 8 + dragon.getRandom().nextInt(16)),
-                (escortPos.getZ() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance) - IafConfig.dragonWanderFromHomeDistance / 2));
+            BlockPos pos = new BlockPos(
+                escortPos.getX() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2,
+                (distFromGround > 16 ? escortPos.getY() + dragon.getRandom().nextInt(6) - 3 : escortPos.getY() + 8 + dragon.getRandom().nextInt(10)),
+                (escortPos.getZ() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2));
             if (dragon.getDistanceSquared(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
                 return pos;
             }
@@ -105,6 +128,11 @@ public class DragonUtils {
         BlockPos newPos = radialPos.above(distFromGround > 16 ? (int) Math.min(IafConfig.maxDragonFlight, dragon.getY() + dragon.getRandom().nextInt(16) - 8) : (int) dragon.getY() + dragon.getRandom().nextInt(16) + 1);
         BlockPos pos = dragon.doesWantToLand() ? ground : newPos;
         BlockPos surface = dragon.level().getFluidState(newPos.below(2)).is(FluidTags.WATER) ? newPos.below(dragon.getRandom().nextInt(10) + 1) : newPos;
+        
+        if (dragon.getRandom().nextInt(5) == 0) {
+            return surface.above(10 + dragon.getRandom().nextInt(10));
+        }
+
         if (dragon.getDistanceSquared(Vec3.atCenterOf(surface)) > 6 && dragon.level().getFluidState(surface).is(FluidTags.WATER)) {
             return surface;
         }
