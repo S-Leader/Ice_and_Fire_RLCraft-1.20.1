@@ -150,21 +150,7 @@ public class EntityGoldDragon extends EntityDragonBase {
             if (!this.attackDecision && (this.onGround() || this.isFlying() || this.isHovering())) {
                 shootFireAtMob(attackTarget);
             }
-            if (this.attackDecision && this.isFlying()
-                    && this.distanceToSqr(attackTarget) < 100) {
-                double difX = attackTarget.getX() - this.getX();
-                double difY = attackTarget.getY() + attackTarget.getBbHeight() - this.getY();
-                double difZ = attackTarget.getZ() - this.getZ();
-                this.setDeltaMovement(this.getDeltaMovement().add(difX * 0.1D, difY * 0.1D, difZ * 0.1D));
-                if (this.getBoundingBox().inflate(1 + this.getRenderSize() * 0.5F, 1 + this.getRenderSize() * 0.5F,
-                        1 + this.getRenderSize() * 0.5F).intersects(attackTarget.getBoundingBox())) {
-                    doHurtTarget(attackTarget);
-                    attackDecision = true;
-                    randomizeAttacks();
-                    setFlying(false);
-                    setHovering(false);
-                }
-            }
+            // 空中时始终使用远程攻击，不再俯冲近战
         }
     }
 

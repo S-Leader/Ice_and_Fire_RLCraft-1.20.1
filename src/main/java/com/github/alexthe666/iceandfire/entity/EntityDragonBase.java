@@ -19,6 +19,7 @@ import com.github.alexthe666.iceandfire.entity.util.*;
 import com.github.alexthe666.iceandfire.enums.EnumDragonEgg;
 import com.github.alexthe666.iceandfire.inventory.ContainerDragon;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
+import com.github.alexthe666.iceandfire.compat.CuriosUtil;
 import com.github.alexthe666.iceandfire.item.ItemDragonArmor;
 import com.github.alexthe666.iceandfire.item.ItemSummoningCrystal;
 import com.github.alexthe666.iceandfire.message.MessageDragonSetBurnBlock;
@@ -2007,10 +2008,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             airTarget = new BlockPos(airTarget.getX(), maxFlightHeight, airTarget.getZ());
         }
         if (isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
-            double y = this.attackDecision ? airTarget.getY() : this.getY();
-
+            // 统一使用airTarget高度，不再因attackDecision俯冲到地面
             double targetX = airTarget.getX() + 0.5D - getX();
-            double targetY = Math.min(y, maxFlightHeight) + 1D - getY();
+            double targetY = Math.min(airTarget.getY(), maxFlightHeight) + 1D - getY();
             double targetZ = airTarget.getZ() + 0.5D - getZ();
             Vec3 mot = this.getDeltaMovement();
             double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * 0.100000000372529 * getFlySpeed();
@@ -2022,7 +2022,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             this.zza = 0.5F;
             double d0 = airTarget.getX() + 0.5D - this.getX();
             double d2 = airTarget.getZ() + 0.5D - this.getZ();
-            double d1 = y + 0.5D - this.getY();
+            double d1 = airTarget.getY() + 0.5D - this.getY();
             double d3 = Mth.sqrt((float)(d0 * d0 + d2 * d2));
             float f = (float) (Mth.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
             float f1 = (float) (-(Mth.atan2(d1, d3) * (180D / Math.PI)));
@@ -2583,7 +2583,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                         if (this.isOwnedBy(living) || this.isOwnersPet(living)) {
                             living.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 50 * size));
                         } else {
-                            if (living.getItemBySlot(EquipmentSlot.HEAD).getItem() != IafItemRegistry.EARPLUGS.get()) {
+                            if (!CuriosUtil.isWearingEarplugs(living)) {
                                 living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 50 * size));
                             }
                         }
@@ -2821,9 +2821,14 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     public abstract void stimulateFire(double burnX, double burnY, double burnZ, int syncType);
 
-    // 随机化攻击决策（简化自1.12.2 RLC的布尔方式）
+    // 随机化攻击决策：飞行时强制远程，地面时随机
     public void randomizeAttacks() {
-        this.attackDecision = getRandom().nextBoolean();
+        if (this.isFlying() || this.isHovering()) {
+            // 飞行中始终使用远程攻击（喷火/火球）
+            this.attackDecision = false;
+        } else {
+            this.attackDecision = getRandom().nextBoolean();
+        }
     }
 
     @Override

@@ -10,8 +10,8 @@ public class IafConfig {
     //public static boolean logCascadingWorldGen = false;
     public static boolean generateDragonSkeletons = true;
     public static int generateDragonSkeletonChance = 300;
-    public static int generateDragonDenChance = 260;
-    public static int generateDragonRoostChance = 480;
+    public static int generateDragonDenChance = 180;
+    public static int generateDragonRoostChance = 360;
     public static int dragonDenGoldAmount = 4;
     public static boolean spawnGlaciers = true;
     public static int glacierSpawnChance = 4;
@@ -123,7 +123,7 @@ public class IafConfig {
     public static boolean explosiveDragonBreath = false;
     public static double weezerTinkersDisarmChance = 0.2F;
     public static boolean chunkLoadSummonCrystal = true;
-    public static double dangerousWorldGenDistanceLimit = 1000;
+    public static double dangerousWorldGenDistanceLimit = 200;
     public static double dangerousWorldGenSeparationLimit = 300;
     public static double dragonFlightSpeedMod = 1F;
     public static double hippogryphFlightSpeedMod = 1F;

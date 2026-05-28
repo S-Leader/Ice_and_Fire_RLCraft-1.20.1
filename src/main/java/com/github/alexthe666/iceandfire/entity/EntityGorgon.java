@@ -8,6 +8,7 @@ import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.entity.ai.GorgonAIStareAttack;
 import com.github.alexthe666.iceandfire.entity.util.*;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
+import com.github.alexthe666.iceandfire.compat.CuriosUtil;
 import com.github.alexthe666.iceandfire.event.ServerEvents;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.misc.IafDamageRegistry;
@@ -67,7 +68,7 @@ public class EntityGorgon extends Monster implements IAnimatedEntity, IVillagerF
     }
 
     public static boolean isBlindfolded(LivingEntity attackTarget) {
-        return attackTarget != null && (attackTarget.getItemBySlot(EquipmentSlot.HEAD).getItem() == IafItemRegistry.BLINDFOLD.get() || attackTarget.hasEffect(MobEffects.BLINDNESS) || ServerEvents.isBlindMob(attackTarget));
+        return attackTarget != null && (CuriosUtil.isWearingBlindfold(attackTarget) || attackTarget.hasEffect(MobEffects.BLINDNESS) || ServerEvents.isBlindMob(attackTarget));
     }
 
     public static AttributeSupplier.Builder bakeAttributes() {

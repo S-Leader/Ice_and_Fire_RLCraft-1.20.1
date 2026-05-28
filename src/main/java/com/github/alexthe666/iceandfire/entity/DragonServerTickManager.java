@@ -82,20 +82,7 @@ public class DragonServerTickManager {
             dragon.roar();
         }
 
-        if (dragon.isFlying() && dragon.getTarget() != null) {
-            if (dragon.attackDecision)
-                dragon.setTackling(true);
-
-            if (dragon.isTackling()) {
-                if (dragon.getBoundingBox().expandTowards(2.0D, 2.0D, 2.0D).intersects(dragon.getTarget().getBoundingBox())) {
-                    dragon.attackDecision = true;
-                    dragon.randomizeAttacks();
-                    dragon.getCombatManager().attackTarget(dragon.getTarget(), null, dragon.getDragonStage() * 3);
-                    dragon.setFlying(false);
-                    dragon.setHovering(false);
-                }
-            }
-        }
+        // 龙在空中不再俯冲近战，改为纯远程攻击（喷火/火球）
 
         if (dragon.getControllingPassenger() == null && dragon.isTackling() && (dragon.getTarget() == null || !dragon.attackDecision)) {
             dragon.setTackling(false);
@@ -253,20 +240,10 @@ public class DragonServerTickManager {
                 dragon.fireStopTicks--;
             }
         }
-        if (dragon.isFlying()) {
-            if (dragon.getTarget() != null && dragon.getBoundingBox().expandTowards(3.0F, 3.0F, 3.0F).intersects(dragon.getTarget().getBoundingBox())) {
-                dragon.doHurtTarget(dragon.getTarget());
-            }
-            if (dragon.attackDecision && (dragon.horizontalCollision || dragon.onGround())) {
-                dragon.attackDecision = true;
-                if (dragon.getControllingPassenger() == null) {
-                    dragon.setFlying(false);
-                    dragon.setHovering(false);
-                }
-            }
-            if (dragon.attackDecision && dragon.getTarget() != null && dragon.isTargetBlocked(dragon.getTarget().position())) {
-                dragon.randomizeAttacks();
-            }
+        // 空中碰撞检测：仅在撞到障碍物时考虑降落，不再强制停飞
+        if (dragon.isFlying() && dragon.horizontalCollision && dragon.onGround() && dragon.getControllingPassenger() == null) {
+            dragon.setFlying(false);
+            dragon.setHovering(false);
         }
     }
 }

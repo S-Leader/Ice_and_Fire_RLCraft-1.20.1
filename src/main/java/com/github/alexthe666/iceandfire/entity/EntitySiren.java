@@ -15,6 +15,7 @@ import com.github.alexthe666.iceandfire.entity.util.IHasCustomizableAttributes;
 import com.github.alexthe666.iceandfire.entity.util.IHearsSiren;
 import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
+import com.github.alexthe666.iceandfire.compat.CuriosUtil;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.message.MessageSirenSong;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
@@ -119,8 +120,7 @@ public class EntitySiren extends Monster implements IAnimatedEntity, IVillagerFe
     }
 
     public static boolean isWearingEarplugs(LivingEntity entity) {
-        ItemStack helmet = entity.getItemBySlot(EquipmentSlot.HEAD);
-        return helmet.getItem() == IafItemRegistry.EARPLUGS.get() || helmet != ItemStack.EMPTY && helmet.getItem().getDescriptionId().contains("earmuff");
+        return CuriosUtil.isWearingEarplugs(entity);
     }
 
     @Override

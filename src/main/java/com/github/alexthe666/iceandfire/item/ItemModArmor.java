@@ -7,13 +7,19 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ItemModArmor extends ArmorItem {
+/**
+ * 通用模组盔甲（蚁穴盔甲、羊伪装、耳塞等）
+ * 实现 ICurioItem 但仅对耳塞启用 Curios 功能
+ */
+public class ItemModArmor extends ArmorItem implements ICurioItem {
 
     public ItemModArmor(ArmorMaterial material, ArmorItem.Type slot) {
         super(material, slot, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/);
@@ -59,5 +65,23 @@ public class ItemModArmor extends ArmorItem {
             }
         }
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
+    }
+
+    // ========== Curios 兼容（仅耳塞启用） ==========
+
+    @Override
+    public boolean hasCurioCapability(ItemStack stack) {
+        // 仅耳塞启用 Curios 功能，其他盔甲（蚁穴、羊伪装等）不受影响
+        return this == IafItemRegistry.EARPLUGS.get();
+    }
+
+    @Override
+    public void curioTick(SlotContext slotContext, ItemStack stack) {
+        // 耳塞为被动防护，不需要 tick 效果
+    }
+
+    @Override
+    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
+        return this == IafItemRegistry.EARPLUGS.get();
     }
 }
