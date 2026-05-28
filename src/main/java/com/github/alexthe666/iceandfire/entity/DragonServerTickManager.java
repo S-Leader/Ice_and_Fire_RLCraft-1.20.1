@@ -124,6 +124,11 @@ public class DragonServerTickManager {
             dragon.setHovering(false);
         }
         if (dragon.getControllingPassenger() == null) {
+            // AI飞行时停止pathfinder导航，由flyAround()全权控制移动
+            // 避免pathfinder和flyAround()两套导航系统同时修改deltaMovement导致冲突
+            if (dragon.isFlying() || dragon.isHovering()) {
+                dragon.getNavigation().stop();
+            }
             if ((dragon.useFlyingPathFinder() || dragon.isHovering()) && dragon.navigatorType != 1) {
                 dragon.switchNavigator(1);
             }
@@ -135,7 +140,7 @@ public class DragonServerTickManager {
         if (dragon.getControllingPassenger() == null && !dragon.useFlyingPathFinder() && !dragon.isHovering() && dragon.navigatorType != 0) {
             dragon.switchNavigator(0);
         }
-        // Dragon landing
+        // 龙降落：仅在不在空中且想要降落时取消飞行
         if (dragon.getControllingPassenger() == null && !dragon.isOverAir() && dragon.doesWantToLand() && (dragon.isFlying() || dragon.isHovering()) && !dragon.isInWater()) {
             dragon.setFlying(false);
             dragon.setHovering(false);

@@ -2300,20 +2300,18 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
      */
     protected void updatePitch(final double verticalDelta) {
         if (this.isOverAir() && !this.isPassenger()) {
-            // Update the pitch when in air, and stepping up many blocks
+            // AI飞行时使用较小的pitch灵敏度，避免pitch剧烈波动干扰飞行导航
+            float pitchSensitivity = this.getControllingPassenger() != null ? 10.0f : 4.0f;
             if (!this.isHovering()) {
-                this.incrementDragonPitch((float) (verticalDelta) * 10);
+                this.incrementDragonPitch((float) (verticalDelta) * pitchSensitivity);
             }
             this.setDragonPitch(Mth.clamp(this.getDragonPitch(), -60, 40));
             final float plateau = 2;
             final float planeDist = (float) ((Math.abs(this.getDeltaMovement().x) + Math.abs(this.getDeltaMovement().z)) * 6F);
             if (this.getDragonPitch() > plateau) {
-                //down
-                //this.motionY -= 0.2D;
                 this.decrementDragonPitch(planeDist * Math.abs(this.getDragonPitch()) / 90);
             }
-            if (this.getDragonPitch() < -plateau) {//-2
-                //up
+            if (this.getDragonPitch() < -plateau) {
                 this.incrementDragonPitch(planeDist * Math.abs(this.getDragonPitch()) / 90);
             }
             if (this.getDragonPitch() > 2F) {
@@ -2321,13 +2319,14 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             } else if (this.getDragonPitch() < -2F) {
                 this.incrementDragonPitch(1);
             }
-            if (this.getControllingPassenger() == null && this.getDragonPitch() < -45 && planeDist < 3) {
+            // 仅在有骑乘者时根据pitch强制切换为悬停，AI飞行时由flyAround()控制状态
+            if (this.getControllingPassenger() != null && this.getDragonPitch() < -45 && planeDist < 3) {
                 if (this.isFlying() && !this.isHovering()) {
                     this.setHovering(true);
                 }
             }
         } else {
-            // Damp the pitch once on ground
+            // 地面时平滑归零pitch
             if (Mth.abs(this.getDragonPitch()) < 1) {
                 this.setDragonPitch(0);
             } else {
@@ -2514,11 +2513,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         }
 
         if (this.isVehicle()) {
-            // When riding, the server side movement check is performed in ServerGamePacketListenerImpl#handleMoveVehicle
-            // verticalCollide tag might get inconsistent due to dragon's large bounding box and causes move wrongly msg
             if (isControlledByLocalInstance()) {
-                // This is how EntityDragonBase#breakBlock handles movement when breaking blocks
-                // it's done by server, however client does not fire server side events, so breakBlock() here won't work
                 if (horizontalCollision) {
                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.6F, 1, 0.6F));
                 }
@@ -2526,14 +2521,13 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             } else {
                 super.move(pType, pPos);
             }
-
-            // Set no gravity flag to prevent getting kicked by flight disabled servers
-            this.setNoGravity(this.isHovering() || this.isFlying());
         } else {
-            // The flight mgr is not ready for noGravity
-            this.setNoGravity(false);
             super.move(pType, pPos);
         }
+
+        // 飞行/悬停时禁用重力，无论是否有骑乘者
+        // 这样AI飞行时不会被重力持续拉低导致频繁取消飞行
+        this.setNoGravity(this.isHovering() || this.isFlying());
     }
 
     public void updateCheckPlayer() {
@@ -2644,7 +2638,8 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     public boolean isChained() {
         AtomicBoolean isChained = new AtomicBoolean(false);
-        EntityDataProvider.getCapability(this).ifPresent(data -> isChained.set(data.chainData.getChainedTo().isEmpty()));
+        // 修复逻辑反转：isEmpty()表示没有拴绳，应取反
+        EntityDataProvider.getCapability(this).ifPresent(data -> isChained.set(!data.chainData.getChainedTo().isEmpty()));
         return isChained.get();
     }
 
