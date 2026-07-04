@@ -27,6 +27,7 @@ public class IafConfig {
     public static double dragonAttackDamageIce = 2.5F;
     public static double dragonAttackDamageLightning = 3.5F;
     public static int maxDragonFlight = 256;
+    public static int dragonFlightHeight = 48;
     public static int dragonGoldSearchLength = 30;
     public static boolean canDragonsHealFromBiting;
     public static boolean canDragonsDespawn = true;
@@ -182,6 +183,7 @@ public class IafConfig {
             dragonAttackDamageIce = ConfigHolder.SERVER.dragonAttackDamageIce.get();
             dragonAttackDamageLightning = ConfigHolder.SERVER.dragonAttackDamageLightning.get();
             maxDragonFlight = ConfigHolder.SERVER.maxDragonFlight.get();
+            dragonFlightHeight = ConfigHolder.SERVER.dragonFlightHeight.get();
             dragonGoldSearchLength = ConfigHolder.SERVER.dragonGoldSearchLength.get();
             canDragonsHealFromBiting = ConfigHolder.SERVER.canDragonsHealFromBiting.get();
             canDragonsDespawn = ConfigHolder.SERVER.canDragonsDespawn.get();

@@ -4,7 +4,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.github.alexthe666.iceandfire.entity.EntityDreadQueen;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
-import net.minecraft.core.Vec3i;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 
@@ -30,7 +30,7 @@ public class DragonServerTickManager {
             if (dragon.hasHomePosition
                     && dragon.getRestrictCenter() != null
                     && DragonUtils.isInHomeDimension(dragon)
-                    && dragon.getDistanceSquared(Vec3.atCenterOf(dragon.getRestrictCenter())) > dragon.getBbWidth() * 10
+                    && dragon.distanceToSqr(Vec3.atCenterOf(dragon.getRestrictCenter())) > dragon.getBbWidth() * 10
                     && this.dragon.getCommand() != 2 && this.dragon.getCommand() != 1) {
                 dragon.lookingForRoostAIFlag = true;
             } else {
@@ -65,7 +65,9 @@ public class DragonServerTickManager {
         if (dragon.isInLove()) {
             dragon.level().broadcastEntityEvent(dragon, (byte) 18);
         }
-        if (new Vec3i((int) dragon.xo, (int) dragon.yo, (int) dragon.zo).distSqr(dragon.blockPosition()) <= 0.5) {
+        // 与1.12.2一致仅比较XZ（贴墙上下浮动不清零）；用floor保证负坐标区判定正确
+        // （原实现用(int)截断与blockPosition()的floor比较，负坐标下恒差1格，导致卡住检测在负坐标区从不生效）
+        if (Mth.floor(dragon.xo) == dragon.getBlockX() && Mth.floor(dragon.zo) == dragon.getBlockZ()) {
             dragon.ticksStill++;
         } else {
             dragon.ticksStill = 0;

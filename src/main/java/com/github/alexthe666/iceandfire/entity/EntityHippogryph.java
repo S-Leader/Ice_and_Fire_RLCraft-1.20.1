@@ -162,8 +162,8 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
         this.goalSelector.addGoal(4, new HippogryphAIMate(this, 1.0D));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, Ingredient.of(IafItemTags.TEMPT_HIPPOGRYPH), false));
         this.goalSelector.addGoal(6, new HippogryphAIAirTarget(this));
-        //TODO: This doesn't gurantee the hippogryph will fly, it can still and is likely to path on the ground
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomFlyingGoal(this, 1D));
+        // 飞行选点由HippogryphAIAirTarget负责，地面漫游由HippogryphAIWander负责，
+        // 不再使用vanilla WaterAvoidingRandomFlyingGoal（地面时会寻路到树冠/空中点导致怪异走位）
         this.goalSelector.addGoal(8, new HippogryphAIWander(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, LivingEntity.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -1021,7 +1021,7 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
 
     // 向airTarget方向飞行（移植自1.12.2 RLC）
     public void flyTowardsTarget() {
-        if (airTarget != null && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+        if (airTarget != null && this.isFlying() && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
             double targetX = airTarget.getX() + 0.5D - this.getX();
             double targetY = airTarget.getY() + 1D - this.getY();
             double targetZ = airTarget.getZ() + 0.5D - this.getZ();
@@ -1110,13 +1110,6 @@ public class EntityHippogryph extends TamableAnimal implements ISyncMount, IAnim
             return !level().isEmptyBlock(pos);
         }
         return false;
-    }
-
-    public float getDistanceSquared(Vec3 Vector3d) {
-        float f = (float) (this.getX() - Vector3d.x);
-        float f1 = (float) (this.getY() - Vector3d.y);
-        float f2 = (float) (this.getZ() - Vector3d.z);
-        return f * f + f1 * f1 + f2 * f2;
     }
 
     @Override

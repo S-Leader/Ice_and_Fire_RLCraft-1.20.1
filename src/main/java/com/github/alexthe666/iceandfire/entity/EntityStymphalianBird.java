@@ -376,7 +376,7 @@ public class EntityStymphalianBird extends Monster implements IAnimatedEntity, E
     }
 
     public void flyTowardsTarget() {
-        if (airTarget != null && isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+        if (airTarget != null && isTargetInAir() && this.isFlying() && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
             double targetX = airTarget.getX() + 0.5D - getX();
             double targetY = Math.min(airTarget.getY(), 256) + 1D - getY();
             double targetZ = airTarget.getZ() + 0.5D - getZ();
@@ -395,7 +395,7 @@ public class EntityStymphalianBird extends Monster implements IAnimatedEntity, E
         } else {
             this.airTarget = null;
         }
-        if (airTarget != null && isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
+        if (airTarget != null && isTargetInAir() && this.isFlying() && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
             this.setFlying(false);
         }
     }
@@ -465,13 +465,6 @@ public class EntityStymphalianBird extends Monster implements IAnimatedEntity, E
         if (this.flock != null && this.flock.isLeader(this) && entity != null) {
             this.flock.onLeaderAttack(entity);
         }
-    }
-
-    public float getDistanceSquared(Vec3 Vector3d) {
-        float f = (float) (this.getX() - Vector3d.x);
-        float f1 = (float) (this.getY() - Vector3d.y);
-        float f2 = (float) (this.getZ() - Vector3d.z);
-        return f * f + f1 * f1 + f2 * f2;
     }
 
     protected boolean isTargetInAir() {

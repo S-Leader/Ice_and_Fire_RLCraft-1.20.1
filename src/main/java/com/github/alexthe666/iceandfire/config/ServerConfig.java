@@ -23,6 +23,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.DoubleValue dragonAttackDamageIce;
     public final ForgeConfigSpec.DoubleValue dragonAttackDamageLightning;
     public final ForgeConfigSpec.IntValue maxDragonFlight;
+    public final ForgeConfigSpec.IntValue dragonFlightHeight;
     public final ForgeConfigSpec.IntValue dragonGoldSearchLength;
     public final ForgeConfigSpec.BooleanValue canDragonsHealFromBiting;
     public final ForgeConfigSpec.BooleanValue canDragonsDespawn;
@@ -189,6 +190,7 @@ public class ServerConfig {
         builder.pop();
         builder.push("Behaviour");
         this.maxDragonFlight = buildInt(builder, "Max Dragon Flight Height", "all", 256, 100, Integer.MAX_VALUE, "How high dragons can fly, in Y height.");
+        this.dragonFlightHeight = buildInt(builder, "Dragon Cruise Flight Height", "all", 48, 16, 128, "Cruising height above the ground (in blocks) for dragon AI flight. Escorting dragons fly at 2/3 of this value, hippogryphs at 1/2.");
         this.dragonGoldSearchLength = buildInt(builder, "Dragon Gold Search Length", "all", 30, 0, 10000, "How far away dragons will detect gold blocks being destroyed or chests being opened");
         this.canDragonsHealFromBiting = buildBoolean(builder, "Dragon Bite Heal", "all", true, "Whether the bite attack from a dragon heals them or not.");
         this.canDragonsDespawn = buildBoolean(builder, "Dragons Despawn", "all", true, "True if dragons can despawn. Note that if this is false there may be SERIOUS lag issues.");

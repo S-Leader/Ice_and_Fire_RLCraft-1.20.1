@@ -32,12 +32,43 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DragonUtils {
+    // 护航飞行高度：比巡航低，便于跟随主人
+    private static int getEscortFlightHeight() {
+        return Math.max(8, IafConfig.dragonFlightHeight * 2 / 3);
+    }
+
+    // 骏鹰体型小，巡航高度取龙的一半
+    private static int getHippogryphFlightHeight() {
+        return Math.max(8, IafConfig.dragonFlightHeight / 2);
+    }
+
+    /**
+     * 空战追踪选点：近距离(≤32格)直扑目标实时位置；
+     * 远距离绕目标随机盘旋点逐步接近，仅在无点或到达后重选，避免每tick换点导致乱飞。
+     */
+    public static BlockPos updateAirAttackTarget(EntityDragonBase dragon, LivingEntity target, @Nullable BlockPos current) {
+        // 32格内直扑，交由战斗逻辑俯冲/吐息
+        if (dragon.distanceToSqr(target.getX(), dragon.getY(), target.getZ()) <= 1024) {
+            return target.blockPosition();
+        }
+        // 到达当前盘旋点（或无点）时，在目标周围16~31格、上方16格处选新点
+        if (current == null || dragon.distanceToSqr(Vec3.atCenterOf(current)) < 16) {
+            double angle = Math.PI * 2 * dragon.getRandom().nextDouble();
+            double dist = 16 + dragon.getRandom().nextInt(16);
+            return BlockPos.containing(
+                target.getX() + Math.sin(angle) * dist,
+                target.getY() + 16,
+                target.getZ() + Math.cos(angle) * dist);
+        }
+        return current;
+    }
+
     // 获取位置的最大飞行高度（修正公式，基于地面高度+相对偏移，且不超过绝对上限）
     public static int getMaximumFlightHeightForPos(Level world, BlockPos pos) {
         int maxFlight = IafConfig.maxDragonFlight;
         int groundHeight = world.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
-        // 允许龙在地面上方飞行最多64格，但不超过配置的绝对上限
-        int relativeMaxHeight = groundHeight + 64;
+        // 巡航高度上方留16格余量，但不超过配置的绝对上限
+        int relativeMaxHeight = groundHeight + IafConfig.dragonFlightHeight + 16;
         return Math.min(maxFlight, relativeMaxHeight);
     }
 
@@ -59,13 +90,13 @@ public class DragonUtils {
         
         int wanderDist = Math.max(5, IafConfig.dragonWanderFromHomeDistance / 2);
         for (int i = 0; i < 10; i++) {
-            // 护航飞行高度：地面+8到地面+32，不超过最大飞行高度
-            int targetY = Math.min(maxHeight, ground.getY() + 8 + dragon.getRandom().nextInt(24));
+            // 护航飞行高度固定，避免随机高度导致上下颠簸
+            int targetY = Math.min(maxHeight, ground.getY() + getEscortFlightHeight());
             BlockPos pos = new BlockPos(
                 escortPos.getX() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2,
                 targetY,
                 (escortPos.getZ() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2));
-            if (dragon.getDistanceSquared(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
+            if (dragon.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
                 return pos;
             }
         }
@@ -98,13 +129,13 @@ public class DragonUtils {
             int maxHeight = getMaximumFlightHeightForPos(dragon.level(), dragonPos);
             for (int i = 0; i < 10; i++) {
                 BlockPos homePos = dragon.homePos.getPosition();
-                // 巡航高度：地面+8到地面+48，不超过最大飞行高度
-                int targetY = Math.min(maxHeight, ground.getY() + 8 + dragon.getRandom().nextInt(40));
+                // 巡航高度固定为配置值，只保留XZ随机漫游，避免随机高度导致上下颠簸
+                int targetY = Math.min(maxHeight, ground.getY() + IafConfig.dragonFlightHeight);
                 BlockPos pos = new BlockPos(
                     homePos.getX() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance,
                     targetY,
                     homePos.getZ() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance);
-                if (dragon.getDistanceSquared(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
+                if (dragon.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
                     return pos;
                 }
             }
@@ -115,11 +146,11 @@ public class DragonUtils {
         BlockPos radialPos = BlockPos.containing(dragon.getX() + extraX, 0, dragon.getZ() + extraZ);
         BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, radialPos);
         int maxHeight = getMaximumFlightHeightForPos(dragon.level(), radialPos);
-        // 巡航高度：地面+8到地面+48，不超过最大飞行高度
-        int targetY = Math.min(maxHeight, ground.getY() + 8 + dragon.getRandom().nextInt(40));
+        // 巡航高度固定为配置值，避免随机高度导致上下颠簸
+        int targetY = Math.min(maxHeight, ground.getY() + IafConfig.dragonFlightHeight);
         BlockPos newPos = new BlockPos(radialPos.getX(), targetY, radialPos.getZ());
         BlockPos pos = dragon.doesWantToLand() ? ground : newPos;
-        if (dragon.getDistanceSquared(Vec3.atCenterOf(newPos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(newPos))) {
+        if (dragon.distanceToSqr(Vec3.atCenterOf(newPos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(newPos))) {
             return pos;
         }
         return null;
@@ -134,17 +165,18 @@ public class DragonUtils {
         BlockPos radialPos = BlockPos.containing(dragon.getX() + extraX, 0, dragon.getZ() + extraZ);
         BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, radialPos);
         int maxHeight = getMaximumFlightHeightForPos(dragon.level(), radialPos);
-        // 巡航高度：地面+8到地面+48，不超过最大飞行高度
-        int targetY = Math.min(maxHeight, ground.getY() + 8 + dragon.getRandom().nextInt(40));
+        // 巡航高度固定为配置值，避免随机高度导致上下颠簸
+        int targetY = Math.min(maxHeight, ground.getY() + IafConfig.dragonFlightHeight);
         BlockPos newPos = new BlockPos(radialPos.getX(), targetY, radialPos.getZ());
         BlockPos pos = dragon.doesWantToLand() ? ground : newPos;
         BlockPos surface = dragon.level().getFluidState(newPos.below(2)).is(FluidTags.WATER) ? newPos.below(dragon.getRandom().nextInt(10) + 1) : newPos;
         
         if (dragon.getRandom().nextInt(5) == 0) {
-            return surface.above(10 + dragon.getRandom().nextInt(10));
+            // 偶尔跃出水面：高度固定，去除随机
+            return surface.above(15);
         }
 
-        if (dragon.getDistanceSquared(Vec3.atCenterOf(surface)) > 6 && dragon.level().getFluidState(surface).is(FluidTags.WATER)) {
+        if (dragon.distanceToSqr(Vec3.atCenterOf(surface)) > 6 && dragon.level().getFluidState(surface).is(FluidTags.WATER)) {
             return surface;
         }
         return null;
@@ -206,12 +238,12 @@ public class DragonUtils {
             int maxHeight = getMaximumFlightHeightForPos(hippo.level(), dragonPos);
             for (int i = 0; i < 10; i++) {
                 // 骏鹰巡航高度：地面+8到地面+32
-                int targetY = Math.min(maxHeight, ground.getY() + 8 + hippo.getRandom().nextInt(24));
+                int targetY = Math.min(maxHeight, ground.getY() + getHippogryphFlightHeight());
                 BlockPos pos = BlockPos.containing(
                     hippo.homePos.getX() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance) - IafConfig.dragonWanderFromHomeDistance,
                     targetY,
                     hippo.homePos.getZ() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance);
-                if (hippo.getDistanceSquared(Vec3.atCenterOf(pos)) > 6 && !hippo.isTargetBlocked(Vec3.atCenterOf(pos))) {
+                if (hippo.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !hippo.isTargetBlocked(Vec3.atCenterOf(pos))) {
                     return pos;
                 }
             }
@@ -220,10 +252,10 @@ public class DragonUtils {
         BlockPos ground = hippo.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, radialPos);
         int maxHeight = getMaximumFlightHeightForPos(hippo.level(), radialPos);
         // 骏鹰巡航高度：地面+8到地面+32，不超过最大飞行高度
-        int targetY = Math.min(maxHeight, ground.getY() + 8 + hippo.getRandom().nextInt(24));
+        int targetY = Math.min(maxHeight, ground.getY() + getHippogryphFlightHeight());
         BlockPos newPos = new BlockPos(radialPos.getX(), targetY, radialPos.getZ());
         BlockPos pos = hippo.doesWantToLand() ? ground : newPos;
-        if (!hippo.isTargetBlocked(Vec3.atCenterOf(newPos)) && hippo.getDistanceSquared(Vec3.atCenterOf(newPos)) > 6) {
+        if (!hippo.isTargetBlocked(Vec3.atCenterOf(newPos)) && hippo.distanceToSqr(Vec3.atCenterOf(newPos)) > 6) {
             return newPos;
         }
         return null;
@@ -243,7 +275,7 @@ public class DragonUtils {
         BlockPos newPos = radialPos.above(distFromGround > 16 ? flightHeight : (int) bird.getY() + bird.getRandom().nextInt(16) + 1);
         // FIXME :: Unused
 //        BlockPos pos = bird.doesWantToLand() ? ground : newPos;
-        if (bird.getDistanceSquared(Vec3.atCenterOf(newPos)) > 6 && !bird.isTargetBlocked(Vec3.atCenterOf(newPos))) {
+        if (bird.distanceToSqr(Vec3.atCenterOf(newPos)) > 6 && !bird.isTargetBlocked(Vec3.atCenterOf(newPos))) {
             return newPos;
         }
         return null;

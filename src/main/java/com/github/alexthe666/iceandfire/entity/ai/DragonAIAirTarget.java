@@ -38,15 +38,15 @@ public class DragonAIAirTarget extends Goal {
         }
 
         // 已到达目标附近，清除目标，促使寻找下一个目标
-        if (dragon.airTarget != null && dragon.getDistanceSquared(Vec3.atCenterOf(dragon.airTarget)) < 16) {
+        if (dragon.airTarget != null && dragon.distanceToSqr(Vec3.atCenterOf(dragon.airTarget)) < 16) {
             dragon.airTarget = null;
         }
 
         if (dragon.airTarget == null) {
-            // 有攻击目标时，向其位置飞行
+            // 有攻击目标时：近距离直扑，远距离绕目标盘旋接近
             LivingEntity attackTarget = dragon.getTarget();
             if (attackTarget != null && attackTarget.isAlive()) {
-                dragon.airTarget = attackTarget.blockPosition();
+                dragon.airTarget = DragonUtils.updateAirAttackTarget(dragon, attackTarget, dragon.airTarget);
                 return true;
             }
             // 无攻击目标时，选择随机空中巡航点
@@ -76,7 +76,8 @@ public class DragonAIAirTarget extends Goal {
         }
         LivingEntity attackTarget = dragon.getTarget();
         if (attackTarget != null && attackTarget.isAlive()) {
-            dragon.airTarget = attackTarget.blockPosition();
+            // 近距离直扑，远距离绕目标盘旋接近（与flyAround策略一致）
+            dragon.airTarget = DragonUtils.updateAirAttackTarget(dragon, attackTarget, dragon.airTarget);
             return true;
         }
         return dragon.airTarget != null && !dragon.isTargetBlocked(Vec3.atCenterOf(dragon.airTarget));

@@ -22,14 +22,14 @@ public class DragonAIReturnToRoost extends Goal {
             && (dragon.getTarget() == null || !dragon.getTarget().isAlive())
             && dragon.getRestrictCenter() != null
             && DragonUtils.isInHomeDimension(dragon)
-            && dragon.getDistanceSquared(Vec3.atCenterOf(dragon.getRestrictCenter())) > dragon.getBbWidth()
+            && dragon.distanceToSqr(Vec3.atCenterOf(dragon.getRestrictCenter())) > dragon.getBbWidth()
             * dragon.getBbWidth();
     }
 
     @Override
     public void tick() {
         if (this.dragon.getRestrictCenter() != null) {
-            final double dist = Math.sqrt(dragon.getDistanceSquared(Vec3.atCenterOf(dragon.getRestrictCenter())));
+            final double dist = Math.sqrt(dragon.distanceToSqr(Vec3.atCenterOf(dragon.getRestrictCenter())));
             final double xDist = Math.abs(dragon.getX() - dragon.getRestrictCenter().getX() - 0.5F);
             final double zDist = Math.abs(dragon.getZ() - dragon.getRestrictCenter().getZ() - 0.5F);
             final double xzDist = Math.sqrt(xDist * xDist + zDist * zDist);

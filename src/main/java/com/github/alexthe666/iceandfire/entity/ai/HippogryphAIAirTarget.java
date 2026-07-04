@@ -36,7 +36,7 @@ public class HippogryphAIAirTarget extends Goal {
             return false;
         }
         // 已到达目标附近，清除目标
-        if (hippogryph.airTarget != null && hippogryph.getDistanceSquared(new Vec3(hippogryph.airTarget.getX(), hippogryph.getY(), hippogryph.airTarget.getZ())) < 3) {
+        if (hippogryph.airTarget != null && hippogryph.distanceToSqr(new Vec3(hippogryph.airTarget.getX(), hippogryph.getY(), hippogryph.airTarget.getZ())) < 3) {
             hippogryph.airTarget = null;
         }
 

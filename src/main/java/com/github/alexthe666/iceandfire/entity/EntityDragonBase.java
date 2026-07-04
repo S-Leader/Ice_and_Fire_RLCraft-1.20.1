@@ -60,6 +60,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -210,9 +211,10 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     public SimpleContainer dragonInventory;
     public String prevArmorResLoc = "0|0|0|0";
     public String armorResLoc = "0|0|0|0";
-    public IafDragonFlightManager flightManager;
     public boolean lookingForRoostAIFlag = false;
     protected int flyHovering;
+    // 飞行中横向碰撞的连续tick数，用于撞墙改道
+    private int flightStuckTicks;
     protected boolean hasHadHornUse = false;
     protected int fireTicks;
     protected int blockBreakCounter;
@@ -257,7 +259,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             tail_buffer = new ChainBuffer();
         }
         legSolver = new LegSolverQuadruped(0.3F, 0.35F, 0.2F, 1.45F, 1.0F);
-        this.flightManager = new IafDragonFlightManager(this);
         this.animationManager = new DragonAnimationManager(this);
         this.serverTickManager = new DragonServerTickManager(this);
         this.combatManager = new DragonCombatManager(this);
@@ -488,7 +489,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             this.setFlying(false);
             this.setHovering(false);
         } else if (navigatorType == 1) {
-            this.moveControl = new IafDragonFlightManager.FlightMoveHelper(this);
+            // AI飞行：移动完全由flyAround()/flyTowardsTarget()驱动，
+            // 飞行期间导航每tick被stop()，vanilla MoveControl保持WAIT不产生位移
+            this.moveControl = new MoveControl(this);
             this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
             this.navigatorType = 1;
         } else {
@@ -1402,6 +1405,10 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         boolean checkNavigation = ticksStill > 80 && canMove() && !isHovering();
 
         if (checkNavigation) {
+            // 飞行中有airTarget却长时间未移动同样视为卡住（1.12.2 RLC语义，飞行撞墙可触发挖掘）
+            if (airTarget != null) {
+                return true;
+            }
             PathNavigation navigation = getNavigation();
             Path path = navigation.getPath();
 
@@ -1761,10 +1768,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (!level().isClientSide && (this.isFlying() || this.isHovering()) && !this.isModelDead()) {
             this.flyAround();
         }
-        // 保留flightManager仅用于骑乘控制模式
-        if (useFlyingPathFinder() && !level().isClientSide && this.getControllingPassenger() != null) {
-            this.flightManager.update();
-        }
         level().getProfiler().pop();
         level().getProfiler().pop();
 
@@ -1989,9 +1992,20 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (airTarget != null && (doesWantToLand() && getTarget() == null)) {
             airTarget = null;
         }
-        // 有攻击目标时动态追踪
+        // 撞墙改道：无攻击目标且横向碰撞持续2秒，丢弃当前目标重新选路
+        // （选路时isTargetBlocked射线会避开被挡方向；有攻击目标时不改道，交由isStuck挖掘处理）
+        if (this.horizontalCollision && this.getTarget() == null) {
+            flightStuckTicks++;
+            if (flightStuckTicks > 40) {
+                airTarget = null;
+                flightStuckTicks = 0;
+            }
+        } else {
+            flightStuckTicks = 0;
+        }
+        // 有攻击目标时动态追踪：近距离直扑，远距离绕目标盘旋接近
         if (getTarget() != null && getTarget().isAlive()) {
-            airTarget = getTarget().blockPosition();
+            airTarget = DragonUtils.updateAirAttackTarget(this, getTarget(), airTarget);
         }
         if (airTarget != null) {
             flyTowardsTarget();
@@ -2007,7 +2021,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (airTarget.getY() > maxFlightHeight) {
             airTarget = new BlockPos(airTarget.getX(), maxFlightHeight, airTarget.getZ());
         }
-        if (isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+        if (isTargetInAir() && this.isFlying() && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
             // 统一使用airTarget高度，不再因attackDecision俯冲到地面
             double targetX = airTarget.getX() + 0.5D - getX();
             double targetY = Math.min(airTarget.getY(), maxFlightHeight) + 1D - getY();
@@ -2037,7 +2051,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                 this.setHovering(false);
                 hoverTicks = 0;
             }
-            if (this.getDistanceSquared(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
+            if (this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
                 setFlying(false);
                 setHovering(true);
             }
@@ -2084,13 +2098,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     public void setCrystalBound(boolean crystalBound) {
         this.entityData.set(CRYSTAL_BOUND, crystalBound);
-    }
-
-    public float getDistanceSquared(Vec3 Vector3d) {
-        final float f = (float) (this.getX() - Vector3d.x);
-        final float f1 = (float) (this.getY() - Vector3d.y);
-        final float f2 = (float) (this.getZ() - Vector3d.z);
-        return f * f + f1 * f1 + f2 * f2;
     }
 
     public abstract Item getVariantScale(int variant);
@@ -2859,11 +2866,11 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     @Override
     public void setTarget(@Nullable LivingEntity target) {
         super.setTarget(target);
-        // 有攻击目标时，设置airTarget为目标位置（移植自1.12.2 RLC）
+        // 清空旧目标点，下tick由flyAround()/DragonAIAirTarget按距离策略选点
+        // （直接覆写为目标位置会锁死"直扑目标脚底"直到近距离，破坏远距离盘旋）
         if (target != null) {
-            this.airTarget = target.blockPosition();
+            this.airTarget = null;
         }
-        this.flightManager.onSetAttackTarget(target);
     }
 
     @Override
