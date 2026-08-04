@@ -45,7 +45,8 @@ public class IafBlockTags extends BlockTagsProvider {
                 .add(IafBlockRegistry.CHARRED_DIRT_PATH.get())
                 .add(IafBlockRegistry.CHARRED_GRASS.get())
                 .add(IafBlockRegistry.CHARRED_GRAVEL.get())
-                .add(IafBlockRegistry.CHARRED_STONE.get());
+                .add(IafBlockRegistry.CHARRED_STONE.get())
+                .add(IafBlockRegistry.CHARED_RUBY_ORE.get());
 
         tag(FROZEN_BLOCKS)
                 .add(IafBlockRegistry.FROZEN_COBBLESTONE.get())
@@ -54,7 +55,8 @@ public class IafBlockTags extends BlockTagsProvider {
                 .add(IafBlockRegistry.FROZEN_GRASS.get())
                 .add(IafBlockRegistry.FROZEN_GRAVEL.get())
                 .add(IafBlockRegistry.FROZEN_STONE.get())
-                .add(IafBlockRegistry.FROZEN_SPLINTERS.get());
+                .add(IafBlockRegistry.FROZEN_SPLINTERS.get())
+                .add(IafBlockRegistry.FROZEN_SAPPHIRE_ORE.get());
 
         tag(CRACKLED_BLOCKS)
                 .add(IafBlockRegistry.CRACKLED_COBBLESTONE.get())
@@ -62,7 +64,8 @@ public class IafBlockTags extends BlockTagsProvider {
                 .add(IafBlockRegistry.CRACKLED_DIRT_PATH.get())
                 .add(IafBlockRegistry.CRACKLED_GRASS.get())
                 .add(IafBlockRegistry.CRACKLED_GRASS.get())
-                .add(IafBlockRegistry.CRACKLED_STONE.get());
+                .add(IafBlockRegistry.CRACKLED_STONE.get())
+                .add(IafBlockRegistry.CRACKLED_AMETHYST_ORE.get());
 
         tag(DRAGON_ENVIRONMENT_BLOCKS)
                 .addTag(CHARRED_BLOCKS)
@@ -85,13 +88,13 @@ public class IafBlockTags extends BlockTagsProvider {
                 .add(Blocks.IRON_ORE);
 
         tag(FIRE_DRAGON_CAVE_ORES)
-                .add(Blocks.EMERALD_ORE);
+                .add(IafBlockRegistry.CHARED_RUBY_ORE.get());
 
         tag(ICE_DRAGON_CAVE_ORES)
-                .add(IafBlockRegistry.SAPPHIRE_ORE.get());
+                .add(IafBlockRegistry.FROZEN_SAPPHIRE_ORE.get());
 
         tag(LIGHTNING_DRAGON_CAVE_ORES)
-                .add(Blocks.BUDDING_AMETHYST);
+                .add(IafBlockRegistry.CRACKLED_AMETHYST_ORE.get());
 
         tag(DRAGON_BLOCK_BREAK_BLACKLIST)
                 .addTag(Tags.Blocks.CHESTS)
@@ -113,16 +116,28 @@ public class IafBlockTags extends BlockTagsProvider {
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(IafBlockRegistry.SAPPHIRE_ORE.get())
-                .add(IafBlockRegistry.SAPPHIRE_BLOCK.get());
+                .add(IafBlockRegistry.SAPPHIRE_BLOCK.get())
+                .add(IafBlockRegistry.RUBY_ORE.get())
+                .add(IafBlockRegistry.RUBY_BLOCK.get())
+                .add(IafBlockRegistry.CHARED_RUBY_ORE.get())
+                .add(IafBlockRegistry.FROZEN_SAPPHIRE_ORE.get())
+                .add(IafBlockRegistry.CRACKLED_AMETHYST_ORE.get());
 
         tag(Tags.Blocks.ORES)
                 .add(IafBlockRegistry.SILVER_ORE.get())
                 .add(IafBlockRegistry.DEEPSLATE_SILVER_ORE.get())
-                .add(IafBlockRegistry.SAPPHIRE_ORE.get());
+                .add(IafBlockRegistry.SAPPHIRE_ORE.get())
+                .add(IafBlockRegistry.SAPPHIRE_BLOCK.get())
+                .add(IafBlockRegistry.RUBY_ORE.get())
+                .add(IafBlockRegistry.RUBY_BLOCK.get())
+                .add(IafBlockRegistry.CHARED_RUBY_ORE.get())
+                .add(IafBlockRegistry.FROZEN_SAPPHIRE_ORE.get())
+                .add(IafBlockRegistry.CRACKLED_AMETHYST_ORE.get());
 
         tag(Tags.Blocks.ORES_IN_GROUND_STONE)
                 .add(IafBlockRegistry.SILVER_ORE.get())
-                .add(IafBlockRegistry.SAPPHIRE_ORE.get());
+                .add(IafBlockRegistry.SAPPHIRE_ORE.get())
+                .add(IafBlockRegistry.RUBY_ORE.get());
 
         tag(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE)
                 .add(IafBlockRegistry.DEEPSLATE_SILVER_ORE.get());

@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "":  { "model": "iceandfire:block/chared_ruby_ore" }
+    }
+}

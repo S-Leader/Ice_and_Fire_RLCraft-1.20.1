@@ -128,6 +128,7 @@ public class IafItemRegistry {
 
     public static final RegistryObject<Item> BESTIARY = registerItem("bestiary", ItemBestiary::new);
     public static final RegistryObject<Item> MANUSCRIPT = registerItem("manuscript", ItemGeneric::new);
+    public static final RegistryObject<Item> RUBY_GEM = registerItem("ruby_gem", ItemGeneric::new);
     public static final RegistryObject<Item> SAPPHIRE_GEM = registerItem("sapphire_gem", ItemGeneric::new);
     public static final RegistryObject<Item> SILVER_INGOT = registerItem("silver_ingot", ItemGeneric::new);
     public static final RegistryObject<Item> SILVER_NUGGET = registerItem("silver_nugget", ItemGeneric::new);
@@ -818,12 +819,6 @@ public class IafItemRegistry {
         return itemRegistryObject;
     }
 
-
-    /**
-     Set repair materials etc.
-     Due to the priority it should run after {@link DeferredRegister#addEntries( RegisterEvent)}
-     (and therefor not cause issues when accessing the suppliers)
-    */
     @SubscribeEvent( priority = EventPriority.LOW)
     public static void setRepairMaterials(final RegisterEvent event) {
         if (event.getRegistryKey() != Registries.ITEM) {

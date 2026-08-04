@@ -36,6 +36,7 @@ public final class IafPlacedFeatures {
     public static final ResourceKey<PlacedFeature> PLACED_SPAWN_STYMPHALIAN_BIRD = registerKey("spawn_stymphalian_bird");
     public static final ResourceKey<PlacedFeature> PLACED_SPAWN_WANDERING_CYCLOPS = registerKey("spawn_wandering_cyclops");
     public static final ResourceKey<PlacedFeature> PLACED_SILVER_ORE = registerKey("silver_ore");
+    public static final ResourceKey<PlacedFeature> PLACED_RUBY_ORE = registerKey("ruby_ore");
     public static final ResourceKey<PlacedFeature> PLACED_SAPPHIRE_ORE = registerKey("sapphire_ore");
     public static final ResourceKey<PlacedFeature> PLACED_FIRE_LILY = registerKey("fire_lily");
     public static final ResourceKey<PlacedFeature> PLACED_LIGHTNING_LILY = registerKey("lightning_lily");
@@ -77,7 +78,7 @@ public final class IafPlacedFeatures {
         // Underground
         //TODO: Make it different from copper ore
         context.register(PLACED_SILVER_ORE, new PlacedFeature(features.getOrThrow(IafConfiguredFeatures.SILVER_ORE), commonOrePlacement(16, HeightRangePlacement.triangle(VerticalAnchor.absolute(-16), VerticalAnchor.absolute(112)))));
-        //TODO: Maybe copper emerald ore?
+        context.register(PLACED_RUBY_ORE, new PlacedFeature(features.getOrThrow(IafConfiguredFeatures.RUBY_ORE), commonOrePlacement(4, HeightRangePlacement.triangle(VerticalAnchor.absolute(-16), VerticalAnchor.absolute(112)))));
         context.register(PLACED_SAPPHIRE_ORE, new PlacedFeature(features.getOrThrow(IafConfiguredFeatures.SAPPHIRE_ORE), commonOrePlacement(4, HeightRangePlacement.triangle(VerticalAnchor.absolute(-16), VerticalAnchor.absolute(112)))));
         context.register(PLACED_FIRE_DRAGON_CAVE, new PlacedFeature(features.getOrThrow(IafConfiguredFeatures.FIRE_DRAGON_CAVE), List.of(CustomBiomeFilter.biome())));
         context.register(PLACED_ICE_DRAGON_CAVE, new PlacedFeature(features.getOrThrow(IafConfiguredFeatures.ICE_DRAGON_CAVE), List.of(CustomBiomeFilter.biome())));

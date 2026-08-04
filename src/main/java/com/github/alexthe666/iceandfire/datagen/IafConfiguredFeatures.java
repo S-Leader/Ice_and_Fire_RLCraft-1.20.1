@@ -48,6 +48,7 @@ public final class IafConfiguredFeatures {
 
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> SILVER_ORE = registerKey("silver_ore");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> RUBY_ORE = registerKey("ruby_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> SAPPHIRE_ORE = registerKey("sapphire_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> FIRE_LILY = registerKey("fire_lily");
     public static final ResourceKey<ConfiguredFeature<?, ?>> FROST_LILY = registerKey("frost_lily");
@@ -90,6 +91,7 @@ public final class IafConfiguredFeatures {
         context.register(SILVER_ORE, new ConfiguredFeature<>(Feature.ORE,new OreConfiguration(silverOreConfiguration, 4)));
 
         //TODO: Sapphires should only generate for ice dragon stuff
+        context.register(RUBY_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), IafBlockRegistry.RUBY_ORE.get().defaultBlockState(), 4, 0.5f)));
         context.register(SAPPHIRE_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), IafBlockRegistry.SAPPHIRE_ORE.get().defaultBlockState(), 4, 0.5f)));
         //TODO: Look at VegetationFeatures.java
         context.register(FIRE_LILY, new ConfiguredFeature(Feature.FLOWER, flowerConf.apply(IafBlockRegistry.FIRE_LILY.get())));

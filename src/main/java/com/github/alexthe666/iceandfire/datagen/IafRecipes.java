@@ -639,6 +639,7 @@ public class IafRecipes extends RecipeProvider {
                                 IafItemRegistry.SILVER_SHOVEL.get(),
                                 IafItemRegistry.SILVER_HOE.get());
 
+                compact(consumer, IafItemRegistry.RUBY_GEM.get(), IafBlockRegistry.RUBY_BLOCK.get());
                 compact(consumer, IafItemRegistry.SAPPHIRE_GEM.get(), IafBlockRegistry.SAPPHIRE_BLOCK.get());
 
                 ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, IafItemRegistry.TIDE_TRIDENT.get())

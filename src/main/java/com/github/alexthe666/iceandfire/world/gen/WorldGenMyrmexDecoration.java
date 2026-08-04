@@ -181,7 +181,7 @@ public class WorldGenMyrmexDecoration {
                 } else if (rand.nextInt(3) == 0) {
                     ore = Blocks.DIAMOND_ORE;
                 } else if (rand.nextInt(2) == 0) {
-                    ore = rand.nextBoolean() ? Blocks.EMERALD_ORE : IafBlockRegistry.SAPPHIRE_ORE.get();
+                    ore = rand.nextBoolean() ? IafBlockRegistry.RUBY_ORE.get() : IafBlockRegistry.SAPPHIRE_ORE.get();
                     if(rand.nextInt(2) == 0){
                         ore = Blocks.AMETHYST_CLUSTER;
                     }

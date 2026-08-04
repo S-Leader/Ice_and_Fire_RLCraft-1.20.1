@@ -1,6 +1,11 @@
 {
   "values": [
     "iceandfire:sapphire_ore",
-    "iceandfire:sapphire_block"
+    "iceandfire:sapphire_block",
+    "iceandfire:ruby_ore",
+    "iceandfire:ruby_block",
+    "iceandfire:chared_ruby_ore",
+    "iceandfire:frozen_sapphire_ore",
+    "iceandfire:crackled_amethyst_ore"
   ]
 }
