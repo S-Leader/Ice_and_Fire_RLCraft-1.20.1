@@ -59,6 +59,11 @@
     "iceandfire:dread_stone_bricks_mossy",
     "iceandfire:dread_stone",
     "iceandfire:dread_stone_tile",
-    "iceandfire:deepslate_silver_ore"
+    "iceandfire:deepslate_silver_ore",
+    "iceandfire:ruby_ore",
+    "iceandfire:ruby_block",
+    "iceandfire:chared_ruby_ore",
+    "iceandfire:frozen_sapphire_ore",
+    "iceandfire:crackled_amethyst_ore"
   ]
 }

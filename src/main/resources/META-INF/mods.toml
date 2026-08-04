@@ -4,11 +4,14 @@ issueTrackerURL = "https://github.com/Alex-the-666/ice-and-fire/issues" #optiona
 license = "GNU LESSER GENERAL PUBLIC LICENSE"
 [[mods]] #mandatory
 modId = "iceandfire" #mandatory
-version = "${mod_version}" #mandatory
+version = "1.5.3" #mandatory
 displayName = "Ice and Fire" #mandatory
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/ice-and-fire-dragons" #optional
 authors = "Alexthe666, TheBv" #optional
 description = '''Dragons and other mythological creatures in minecraft.'''
+
+[[mixins]]
+config = "iceandfire.mixins.json"
 [[dependencies.iceandfire]] #optional
 # the modid of the dependency
 modId = "citadel" #mandatory
