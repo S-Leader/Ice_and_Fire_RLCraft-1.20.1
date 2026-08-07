@@ -67,7 +67,7 @@ public class EntityGhostSword extends AbstractArrow {
         super.tick();
         noPhysics = true;
         float sqrt = Mth.sqrt((float) (this.getDeltaMovement().x * this.getDeltaMovement().x + this.getDeltaMovement().z * this.getDeltaMovement().z));
-        if ((sqrt < 0.1F) && this.tickCount > 200) {
+        if ((sqrt < 0.1F) && this.tickCount > 100) {
             this.remove(RemovalReason.DISCARDED);
         }
         double d0 = 0;

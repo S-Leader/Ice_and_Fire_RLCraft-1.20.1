@@ -13,6 +13,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -26,12 +27,13 @@ public class WorldGenSirenIsland extends Feature<NoneFeatureConfiguration> imple
 
     @Override
     public boolean place(final FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        if (!WorldUtil.canGenerate(IafConfig.generateSirenChance, context.level(), context.random(), context.origin(), getId(), false)) {
+        BlockPos featureOrigin = WorldGenChunkSafety.centeredSurfaceOrigin(context.level(), context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
+        if (!WorldUtil.canGenerate(IafConfig.generateSirenChance, context.level(), context.random(), featureOrigin, getId(), false)) {
             return false;
         }
 
         int up = context.random().nextInt(4) + 1;
-        BlockPos center = context.origin().above(up);
+        BlockPos center = featureOrigin.above(up);
         int layer = 0;
         int sirens = 1 + context.random().nextInt(3);
 
@@ -71,7 +73,8 @@ public class WorldGenSirenIsland extends Feature<NoneFeatureConfiguration> imple
     }
 
     private int getRadius(int layer, int up) {
-        return layer > up ? (int) (layer * 0.25) + up : Math.min(layer, MAX_ISLAND_RADIUS);
+        int radius = layer > up ? (int) (layer * 0.25) + up : Math.min(layer, MAX_ISLAND_RADIUS);
+        return Math.min(radius, 15);
     }
 
     private BlockState getStone(RandomSource random) {

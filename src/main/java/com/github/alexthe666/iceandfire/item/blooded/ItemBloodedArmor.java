@@ -55,7 +55,7 @@ public class ItemBloodedArmor extends ArmorItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level,
-            @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+                                @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         ChatFormatting elementColor = switch (dragonType.getElement()) {
             case FIRE -> ChatFormatting.DARK_RED;
             case ICE -> ChatFormatting.AQUA;
@@ -95,7 +95,9 @@ public class ItemBloodedArmor extends ArmorItem {
                 () -> () -> ClientBloodedHelper.countWornPieces(myElement));
     }
 
-    /** 客户端专用辅助类 — 服务端永远不会加载此类 */
+    /**
+     * 客户端专用辅助类 — 服务端永远不会加载此类
+     */
     private static class ClientBloodedHelper {
         static int countWornPieces(BloodedDragonType.DragonElement element) {
             try {
@@ -119,7 +121,9 @@ public class ItemBloodedArmor extends ArmorItem {
         }
     }
 
-    /** Checks if the given entity is wearing a full set of blooded armor of the specified element. Safe for server-side. */
+    /**
+     * Checks if the given entity is wearing a full set of blooded armor of the specified element. Safe for server-side.
+     */
     public static boolean hasFullArmorSet(LivingEntity entity, BloodedDragonType.DragonElement element) {
         if (entity == null) return false;
         int count = 0;
@@ -151,10 +155,8 @@ public class ItemBloodedArmor extends ArmorItem {
             }
             boolean inner = slot == EquipmentSlot.LEGS || slot == EquipmentSlot.HEAD;
             return switch (armor.getDragonType().getElement()) {
-                case FIRE ->
-                        new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedFireArmor(inner);
-                case ICE ->
-                        new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedIceArmor(inner);
+                case FIRE -> new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedFireArmor(inner);
+                case ICE -> new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedIceArmor(inner);
                 case LIGHTNING ->
                         new com.github.alexthe666.iceandfire.client.model.armor.ModelBloodedLightningArmor(inner);
             };

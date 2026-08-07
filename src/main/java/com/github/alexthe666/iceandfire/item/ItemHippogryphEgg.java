@@ -66,7 +66,7 @@ public class ItemHippogryphEgg extends Item {
 
         if (!worldIn.isClientSide) {
             EntityHippogryphEgg entityegg = new EntityHippogryphEgg(IafEntityRegistry.HIPPOGRYPH_EGG.get(), worldIn,
-                playerIn, itemstack);
+                    playerIn, itemstack);
             entityegg.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
             worldIn.addFreshEntity(entityegg);
         }

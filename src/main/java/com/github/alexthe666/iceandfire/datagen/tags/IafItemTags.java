@@ -73,10 +73,6 @@ public class IafItemTags extends ItemTagsProvider {
     public static TagKey<Item> TEMPT_HIPPOCAMPUS = createKey("tempt_hippocampus");
     public static TagKey<Item> TEMPT_HIPPOGRYPH = createKey("tempt_hippogryph");
 
-    public static TagKey<Item> FIRE_DRAGONSTEEL = createForgeKey(INGOTS_PATH + "/fire_dragonsteel");
-    public static TagKey<Item> ICE_DRAGONSTEEL = createForgeKey(INGOTS_PATH + "/ice_dragonsteel");
-    public static TagKey<Item> LIGHTNING_DRAGONSTEEL = createForgeKey(INGOTS_PATH + "/lightning_dragonsteel");
-
     public IafItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, ExistingFileHelper helper) {
         super(output, lookupProvider, blockTags, IceAndFire.MODID, helper);
     }
@@ -91,7 +87,7 @@ public class IafItemTags extends ItemTagsProvider {
 
         tag(MOB_SKULLS).addTag(DRAGON_SKULLS);
 
-        tag(MAKE_ITEM_DROPS_FIREIMMUNE).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_SWORD.get()).add(IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get()).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_PICKAXE.get()).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_AXE.get()).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_SHOVEL.get()).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_HOE.get());
+        tag(MAKE_ITEM_DROPS_FIREIMMUNE).add(IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get());
 
         tag(DRAGON_ARROWS).add(IafItemRegistry.DRAGONBONE_ARROW.get());
 
@@ -99,7 +95,7 @@ public class IafItemTags extends ItemTagsProvider {
 
         tag(Tags.Items.INGOTS)
                 // .add(IafItemRegistry.COPPER_INGOT.get())
-                .add(IafItemRegistry.GHOST_INGOT.get()).add(IafItemRegistry.SILVER_INGOT.get()).add(IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get()).add(IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get()).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get()).add(IafItemRegistry.DRAGONSTEEL_GOLD_INGOT.get());
+                .add(IafItemRegistry.GHOST_INGOT.get()).add(IafItemRegistry.SILVER_INGOT.get());
         tag(INGOTS_SILVER).add(IafItemRegistry.SILVER_INGOT.get().asItem());
 
         tag(Tags.Items.NUGGETS).add(IafItemRegistry.COPPER_NUGGET.get()).add(IafItemRegistry.SILVER_NUGGET.get());
@@ -146,9 +142,6 @@ public class IafItemTags extends ItemTagsProvider {
                 .addTag(STORAGE_BLOCKS_SCALES_DRAGON_FIRE)
                 .addTag(STORAGE_BLOCKS_SCALES_DRAGON_ICE)
                 .addTag(STORAGE_BLOCKS_SCALES_DRAGON_LIGHTNING)
-                .add(IafBlockRegistry.DRAGONSTEEL_FIRE_BLOCK.get().asItem())
-                .add(IafBlockRegistry.DRAGONSTEEL_ICE_BLOCK.get().asItem())
-                .add(IafBlockRegistry.DRAGONSTEEL_LIGHTNING_BLOCK.get().asItem())
                 .add(IafBlockRegistry.RUBY_BLOCK.get().asItem())
                 .add(IafBlockRegistry.SAPPHIRE_BLOCK.get().asItem()).add(IafBlockRegistry.SILVER_BLOCK.get().asItem()).add(IafBlockRegistry.RAW_SILVER_BLOCK.get().asItem()).add(IafBlockRegistry.DRAGON_BONE_BLOCK.get().asItem());
         tag(STORAGE_BLOCKS_SILVER).add(IafBlockRegistry.SILVER_BLOCK.get().asItem());
@@ -200,11 +193,6 @@ public class IafItemTags extends ItemTagsProvider {
         tag(DRAGON_HEARTS).add(IafItemRegistry.FIRE_DRAGON_HEART.get()).add(IafItemRegistry.ICE_DRAGON_HEART.get()).add(IafItemRegistry.LIGHTNING_DRAGON_HEART.get()).add(IafItemRegistry.GOLD_DRAGON_HEART.get());
 
         tag(DRAGON_BONES).add(IafItemRegistry.DRAGON_BONE.get());
-
-        tag(FIRE_DRAGONSTEEL).add(IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get());
-        tag(ICE_DRAGONSTEEL).add(IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get());
-        tag(LIGHTNING_DRAGONSTEEL).add(IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get());
-
 
         IafItemRegistry.ITEMS.getEntries().forEach(registryObject -> {
             Item item = registryObject.get();

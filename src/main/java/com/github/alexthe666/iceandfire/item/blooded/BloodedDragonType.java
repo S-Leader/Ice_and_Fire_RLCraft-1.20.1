@@ -26,7 +26,7 @@ public enum BloodedDragonType {
     private final ChatFormatting color;
 
     BloodedDragonType(String id, String colorName, String texturePrefix,
-            DragonElement element, ChatFormatting color) {
+                      DragonElement element, ChatFormatting color) {
         this.id = id;
         this.colorName = colorName;
         this.texturePrefix = texturePrefix;

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": {
+      "item": "minecraft:oak_planks"
+    },
+    "S": {
+      "item": "minecraft:oak_slab"
+    }
+  },
+  "pattern": [
+    "SPS",
+    " P ",
+    "SPS"
+  ],
+  "result": {
+    "item": "iceandfire:podium_oak"
+  },
+  "show_notification": true
+}

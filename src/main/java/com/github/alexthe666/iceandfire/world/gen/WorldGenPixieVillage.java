@@ -29,7 +29,7 @@ public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> impl
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel worldIn = context.level();
         RandomSource rand = context.random();
-        BlockPos position = context.origin();
+        BlockPos position = WorldGenChunkSafety.centeredSurfaceOrigin(worldIn, context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
 
         if (rand.nextInt(IafConfig.spawnPixiesChance) != 0 || !IafWorldRegistry.isFarEnoughFromSpawn(worldIn, position)) {
             return false;
@@ -40,10 +40,18 @@ public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> impl
         int placedRoads = 0;
         while(placedRoads < maxRoads){
             int roadLength = 10 + rand.nextInt(15);
-            Direction buildingDirection = Direction.from2DDataValue(rand.nextInt(3));
+            Direction buildingDirection = Direction.from2DDataValue(rand.nextInt(4));
+            BlockPos lastSafeRoadPos = buildPosition;
             for(int i = 0; i < roadLength; i++) {
-                BlockPos buildPosition2 = buildPosition.relative(buildingDirection, i);
-                buildPosition2 = worldIn.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, buildPosition2).below();
+                BlockPos horizontalPos = buildPosition.relative(buildingDirection, i);
+                if (!WorldGenChunkSafety.isSafe(position, horizontalPos)) {
+                    break;
+                }
+                BlockPos buildPosition2 = worldIn.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, horizontalPos).below();
+                if (!WorldGenChunkSafety.isSafe(position, buildPosition2)) {
+                    break;
+                }
+                lastSafeRoadPos = horizontalPos;
                 if (worldIn.getBlockState(buildPosition2).getFluidState().isEmpty()) {
                     worldIn.setBlock(buildPosition2, Blocks.DIRT_PATH.defaultBlockState(), 2);
                 } else {
@@ -52,7 +60,7 @@ public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> impl
                 if (rand.nextInt(8) == 0) {
                     Direction houseDir = rand.nextBoolean() ? buildingDirection.getClockWise() : buildingDirection.getCounterClockWise();
                     BlockState houseState = IafBlockRegistry.PIXIE_HOUSE_OAK.get().defaultBlockState();
-                    int houseColor = rand.nextInt(5);
+                    int houseColor = rand.nextInt(6);
                     houseState = switch (houseColor) {
                         case 0 -> IafBlockRegistry.PIXIE_HOUSE_MUSHROOM_RED.get().defaultBlockState().setValue(BlockPixieHouse.FACING, houseDir.getOpposite());
                         case 1 -> IafBlockRegistry.PIXIE_HOUSE_MUSHROOM_BROWN.get().defaultBlockState().setValue(BlockPixieHouse.FACING, houseDir.getOpposite());
@@ -68,14 +76,17 @@ public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> impl
                     pixie.setPersistenceRequired();
                     worldIn.addFreshEntity(pixie);
 
-                    worldIn.setBlock(buildPosition2.relative(houseDir).above(), houseState, 2);
-                    if (!worldIn.getBlockState(buildPosition2.relative(houseDir)).canOcclude()) {
-                        worldIn.setBlock(buildPosition2.relative(houseDir), Blocks.COARSE_DIRT.defaultBlockState(), 2);
-                        worldIn.setBlock(buildPosition2.relative(houseDir).below(), Blocks.COARSE_DIRT.defaultBlockState(), 2);
+                    BlockPos housePos = buildPosition2.relative(houseDir);
+                    if (WorldGenChunkSafety.isSafe(position, housePos)) {
+                        worldIn.setBlock(housePos.above(), houseState, 2);
+                        if (!worldIn.getBlockState(housePos).canOcclude()) {
+                            worldIn.setBlock(housePos, Blocks.COARSE_DIRT.defaultBlockState(), 2);
+                            worldIn.setBlock(housePos.below(), Blocks.COARSE_DIRT.defaultBlockState(), 2);
+                        }
                     }
                 }
             }
-            buildPosition = buildPosition.relative(buildingDirection, rand.nextInt(roadLength));
+            buildPosition = lastSafeRoadPos;
             placedRoads++;
         }
 

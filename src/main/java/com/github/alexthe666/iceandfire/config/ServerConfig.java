@@ -101,11 +101,6 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue seaSerpentGriefing;
     public final ForgeConfigSpec.DoubleValue seaSerpentBaseHealth;
     public final ForgeConfigSpec.DoubleValue seaSerpentAttackStrength;
-    public final ForgeConfigSpec.DoubleValue dragonsteelBaseDamage;
-    public final ForgeConfigSpec.IntValue dragonsteelBaseArmor;
-    public final ForgeConfigSpec.DoubleValue dragonsteelBaseArmorToughness;
-    public final ForgeConfigSpec.IntValue dragonsteelBaseDurability;
-    public final ForgeConfigSpec.IntValue dragonsteelBaseDurabilityEquipment;
     public final ForgeConfigSpec.BooleanValue dragonMovedWronglyFix; // FIXME :: Unused
     public final ForgeConfigSpec.BooleanValue weezerTinkers; // FIXME :: Unused
     public final ForgeConfigSpec.DoubleValue dragonBlockBreakingDropChance;
@@ -318,11 +313,6 @@ public class ServerConfig {
         builder.pop();
         builder.pop();
         builder.push("Items");
-        this.dragonsteelBaseDamage = buildDouble(builder, "Dragonsteel Sword Base Attack Strength", "all", 25, 5, Integer.MAX_VALUE, "Default attack strength of a dragonsteel sword.");
-        this.dragonsteelBaseArmor = buildInt(builder, "Dragonsteel Base Armor", "all", 12, 7, Integer.MAX_VALUE, "Default armor value of dragonsteel chestplate.");
-        this.dragonsteelBaseArmorToughness = buildDouble(builder, "Dragonsteel Base Armor Toughness", "all", 6, 0, Double.MAX_VALUE, "Default armor toughness value of dragonsteel.");
-        this.dragonsteelBaseDurability = buildInt(builder, "Dragonsteel Base Durability", "all", 8000, 1, Integer.MAX_VALUE, "Default durability value of dragonsteel tools.");
-        this.dragonsteelBaseDurabilityEquipment = buildInt(builder, "Dragonsteel Base Durability Equipment", "all", 8000, 1, Integer.MAX_VALUE, "Default durability value of dragonsteel equipment.");
         this.weezerTinkers = buildBoolean(builder, "Weezer", "all", true, "Disable this to remove easter egg with tinkers installed.");
         this.weezerTinkersDisarmChance = buildDouble(builder, "Easter Egg Tinkers Tool Disarm chance", "all", 0.2F, 0F, 1F, "Percentage of critical strike that will disarm with easter egg tinkers material.");
         this.chunkLoadSummonCrystal = buildBoolean(builder, "Chunk Load Summon Crystal", "all", true, "True if the summon crystal can load chunks to find dragons.");

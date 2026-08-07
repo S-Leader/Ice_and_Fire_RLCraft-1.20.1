@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class ItemSilverArmor extends ArmorItem{
+public class ItemSilverArmor extends ArmorItem {
 
     public ItemSilverArmor(ArmorMaterial material, ArmorItem.Type slot) {
         super(material, slot, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/);

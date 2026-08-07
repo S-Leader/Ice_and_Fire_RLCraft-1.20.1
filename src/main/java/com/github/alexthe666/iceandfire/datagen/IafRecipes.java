@@ -364,85 +364,6 @@ public class IafRecipes extends RecipeProvider {
                         compact(consumer, type.scale.get(), type.scaleBlock.get());
                 }
 
-                compact(consumer, IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get(),
-                                IafBlockRegistry.DRAGONSTEEL_FIRE_BLOCK.get());
-
-                toolSet(consumer, IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get(), IafItemTags.BONES_WITHER,
-                                IafItemRegistry.DRAGONSTEEL_FIRE_SWORD.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_PICKAXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_AXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_SHOVEL.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_HOE.get());
-
-                armorSet(consumer, IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_HELMET.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_CHESTPLATE.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_LEGGINGS.get(),
-                                IafItemRegistry.DRAGONSTEEL_FIRE_BOOTS.get());
-
-                dragonArmorSet(consumer, IafBlockRegistry.DRAGONSTEEL_FIRE_BLOCK.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_FIRE_0.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_FIRE_1.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_FIRE_2.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_FIRE_3.get());
-
-                compact(consumer, IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get(),
-                                IafBlockRegistry.DRAGONSTEEL_ICE_BLOCK.get());
-
-                toolSet(consumer, IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get(), IafItemTags.BONES_WITHER,
-                                IafItemRegistry.DRAGONSTEEL_ICE_SWORD.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_PICKAXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_AXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_SHOVEL.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_HOE.get());
-
-                armorSet(consumer, IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_HELMET.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_CHESTPLATE.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_LEGGINGS.get(),
-                                IafItemRegistry.DRAGONSTEEL_ICE_BOOTS.get());
-
-                dragonArmorSet(consumer, IafBlockRegistry.DRAGONSTEEL_ICE_BLOCK.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_ICE_0.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_ICE_1.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_ICE_2.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_ICE_3.get());
-
-                compact(consumer, IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get(),
-                                IafBlockRegistry.DRAGONSTEEL_LIGHTNING_BLOCK.get());
-
-                toolSet(consumer, IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get(), IafItemTags.BONES_WITHER,
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_SWORD.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_PICKAXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_AXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_SHOVEL.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_HOE.get());
-
-                armorSet(consumer, IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_HELMET.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_CHESTPLATE.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_LEGGINGS.get(),
-                                IafItemRegistry.DRAGONSTEEL_LIGHTNING_BOOTS.get());
-
-                dragonArmorSet(consumer, IafBlockRegistry.DRAGONSTEEL_LIGHTNING_BLOCK.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_0.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_1.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_2.get(),
-                                IafItemRegistry.DRAGONARMOR_DRAGONSTEEL_LIGHTNING_3.get());
-
-                toolSet(consumer, IafItemRegistry.DRAGONSTEEL_GOLD_INGOT.get(), IafItemTags.BONES_WITHER,
-                                IafItemRegistry.DRAGONSTEEL_GOLD_SWORD.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_PICKAXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_AXE.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_SHOVEL.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_HOE.get());
-
-                armorSet(consumer, IafItemRegistry.DRAGONSTEEL_GOLD_INGOT.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_HELMET.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_CHESTPLATE.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_LEGGINGS.get(),
-                                IafItemRegistry.DRAGONSTEEL_GOLD_BOOTS.get());
-
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, IafBlockRegistry.DREAD_STONE.get(), 8)
                                 .pattern("DDD")
                                 .pattern("DSD")
@@ -745,25 +666,6 @@ public class IafRecipes extends RecipeProvider {
                                 .requires(Ingredient.of(IafItemTags.CRACKLED_BLOCKS), 9)
                                 .unlockedBy("has_item", has(IafItemTags.CRACKLED_BLOCKS))
                                 .save(consumer, location("crackled_to_gravel"));
-
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, IafItemRegistry.DRAGONBONE_SWORD_FIRE.get())
-                                .requires(IafItemRegistry.DRAGONBONE_SWORD.get())
-                                .requires(IafItemRegistry.FIRE_DRAGON_BLOOD.get())
-                                .unlockedBy("has_item", has(IafItemRegistry.FIRE_DRAGON_BLOOD.get()))
-                                .save(consumer, location("dragonbone_sword_fire"));
-
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, IafItemRegistry.DRAGONBONE_SWORD_ICE.get())
-                                .requires(IafItemRegistry.DRAGONBONE_SWORD.get())
-                                .requires(IafItemRegistry.ICE_DRAGON_BLOOD.get())
-                                .unlockedBy("has_item", has(IafItemRegistry.ICE_DRAGON_BLOOD.get()))
-                                .save(consumer, location("dragonbone_sword_ice"));
-
-                ShapelessRecipeBuilder
-                                .shapeless(RecipeCategory.COMBAT, IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get())
-                                .requires(IafItemRegistry.DRAGONBONE_SWORD.get())
-                                .requires(IafItemRegistry.LIGHTNING_DRAGON_BLOOD.get())
-                                .unlockedBy("has_item", has(IafItemRegistry.LIGHTNING_DRAGON_BLOOD.get()))
-                                .save(consumer, location("dragonbone_sword_lightning"));
 
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, IafItemRegistry.GHOST_SWORD.get())
                                 .requires(IafItemRegistry.DRAGONBONE_SWORD.get())

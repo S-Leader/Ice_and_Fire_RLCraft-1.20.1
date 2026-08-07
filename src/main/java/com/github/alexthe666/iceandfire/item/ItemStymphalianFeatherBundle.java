@@ -33,7 +33,7 @@ public class ItemStymphalianFeatherBundle extends Item {
         float rotation = player.yHeadRot;
         for (int i = 0; i < 8; i++) {
             EntityStymphalianFeather feather = new EntityStymphalianFeather(IafEntityRegistry.STYMPHALIAN_FEATHER.get(),
-                worldIn, player);
+                    worldIn, player);
             rotation += 45;
             feather.shootFromRotation(player, 0, rotation, 0.0F, 1.5F, 1.0F);
             if (!worldIn.isClientSide) {

@@ -2,13 +2,12 @@ package com.github.alexthe666.iceandfire.event;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.effect.IafMobEffects;
-import com.github.alexthe666.iceandfire.item.DragonSteelTier;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -64,7 +63,6 @@ public class FrostEventHandler {
         if (!(stack.getItem() instanceof TieredItem tiered))
             return false;
 
-        return tiered.getTier() == IafItemRegistry.ICE_DRAGONBONE_TOOL_MATERIAL
-                || tiered.getTier() == DragonSteelTier.DRAGONSTEEL_TIER_ICE;
+        return tiered.getTier() == IafItemRegistry.ICE_DRAGONBONE_TOOL_MATERIAL;
     }
 }

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -38,7 +39,8 @@ public class WorldGenCyclopsCave extends Feature<NoneFeatureConfiguration> imple
 
     @Override
     public boolean place(final FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        if (!WorldUtil.canGenerate(IafConfig.spawnCyclopsCaveChance, context.level(), context.random(), context.origin(), getId(), true)) {
+        BlockPos origin = WorldGenChunkSafety.centeredSurfaceOrigin(context.level(), context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
+        if (!WorldUtil.canGenerate(IafConfig.spawnCyclopsCaveChance, context.level(), context.random(), origin, getId(), true)) {
             return false;
         }
 
@@ -46,11 +48,11 @@ public class WorldGenCyclopsCave extends Feature<NoneFeatureConfiguration> imple
         int distance = 6;
 
         // Unsure :: Checks if the corners of the feature are on solid ground to make sure it doesn't float
-        if (context.level().isEmptyBlock(context.origin().offset(size - distance, -3, -size + distance)) || context.level().isEmptyBlock(context.origin().offset(size - distance, -3, size - distance)) || context.level().isEmptyBlock(context.origin().offset(-size + distance, -3, -size + distance)) || context.level().isEmptyBlock(context.origin().offset(-size + distance, -3, size - distance))) {
+        if (context.level().isEmptyBlock(origin.offset(size - distance, -3, -size + distance)) || context.level().isEmptyBlock(origin.offset(size - distance, -3, size - distance)) || context.level().isEmptyBlock(origin.offset(-size + distance, -3, -size + distance)) || context.level().isEmptyBlock(origin.offset(-size + distance, -3, size - distance))) {
             return false;
         }
 
-        generateShell(context, size);
+        generateShell(context, origin, size);
 
         int innerSize = size - 2;
         int x = innerSize + context.random().nextInt(2);
@@ -61,23 +63,23 @@ public class WorldGenCyclopsCave extends Feature<NoneFeatureConfiguration> imple
         int sheepPenCount = 0;
 
         // Clear out the area
-        for (BlockPos position : BlockPos.betweenClosedStream(context.origin().offset(-x, -y, -z), context.origin().offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
-            if (position.distSqr(context.origin()) <= radius * radius && position.getY() > context.origin().getY()) {
-                if (!(context.level().getBlockState(context.origin()).getBlock() instanceof AbstractChestBlock)) {
+        for (BlockPos position : BlockPos.betweenClosedStream(origin.offset(-x, -y, -z), origin.offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
+            if (position.distSqr(origin) <= radius * radius && position.getY() > origin.getY()) {
+                if (!(context.level().getBlockState(origin).getBlock() instanceof AbstractChestBlock)) {
                     context.level().setBlock(position, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                 }
             }
         }
 
         // Set up the actual content
-        for (BlockPos position : BlockPos.betweenClosedStream(context.origin().offset(-x, -y, -z), context.origin().offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
-            if (position.distSqr(context.origin()) <= radius * radius && position.getY() == context.origin().getY()) {
+        for (BlockPos position : BlockPos.betweenClosedStream(origin.offset(-x, -y, -z), origin.offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
+            if (position.distSqr(origin) <= radius * radius && position.getY() == origin.getY()) {
                 if (context.random().nextInt(130) == 0 && isTouchingAir(context.level(), position.above())) {
-                    generateSkeleton(context.level(), position.above(), context.random(), context.origin(), radius);
+                    generateSkeleton(context.level(), position.above(), context.random(), origin, radius);
                 }
 
-                if (context.random().nextInt(130) == 0 && position.distSqr(context.origin()) <= (double) (radius * radius) * 0.8F && sheepPenCount < 2) {
-                    generateSheepPen(context.level(), position.above(), context.random(), context.origin(), radius);
+                if (context.random().nextInt(130) == 0 && position.distSqr(origin) <= (double) (radius * radius) * 0.8F && sheepPenCount < 2) {
+                    generateSheepPen(context.level(), position.above(), context.random(), origin, radius);
                     sheepPenCount++;
                 }
 
@@ -111,34 +113,34 @@ public class WorldGenCyclopsCave extends Feature<NoneFeatureConfiguration> imple
         }
 
         EntityCyclops cyclops = IafEntityRegistry.CYCLOPS.get().create(context.level().getLevel());
-        cyclops.absMoveTo(context.origin().getX() + 0.5, context.origin().getY() + 1.5, context.origin().getZ() + 0.5, context.random().nextFloat() * 360, 0);
+        cyclops.absMoveTo(origin.getX() + 0.5, origin.getY() + 1.5, origin.getZ() + 0.5, context.random().nextFloat() * 360, 0);
         // TODO :: Finalize spawn?
         context.level().addFreshEntity(cyclops);
 
         return true;
     }
 
-    private static void generateShell(final FeaturePlaceContext<NoneFeatureConfiguration> context, int size) {
+    private static void generateShell(final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int size) {
         int x = size + context.random().nextInt(2);
         int y = 12 + context.random().nextInt(2);
         int z = size + context.random().nextInt(2);
         float radius = (x + y + z) * 0.333F + 0.5F;
 
-        for (BlockPos position : BlockPos.betweenClosedStream(context.origin().offset(-x, -y, -z), context.origin().offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
-            boolean doorwayX = position.getX() >= context.origin().getX() - 2 + context.random().nextInt(2) && position.getX() <= context.origin().getX() + 2 + context.random().nextInt(2);
-            boolean doorwayZ = position.getZ() >= context.origin().getZ() - 2 + context.random().nextInt(2) && position.getZ() <= context.origin().getZ() + 2 + context.random().nextInt(2);
-            boolean isNotInDoorway = !doorwayX && !doorwayZ && position.getY() > context.origin().getY() || position.getY() > context.origin().getY() + y - (3 + context.random().nextInt(2));
+        for (BlockPos position : BlockPos.betweenClosedStream(origin.offset(-x, -y, -z), origin.offset(x, y, z)).map(BlockPos::immutable).collect(Collectors.toSet())) {
+            boolean doorwayX = position.getX() >= origin.getX() - 2 + context.random().nextInt(2) && position.getX() <= origin.getX() + 2 + context.random().nextInt(2);
+            boolean doorwayZ = position.getZ() >= origin.getZ() - 2 + context.random().nextInt(2) && position.getZ() <= origin.getZ() + 2 + context.random().nextInt(2);
+            boolean isNotInDoorway = !doorwayX && !doorwayZ && position.getY() > origin.getY() || position.getY() > origin.getY() + y - (3 + context.random().nextInt(2));
 
-            if (position.distSqr(context.origin()) <= radius * radius) {
+            if (position.distSqr(origin) <= radius * radius) {
                 BlockState state = context.level().getBlockState(position);
 
                 if (!(state.getBlock() instanceof AbstractChestBlock) && state.getDestroySpeed(context.level(), position) >= 0 && isNotInDoorway) {
                     context.level().setBlock(position, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
                 }
-                if (position.getY() == context.origin().getY()) {
+                if (position.getY() == origin.getY()) {
                     context.level().setBlock(position, Blocks.MOSSY_COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
                 }
-                if (position.getY() <= context.origin().getY() - 1 && !state.canOcclude()) {
+                if (position.getY() <= origin.getY() - 1 && !state.canOcclude()) {
                     context.level().setBlock(position, Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
                 }
             }

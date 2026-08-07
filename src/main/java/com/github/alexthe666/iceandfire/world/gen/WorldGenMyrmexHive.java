@@ -45,6 +45,7 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     private boolean small;
     private final boolean jungle;
     private BlockPos centerOfHive;
+    private boolean enforceChunkBounds;
 
     public WorldGenMyrmexHive(boolean small, boolean jungle, Codec<NoneFeatureConfiguration> configFactoryIn) {
         super(configFactoryIn);
@@ -53,6 +54,7 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     public boolean placeSmallGen(WorldGenLevel worldIn, RandomSource rand, BlockPos pos) {
+        enforceChunkBounds = false;
         hasFoodRoom = false;
         hasNursery = false;
         totalRooms = 0;
@@ -65,9 +67,15 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+        WorldGenMyrmexHive worker = new WorldGenMyrmexHive(this.small, this.jungle, NoneFeatureConfiguration.CODEC);
+        return worker.placeInternal(context);
+    }
+
+    private boolean placeInternal(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel worldIn = context.level();
         RandomSource rand = context.random();
-        BlockPos pos = context.origin();
+        enforceChunkBounds = true;
+        BlockPos pos = WorldGenChunkSafety.centeredSurfaceOrigin(worldIn, context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
         if (!small) {
             if (rand.nextInt(IafConfig.myrmexColonyGenChance) != 0 || !IafWorldRegistry.isFarEnoughFromSpawn(worldIn, pos) || !IafWorldRegistry.isFarEnoughFromDangerousGen(worldIn, pos, getId())) {
                 return false;
@@ -89,7 +97,7 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
         generateMainRoom(worldIn, rand, undergroundPos);
         this.small = false;
         return true;
-    }
+        }
 
     private void generateMainRoom(ServerLevelAccessor world, RandomSource rand, BlockPos position) {
         hive = new MyrmexHive(world.getLevel(), position, 100);
@@ -142,8 +150,30 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
         }
     }
 
+    private boolean canAccess(BlockPos pos) {
+        return !enforceChunkBounds || centerOfHive == null || WorldGenChunkSafety.isSafe(centerOfHive, pos);
+    }
+
+    private boolean canAccessBox(BlockPos pos, int radius) {
+        return !enforceChunkBounds || centerOfHive == null || WorldGenChunkSafety.isBoxSafe(centerOfHive, pos, radius);
+    }
+
+    private int clampPathLength(BlockPos offset, int length, Direction direction, int endRadius) {
+        if (!enforceChunkBounds) {
+            return length;
+        }
+        while (length > 0 && !canAccessBox(offset.relative(direction, length), endRadius)) {
+            length--;
+        }
+        return length;
+    }
+
     private void generatePath(LevelAccessor world, RandomSource rand, BlockPos offset, int length, Direction direction, int roomChance) {
-        if (roomChance == 0) {
+        if (roomChance == 0 || !canAccessBox(offset, 5)) {
+            return;
+        }
+        length = clampPathLength(offset, length, direction, small ? 8 : 10);
+        if (length <= 0) {
             return;
         }
         if (small) {
@@ -183,6 +213,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     private void generateRoom(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, int roomChance, Direction direction) {
+        if (!canAccessBox(position, size + 3)) {
+            return;
+        }
         BlockState resin = jungle ? JUNGLE_RESIN : DESERT_RESIN;
         BlockState sticky_resin = jungle ? STICKY_JUNGLE_RESIN : STICKY_DESERT_RESIN;
         RoomType type = RoomType.random(rand);
@@ -215,12 +248,22 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
 
     private void generateEntrance(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, Direction direction) {
         BlockPos up = position.above();
+        if (!canAccessBox(up, size + 4)) {
+            return;
+        }
         hive.getEntranceBottoms().put(up, direction);
-        while (up.getY() < world.getHeightmapPos(small ? Heightmap.Types.MOTION_BLOCKING_NO_LEAVES : Heightmap.Types.WORLD_SURFACE_WG, up).getY()
-                && ! world.getBlockState(up).is(BlockTags.LOGS))
-        {
+        while (canAccessBox(up, size + 4)
+                && up.getY() < world.getHeightmapPos(small ? Heightmap.Types.MOTION_BLOCKING_NO_LEAVES : Heightmap.Types.WORLD_SURFACE_WG, up).getY()
+                && !world.getBlockState(up).is(BlockTags.LOGS)) {
             generateCircleRespectSky(world, rand, up, size, height, direction);
-            up = up.above().relative(direction);
+            BlockPos next = up.above().relative(direction);
+            if (!canAccessBox(next, size + 4)) {
+                next = up.above();
+            }
+            up = next;
+        }
+        if (!canAccessBox(up, size + 4)) {
+            return;
         }
         BlockState resin = jungle ? JUNGLE_RESIN : DESERT_RESIN;
         BlockState sticky_resin = jungle ? STICKY_JUNGLE_RESIN : STICKY_DESERT_RESIN;
@@ -232,6 +275,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     private void generateCircle(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, Direction direction) {
+        if (!canAccessBox(position, size + 2)) {
+            return;
+        }
         BlockState resin = jungle ? JUNGLE_RESIN : DESERT_RESIN;
         BlockState sticky_resin = jungle ? STICKY_JUNGLE_RESIN : STICKY_DESERT_RESIN;
         int radius = size + 2;
@@ -268,6 +314,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     private void generateCircleRespectSky(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, Direction direction) {
+        if (!canAccessBox(position, size + 2)) {
+            return;
+        }
         BlockState resin = jungle ? JUNGLE_RESIN : DESERT_RESIN;
         BlockState sticky_resin = jungle ? STICKY_JUNGLE_RESIN : STICKY_DESERT_RESIN;
         int radius = size + 2;
@@ -309,6 +358,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
 
 
     private void generateCircleAir(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, Direction direction) {
+        if (!canAccessBox(position, size)) {
+            return;
+        }
         int radius = size;
         {
             for (float i = 0; i < radius; i += 0.5) {
@@ -328,6 +380,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     public void generateSphere(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, BlockState fill) {
+        if (!canAccessBox(position, size + 1)) {
+            return;
+        }
         int i2 = size;
         int ySize = rand.nextInt(2);
         int j = i2 + rand.nextInt(2);
@@ -342,6 +397,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     public void generateSphere(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, BlockState fill, BlockState fill2) {
+        if (!canAccessBox(position, size + 1)) {
+            return;
+        }
         int i2 = size;
         int ySize = rand.nextInt(2);
         int j = i2 + rand.nextInt(2);
@@ -356,6 +414,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     public void generateSphereRespectResin(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, BlockState fill, BlockState fill2) {
+        if (!canAccessBox(position, size + 1)) {
+            return;
+        }
         int i2 = size;
         int ySize = rand.nextInt(2);
         int j = i2 + rand.nextInt(2);
@@ -371,6 +432,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     public void generateSphereRespectAir(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, BlockState fill, BlockState fill2) {
+        if (!canAccessBox(position, size + 1)) {
+            return;
+        }
         int i2 = size;
         int ySize = rand.nextInt(2);
         int j = i2 + rand.nextInt(2);
@@ -394,6 +458,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     private void decorateCircle(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, Direction direction) {
+        if (!canAccessBox(position, size + 3)) {
+            return;
+        }
         int radius = size + 2;
         {
             for (float i = 0; i < radius; i += 0.5) {
@@ -421,6 +488,9 @@ public class WorldGenMyrmexHive extends Feature<NoneFeatureConfiguration> implem
     }
 
     private void decorateSphere(LevelAccessor world, RandomSource rand, BlockPos position, int size, int height, RoomType roomType) {
+        if (!canAccessBox(position, size + 2)) {
+            return;
+        }
         int i2 = size;
         int ySize = rand.nextInt(2);
         int j = i2 + rand.nextInt(2);

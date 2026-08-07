@@ -139,9 +139,6 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> MYRMEX_JUNGLE_RESIN_BLOCK = register(BlockMyrmexConnectedResin.name(true, false), () -> new BlockMyrmexConnectedResin(true, false));
     public static final RegistryObject<Block> MYRMEX_DESERT_RESIN_GLASS = register(BlockMyrmexConnectedResin.name(false, true), () -> new BlockMyrmexConnectedResin(false, true));
     public static final RegistryObject<Block> MYRMEX_JUNGLE_RESIN_GLASS = register(BlockMyrmexConnectedResin.name(true, true), () -> new BlockMyrmexConnectedResin(true, true));
-    public static final RegistryObject<Block> DRAGONSTEEL_FIRE_BLOCK = register("dragonsteel_fire_block", () -> BlockGeneric.builder(10.0F, 1000.0F, SoundType.METAL, MapColor.METAL, null, null, false));
-    public static final RegistryObject<Block> DRAGONSTEEL_ICE_BLOCK = register("dragonsteel_ice_block", () -> BlockGeneric.builder(10.0F, 1000.0F, SoundType.METAL, MapColor.METAL, null, null, false));
-    public static final RegistryObject<Block> DRAGONSTEEL_LIGHTNING_BLOCK = register("dragonsteel_lightning_block", () -> BlockGeneric.builder(10.0F, 1000.0F, SoundType.METAL, MapColor.METAL, null, null, false));
     public static final RegistryObject<BlockDreadBase> DREAD_STONE = register("dread_stone", () -> BlockDreadBase.builder(-1.0F, 100000.0F, SoundType.STONE, MapColor.STONE, null, false));
     public static final RegistryObject<BlockDreadBase> DREAD_STONE_BRICKS = register("dread_stone_bricks", () -> BlockDreadBase.builder(-1.0F, 100000.0F, SoundType.STONE, MapColor.STONE, null, false));
     public static final RegistryObject<BlockDreadBase> DREAD_STONE_BRICKS_CHISELED = register("dread_stone_bricks_chiseled", () -> BlockDreadBase.builder(-1.0F, 100000.0F, SoundType.STONE, MapColor.STONE, null, false));

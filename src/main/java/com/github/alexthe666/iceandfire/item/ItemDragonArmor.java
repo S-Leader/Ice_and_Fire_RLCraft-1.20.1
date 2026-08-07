@@ -37,7 +37,7 @@ public class ItemDragonArmor extends Item {
         return "item.iceandfire." + name;
     }
 
-    static String getNameForSlot(int slot){
+    static String getNameForSlot(int slot) {
         return switch (slot) {
             case 0 -> "head";
             case 1 -> "neck";

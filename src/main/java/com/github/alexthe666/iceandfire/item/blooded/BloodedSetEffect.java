@@ -4,14 +4,12 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.api.ChainLightningUtils;
 import com.github.alexthe666.iceandfire.effect.MobEffectFrostbite;
 import com.github.alexthe666.iceandfire.effect.MobEffectMelt;
-import com.github.alexthe666.iceandfire.item.DragonSteelTier;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.item.ItemAlchemySword;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 
 public final class BloodedSetEffect {
 
@@ -38,9 +36,9 @@ public final class BloodedSetEffect {
 
     private static BloodedDragonType.DragonElement getFullSetElement(Player player) {
         BloodedDragonType.DragonElement element = null;
-        for (EquipmentSlot slot : new EquipmentSlot[] {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
                 EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                EquipmentSlot.LEGS, EquipmentSlot.FEET }) {
+                EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack stack = player.getItemBySlot(slot);
             if (!(stack.getItem() instanceof ItemBloodedArmor blooded))
                 return null;
@@ -64,14 +62,6 @@ public final class BloodedSetEffect {
                 case FIRE -> mainHand.is(IafItemRegistry.DRAGONBONE_SWORD_FIRE.get());
                 case ICE -> mainHand.is(IafItemRegistry.DRAGONBONE_SWORD_ICE.get());
                 case LIGHTNING -> mainHand.is(IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get());
-            };
-        }
-
-        if (mainHand.getItem() instanceof TieredItem tiered) {
-            return switch (element) {
-                case FIRE -> tiered.getTier() == DragonSteelTier.DRAGONSTEEL_TIER_FIRE;
-                case ICE -> tiered.getTier() == DragonSteelTier.DRAGONSTEEL_TIER_ICE;
-                case LIGHTNING -> tiered.getTier() == DragonSteelTier.DRAGONSTEEL_TIER_LIGHTNING;
             };
         }
 

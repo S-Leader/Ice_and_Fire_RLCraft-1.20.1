@@ -153,7 +153,7 @@ public class ItemCockatriceScepter extends Item {
         double d5 = 80F;
         double d0 = target.getX() - origin.getX();
         double d1 = target.getY() + (double) (target.getBbHeight() * 0.5F)
-            - (origin.getY() + (double) origin.getEyeHeight() * 0.5D);
+                - (origin.getY() + (double) origin.getEyeHeight() * 0.5D);
         double d2 = target.getZ() - origin.getZ();
         double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
         d0 = d0 / d3;

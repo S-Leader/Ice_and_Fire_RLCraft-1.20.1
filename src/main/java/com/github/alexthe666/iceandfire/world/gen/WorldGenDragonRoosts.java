@@ -49,20 +49,21 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
 
     @Override
     public boolean place(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        if (!WorldUtil.canGenerate(IafConfig.generateDragonRoostChance, context.level(), context.random(), context.origin(), getId(), true)) {
+        BlockPos origin = WorldGenChunkSafety.centeredSurfaceOrigin(context.level(), context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
+        if (!WorldUtil.canGenerate(IafConfig.generateDragonRoostChance, context.level(), context.random(), origin, getId(), true)) {
             return false;
         }
 
-        boolean isMale = new Random().nextBoolean();
+        boolean isMale = context.random().nextBoolean();
         int radius = 12 + context.random().nextInt(8);
 
-        spawnDragon(context, radius, isMale);
-        generateSurface(context, radius);
-        generateShell(context, radius);
+        spawnDragon(context, origin, radius, isMale);
+        generateSurface(context, origin, radius);
+        generateShell(context, origin, radius);
         radius -= 2;
-        hollowOut(context, radius);
-        radius += 15;
-        generateDecoration(context, radius, isMale);
+        hollowOut(context, origin, radius);
+        int decorationRadius = Math.min(radius + 15, 23);
+        generateDecoration(context, origin, decorationRadius, isMale);
 
         return true;
     }
@@ -101,15 +102,15 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
         return transform(block.defaultBlockState());
     }
 
-    private void generateDecoration(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, int radius, boolean isMale) {
+    private void generateDecoration(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int radius, boolean isMale) {
         int height = (radius / 5);
         double circularArea = getCircularArea(radius, height);
 
-        BlockPos.betweenClosedStream(context.origin().offset(-radius, -height, -radius), context.origin().offset(radius, height, radius)).map(BlockPos::immutable).forEach(position -> {
-            if (position.distSqr(context.origin()) <= circularArea) {
-                double distance = position.distSqr(context.origin()) / circularArea;
+        BlockPos.betweenClosedStream(origin.offset(-radius, -height, -radius), origin.offset(radius, height, radius)).map(BlockPos::immutable).forEach(position -> {
+            if (position.distSqr(origin) <= circularArea) {
+                double distance = position.distSqr(origin) / circularArea;
 
-                if (!context.level().isEmptyBlock(context.origin()) && context.random().nextDouble() > distance * 0.5) {
+                if (!context.level().isEmptyBlock(origin) && context.random().nextDouble() > distance * 0.5) {
                     BlockState state = context.level().getBlockState(position);
 
                     if (!(state.getBlock() instanceof BaseEntityBlock) && state.getDestroySpeed(context.level(), position) >= 0) {
@@ -121,14 +122,15 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
                     }
                 }
 
-                handleCustomGeneration(context, position, distance);
+                if (WorldGenChunkSafety.isBoxSafe(origin, position, 9)) {
+                    handleCustomGeneration(context, position, distance);
+                }
 
-                if (distance > 0.5 && context.random().nextInt(1000) == 0) {
-                    // FIXME
+                if (distance > 0.5 && context.random().nextInt(1000) == 0 && WorldGenChunkSafety.isBoxSafe(origin, position, 4)) {
                     new WorldGenRoostBoulder(transform(Blocks.COBBLESTONE).getBlock(), context.random().nextInt(3), true).generate(context.level(), context.random(), getSurfacePosition(context.level(), position));
                 }
 
-                if (distance < 0.3 && context.random().nextInt(isMale ? 200 : 300) == 0) {
+                if (distance < 0.3 && context.random().nextInt(isMale ? 200 : 300) == 0 && WorldGenChunkSafety.isBoxSafe(origin, position, 3)) {
                     generateTreasurePile(context.level(), context.random(), position);
                 }
 
@@ -146,47 +148,46 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
                     }
                 }
 
-                if (context.random().nextInt(5000) == 0) {
-                    // FIXME
+                if (context.random().nextInt(5000) == 0 && WorldGenChunkSafety.isBoxSafe(origin, position, 3)) {
                     new WorldGenRoostArch(transform(Blocks.COBBLESTONE).getBlock()).generate(context.level(), context.random(), getSurfacePosition(context.level(), position));
                 }
             }
         });
     }
 
-    private void hollowOut(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, int radius) {
+    private void hollowOut(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int radius) {
         int height = 2;
         double circularArea = getCircularArea(radius, height);
-        BlockPos up = context.origin().above(height - 1);
+        BlockPos up = origin.above(height - 1);
 
         BlockPos.betweenClosedStream(up.offset(-radius, 0, -radius), up.offset(radius, height, radius)).map(BlockPos::immutable).forEach(position -> {
-            if (position.distSqr(context.origin()) <= circularArea) {
+            if (position.distSqr(origin) <= circularArea) {
                 context.level().setBlock(position, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
             }
         });
     }
 
-    private void generateShell(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, int radius) {
+    private void generateShell(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int radius) {
         int height = (radius / 5);
         double circularArea = getCircularArea(radius, height);
 
-        BlockPos.betweenClosedStream(context.origin().offset(-radius, -height, -radius), context.origin().offset(radius, 1, radius)).map(BlockPos::immutable).forEach(position -> {
-            if (position.distSqr(context.origin()) < circularArea) {
+        BlockPos.betweenClosedStream(origin.offset(-radius, -height, -radius), origin.offset(radius, 1, radius)).map(BlockPos::immutable).forEach(position -> {
+            if (position.distSqr(origin) < circularArea) {
                 context.level().setBlock(position, context.random().nextBoolean() ? transform(Blocks.GRAVEL) : transform(Blocks.DIRT), Block.UPDATE_CLIENTS);
-            } else if (position.distSqr(context.origin()) == circularArea) {
+            } else if (position.distSqr(origin) == circularArea) {
                 context.level().setBlock(position, transform(Blocks.COBBLESTONE), Block.UPDATE_CLIENTS);
             }
         });
     }
 
-    private void generateSurface(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, int radius) {
+    private void generateSurface(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int radius) {
         int height = 2;
         double circularArea = getCircularArea(radius, height);
 
-        BlockPos.betweenClosedStream(context.origin().offset(-radius, height, -radius), context.origin().offset(radius, 0, radius)).map(BlockPos::immutable).forEach(position -> {
-            int heightDifference = position.getY() - context.origin().getY();
+        BlockPos.betweenClosedStream(origin.offset(-radius, height, -radius), origin.offset(radius, 0, radius)).map(BlockPos::immutable).forEach(position -> {
+            int heightDifference = position.getY() - origin.getY();
 
-            if (position.distSqr(context.origin()) <= circularArea && heightDifference < 2 + context.random().nextInt(height) && !context.level().isEmptyBlock(position.below())) {
+            if (position.distSqr(origin) <= circularArea && heightDifference < 2 + context.random().nextInt(height) && !context.level().isEmptyBlock(position.below())) {
                 if (context.level().isEmptyBlock(position.above())) {
                     context.level().setBlock(position, transform(Blocks.GRASS), Block.UPDATE_CLIENTS);
                 } else {
@@ -229,15 +230,15 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
         }
     }
 
-    private void spawnDragon(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, int ageOffset, boolean isMale) {
+    private void spawnDragon(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context, BlockPos origin, int ageOffset, boolean isMale) {
         EntityDragonBase dragon = getDragonType().create(context.level().getLevel());
         dragon.setGender(isMale);
         dragon.growDragon(40 + ageOffset);
         dragon.setAgingDisabled(true);
         dragon.setHealth(dragon.getMaxHealth());
         dragon.setVariant(new Random().nextInt(4));
-        dragon.absMoveTo(context.origin().getX() + 0.5, context.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, context.origin()).getY() + 1.5, context.origin().getZ() + 0.5, context.random().nextFloat() * 360, 0);
-        dragon.homePos = new HomePosition(context.origin(), context.level().getLevel());
+        dragon.absMoveTo(origin.getX() + 0.5, origin.getY() + 1.5, origin.getZ() + 0.5, context.random().nextFloat() * 360, 0);
+        dragon.homePos = new HomePosition(origin, context.level().getLevel());
         dragon.hasHomePosition = true;
         dragon.setHunger(50);
         context.level().addFreshEntity(dragon);

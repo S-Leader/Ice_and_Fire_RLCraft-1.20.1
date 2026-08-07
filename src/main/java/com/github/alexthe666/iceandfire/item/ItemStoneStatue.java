@@ -56,7 +56,7 @@ public class ItemStoneStatue extends Item {
                 String id = stack.getTag().getString("IAFStoneStatueEntityID");
                 CompoundTag statueNBT = stack.getTag().getCompound("IAFStoneStatueNBT");
                 EntityStoneStatue statue = new EntityStoneStatue(IafEntityRegistry.STONE_STATUE.get(),
-                    context.getLevel());
+                        context.getLevel());
                 statue.readAdditionalSaveData(statueNBT);
                 statue.setTrappedEntityTypeString(id);
                 double d1 = context.getPlayer().getX() - (context.getClickedPos().getX() + 0.5);

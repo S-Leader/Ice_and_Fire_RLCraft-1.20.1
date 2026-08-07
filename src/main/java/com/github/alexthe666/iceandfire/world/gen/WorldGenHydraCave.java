@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -43,7 +44,7 @@ public class WorldGenHydraCave extends Feature<NoneFeatureConfiguration> impleme
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel worldIn = context.level();
         RandomSource rand = context.random();
-        BlockPos position = context.origin();
+        BlockPos position = WorldGenChunkSafety.centeredSurfaceOrigin(worldIn, context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
         ChunkGenerator generator = context.chunkGenerator();
 
         if (rand.nextInt(IafConfig.generateHydraChance) != 0 || !IafWorldRegistry.isFarEnoughFromSpawn(worldIn, position) || !IafWorldRegistry.isFarEnoughFromDangerousGen(worldIn, position, getId())) {

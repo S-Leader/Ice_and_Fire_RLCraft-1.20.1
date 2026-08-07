@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class ItemTrollArmor extends ArmorItem{
+public class ItemTrollArmor extends ArmorItem {
 
     public EnumTroll troll;
 

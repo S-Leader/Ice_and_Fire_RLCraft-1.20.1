@@ -2298,13 +2298,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         }
     }
 
-    /**
-     * Update dragon pitch for the server on {@link IafDragonLogic#updateDragonServer()} <br>
-     * For some reason the {@link LivingEntity#yo} failed to update the pitch properly when the movement is handled by client.
-     * Use {@link LivingEntity#yOld} instead will properly update the pitch on server.
-     *
-     * @param verticalDelta vertical distance from last update
-     */
     protected void updatePitch(final double verticalDelta) {
         if (this.isOverAir() && !this.isPassenger()) {
             // AI飞行时使用较小的pitch灵敏度，避免pitch剧烈波动干扰飞行导航

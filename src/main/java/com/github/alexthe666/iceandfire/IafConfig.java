@@ -105,11 +105,6 @@ public class IafConfig {
     public static boolean seaSerpentGriefing = true;
     public static double seaSerpentBaseHealth = 20D;
     public static double seaSerpentAttackStrength = 4D;
-    public static double dragonsteelBaseDamage = 25F;
-    public static int dragonsteelBaseArmor = 12;
-    public static float dragonsteelBaseArmorToughness = 6;
-    public static int dragonsteelBaseDurability = 8000;
-    public static int dragonsteelBaseDurabilityEquipment = 8000;
     public static boolean dragonMovedWronglyFix = false;
     public static boolean weezerTinkers = true;
     public static double dragonBlockBreakingDropChance = 0.1D;
@@ -261,11 +256,6 @@ public class IafConfig {
             seaSerpentGriefing = ConfigHolder.SERVER.seaSerpentGriefing.get();
             seaSerpentBaseHealth = ConfigHolder.SERVER.seaSerpentBaseHealth.get();
             seaSerpentAttackStrength = ConfigHolder.SERVER.seaSerpentAttackStrength.get();
-            dragonsteelBaseDamage = ConfigHolder.SERVER.dragonsteelBaseDamage.get();
-            dragonsteelBaseArmor = ConfigHolder.SERVER.dragonsteelBaseArmor.get();
-            dragonsteelBaseArmorToughness = ConfigHolder.SERVER.dragonsteelBaseArmorToughness.get().floatValue();
-            dragonsteelBaseDurability = ConfigHolder.SERVER.dragonsteelBaseDurability.get();
-            dragonsteelBaseDurabilityEquipment = ConfigHolder.SERVER.dragonsteelBaseDurabilityEquipment.get();
             dragonMovedWronglyFix = ConfigHolder.SERVER.dragonMovedWronglyFix.get();
             weezerTinkers = ConfigHolder.SERVER.weezerTinkers.get();
             dragonBlockBreakingDropChance = ConfigHolder.SERVER.dragonBlockBreakingDropChance.get();

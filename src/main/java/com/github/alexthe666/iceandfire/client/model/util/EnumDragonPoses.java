@@ -23,6 +23,7 @@ public enum EnumDragonPoses implements IEnumDragonPoses {
 	BLAST_CHARGE2("attack_blast_charge2"),
 	BLAST_CHARGE3("attack_blast_charge3"),
 	STREAM_BREATH("attack_stream_breath"),
+	STREAM_CHARGE("attack_stream_charge"),
 	STREAM_CHARGE1("attack_stream_charge1"),
 	STREAM_CHARGE2("attack_stream_charge2"),
 	STREAM_CHARGE3("attack_stream_charge3"),

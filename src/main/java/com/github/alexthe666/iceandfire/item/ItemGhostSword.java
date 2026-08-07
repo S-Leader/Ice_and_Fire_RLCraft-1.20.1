@@ -26,7 +26,7 @@ import java.util.List;
 public class ItemGhostSword extends SwordItem {
 
     public ItemGhostSword() {
-        super(IafItemRegistry.GHOST_SWORD_TOOL_MATERIAL, 5, -1.0F, new Item.Properties()/*.tab(IceAndFire.TAB_ITEMS)*/);
+        super(IafItemRegistry.GHOST_SWORD_TOOL_MATERIAL, 0, -2.4F, new Item.Properties());
     }
 
     public static void spawnGhostSwordEntity(ItemStack stack, Player playerEntity) {
