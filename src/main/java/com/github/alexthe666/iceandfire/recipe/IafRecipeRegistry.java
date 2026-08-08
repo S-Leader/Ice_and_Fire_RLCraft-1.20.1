@@ -91,7 +91,7 @@ public class IafRecipeRegistry {
                 protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
                     EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
                         position.x(), position.y(), position.z(), worldIn);
-                    entityarrow.setType(EntityDragonArrow.Type.FIRE);
+                    entityarrow.setType(EntityDragonArrow.ArrowType.FIRE);
                     entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
                     return entityarrow;
                 }
@@ -104,7 +104,7 @@ public class IafRecipeRegistry {
                 protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
                     EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
                         position.x(), position.y(), position.z(), worldIn);
-                    entityarrow.setType(EntityDragonArrow.Type.ICE);
+                    entityarrow.setType(EntityDragonArrow.ArrowType.ICE);
                     entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
                     return entityarrow;
                 }
@@ -117,7 +117,7 @@ public class IafRecipeRegistry {
                 protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
                     EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
                         position.x(), position.y(), position.z(), worldIn);
-                    entityarrow.setType(EntityDragonArrow.Type.LIGHTNING);
+                    entityarrow.setType(EntityDragonArrow.ArrowType.LIGHTNING);
                     entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
                     return entityarrow;
                 }

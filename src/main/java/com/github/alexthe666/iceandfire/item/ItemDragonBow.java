@@ -13,18 +13,18 @@ import java.util.function.Predicate;
 /** Dragon bone bow and the three legacy dragon-blood elemental bow variants. */
 public class ItemDragonBow extends BowItem {
     private static final Predicate<ItemStack> DRAGON_ARROWS = stack -> stack.is(IafItemTags.DRAGON_ARROWS);
-    private final EntityDragonArrow.Type type;
+    private final EntityDragonArrow.ArrowType type;
 
     public ItemDragonBow() {
-        this(EntityDragonArrow.Type.DEFAULT);
+        this(EntityDragonArrow.ArrowType.DEFAULT);
     }
 
-    public ItemDragonBow(EntityDragonArrow.Type type) {
-        super(new Item.Properties().durability(type == EntityDragonArrow.Type.DEFAULT ? 584 : 700));
+    public ItemDragonBow(EntityDragonArrow.ArrowType type) {
+        super(new Item.Properties().durability(type == EntityDragonArrow.ArrowType.DEFAULT ? 584 : 700));
         this.type = type;
     }
 
-    public EntityDragonArrow.Type getType() {
+    public EntityDragonArrow.ArrowType getArrowType() {
         return this.type;
     }
 
@@ -41,8 +41,8 @@ public class ItemDragonBow extends BowItem {
     @Override
     public AbstractArrow customArrow(AbstractArrow arrow) {
         if (arrow instanceof EntityDragonArrow dragonArrow
-                && dragonArrow.getType() == EntityDragonArrow.Type.DEFAULT
-                && this.type != EntityDragonArrow.Type.DEFAULT) {
+                && dragonArrow.getArrowType() == EntityDragonArrow.ArrowType.DEFAULT
+                && this.type != EntityDragonArrow.ArrowType.DEFAULT) {
             dragonArrow.setType(this.type);
         }
         return arrow;

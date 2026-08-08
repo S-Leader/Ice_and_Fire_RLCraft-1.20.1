@@ -18,7 +18,7 @@ public class RenderDragonArrow extends ArrowRenderer<EntityDragonArrow> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull EntityDragonArrow entity) {
-        return switch (entity.getType()) {
+        return switch (entity.getArrowType()) {
             case FIRE -> FIRE;
             case ICE -> ICE;
             case LIGHTNING -> LIGHTNING;

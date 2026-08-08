@@ -28,7 +28,7 @@ public class EntityDragonArrow extends AbstractArrow {
     private static final EntityDataAccessor<Integer> TYPE =
             SynchedEntityData.defineId(EntityDragonArrow.class, EntityDataSerializers.INT);
 
-    public enum Type {
+    public enum ArrowType {
         DEFAULT, FIRE, ICE, LIGHTNING;
 
         public Item getArrowItem() {
@@ -63,27 +63,27 @@ public class EntityDragonArrow extends AbstractArrow {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(TYPE, Type.DEFAULT.ordinal());
+        this.entityData.define(TYPE, ArrowType.DEFAULT.ordinal());
     }
 
-    public void setType(Type type) {
+    public void setType(ArrowType type) {
         this.entityData.set(TYPE, type.ordinal());
     }
 
-    public Type getType() {
+    public ArrowType getArrowType() {
         int ordinal = this.entityData.get(TYPE);
-        return ordinal >= 0 && ordinal < Type.values().length ? Type.values()[ordinal] : Type.DEFAULT;
+        return ordinal >= 0 && ordinal < ArrowType.values().length ? ArrowType.values()[ordinal] : ArrowType.DEFAULT;
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide() && !this.inGround && this.getType() != Type.DEFAULT) {
+        if (this.level().isClientSide() && !this.inGround && this.getArrowType() != ArrowType.DEFAULT) {
             for (int i = 0; i < 2; i++) {
                 double x = this.getX() - this.getDeltaMovement().x * 0.25D * i;
                 double y = this.getY() - this.getDeltaMovement().y * 0.25D * i;
                 double z = this.getZ() - this.getDeltaMovement().z * 0.25D * i;
-                switch (this.getType()) {
+                switch (this.getArrowType()) {
                     case FIRE -> this.level().addParticle(ParticleTypes.FLAME, x, y, z, 0.0D, 0.0D, 0.0D);
                     case ICE -> this.level().addParticle(ParticleTypes.SNOWFLAKE, x, y, z, 0.0D, 0.0D, 0.0D);
                     case LIGHTNING -> this.level().addParticle(ParticleTypes.ELECTRIC_SPARK, x, y, z, 0.0D, 0.0D, 0.0D);
@@ -101,7 +101,7 @@ public class EntityDragonArrow extends AbstractArrow {
         }
 
         Entity owner = this.getOwner();
-        switch (this.getType()) {
+        switch (this.getArrowType()) {
             case FIRE -> {
                 if (target instanceof EntityIceDragon) {
                     target.hurt(this.level().damageSources().inFire(), 13.5F);
@@ -132,14 +132,14 @@ public class EntityDragonArrow extends AbstractArrow {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("DragonArrowType", this.getType().ordinal());
+        tag.putInt("DragonArrowType", this.getArrowType().ordinal());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         int ordinal = tag.getInt("DragonArrowType");
-        this.setType(ordinal >= 0 && ordinal < Type.values().length ? Type.values()[ordinal] : Type.DEFAULT);
+        this.setType(ordinal >= 0 && ordinal < ArrowType.values().length ? ArrowType.values()[ordinal] : ArrowType.DEFAULT);
     }
 
     @Override
@@ -149,6 +149,6 @@ public class EntityDragonArrow extends AbstractArrow {
 
     @Override
     protected @NotNull ItemStack getPickupItem() {
-        return new ItemStack(this.getType().getArrowItem());
+        return new ItemStack(this.getArrowType().getArrowItem());
     }
 }

@@ -228,21 +228,21 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> DRAGONBONE_SWORD_LIGHTNING = registerItem("dragonbone_sword_lightning",
             () -> new ItemAlchemySword(LIGHTNING_DRAGONBONE_TOOL_MATERIAL));
     public static final RegistryObject<Item> DRAGONBONE_ARROW = registerItem("dragonbone_arrow",
-            () -> new ItemDragonArrow(EntityDragonArrow.Type.DEFAULT));
+            () -> new ItemDragonArrow(EntityDragonArrow.ArrowType.DEFAULT));
     public static final RegistryObject<Item> DRAGONBONE_ARROW_FIRE = registerItem("dragonbone_arrow_fire",
-            () -> new ItemDragonArrow(EntityDragonArrow.Type.FIRE));
+            () -> new ItemDragonArrow(EntityDragonArrow.ArrowType.FIRE));
     public static final RegistryObject<Item> DRAGONBONE_ARROW_ICE = registerItem("dragonbone_arrow_ice",
-            () -> new ItemDragonArrow(EntityDragonArrow.Type.ICE));
+            () -> new ItemDragonArrow(EntityDragonArrow.ArrowType.ICE));
     public static final RegistryObject<Item> DRAGONBONE_ARROW_LIGHTNING = registerItem("dragonbone_arrow_lightning",
-            () -> new ItemDragonArrow(EntityDragonArrow.Type.LIGHTNING));
+            () -> new ItemDragonArrow(EntityDragonArrow.ArrowType.LIGHTNING));
     public static final RegistryObject<Item> DRAGON_BOW = registerItem("dragonbone_bow",
-            () -> new ItemDragonBow(EntityDragonArrow.Type.DEFAULT));
+            () -> new ItemDragonBow(EntityDragonArrow.ArrowType.DEFAULT));
     public static final RegistryObject<Item> DRAGON_BOW_FIRE = registerItem("dragonbone_bow_fire",
-            () -> new ItemDragonBow(EntityDragonArrow.Type.FIRE));
+            () -> new ItemDragonBow(EntityDragonArrow.ArrowType.FIRE));
     public static final RegistryObject<Item> DRAGON_BOW_ICE = registerItem("dragonbone_bow_ice",
-            () -> new ItemDragonBow(EntityDragonArrow.Type.ICE));
+            () -> new ItemDragonBow(EntityDragonArrow.ArrowType.ICE));
     public static final RegistryObject<Item> DRAGON_BOW_LIGHTNING = registerItem("dragonbone_bow_lightning",
-            () -> new ItemDragonBow(EntityDragonArrow.Type.LIGHTNING));
+            () -> new ItemDragonBow(EntityDragonArrow.ArrowType.LIGHTNING));
     public static final RegistryObject<Item> DRAGON_SKULL_FIRE = registerItem(ItemDragonSkull.getName(0),
             () -> new ItemDragonSkull(0));
     public static final RegistryObject<Item> DRAGON_SKULL_ICE = registerItem(ItemDragonSkull.getName(1),

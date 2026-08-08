@@ -1,5 +1,8 @@
 {
   "values": [
-    "iceandfire:dragonbone_bow"
+    "iceandfire:dragonbone_bow",
+    "iceandfire:dragonbone_bow_fire",
+    "iceandfire:dragonbone_bow_ice",
+    "iceandfire:dragonbone_bow_lightning"
   ]
 }
