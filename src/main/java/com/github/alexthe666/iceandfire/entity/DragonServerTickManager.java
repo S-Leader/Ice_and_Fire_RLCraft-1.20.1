@@ -96,10 +96,26 @@ public class DragonServerTickManager {
             if (dragon.getAnimationTick() == 10 && DragonUtils.canGrief(dragon)
                     && ForgeEventFactory.getMobGriefingEvent(dragon.level(), dragon)) {
                 Explosion.BlockInteraction mode = Explosion.BlockInteraction.DESTROY;
-                Explosion explosion = new Explosion(dragon.level(), dragon, dragon.getX(), dragon.getY(), dragon.getZ(),
-                        (4F * dragon.getDragonStage()) - 2F, false, mode);
-                explosion.explode();
-                explosion.finalizeExplosion(true);
+
+                // 1.12.2 used BlockBreakExplosion here.  That implementation explicitly
+                // excluded the exploder from entity damage.  A plain 1.20.1 Explosion
+                // can feed its damage back into the dragon, and at stage 5 this is an
+                // 18-block-radius explosion -- easily enough to kill its own caster.
+                // Preserve the old behavior by shielding only the source dragon while
+                // this one explosion is being resolved.
+                boolean wasInvulnerable = dragon.isInvulnerable();
+                Vec3 motionBeforeExplosion = dragon.getDeltaMovement();
+                dragon.setInvulnerable(true);
+                try {
+                    Explosion explosion = new Explosion(dragon.level(), dragon, dragon.getX(), dragon.getY(), dragon.getZ(),
+                            (4F * dragon.getDragonStage()) - 2F, false, mode);
+                    explosion.explode();
+                    explosion.finalizeExplosion(true);
+                } finally {
+                    dragon.setInvulnerable(wasInvulnerable);
+                    // The old BlockBreakExplosion did not knock the exploder away either.
+                    dragon.setDeltaMovement(motionBeforeExplosion);
+                }
                 dragon.ticksStill = 0;
             }
         }

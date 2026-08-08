@@ -1683,6 +1683,19 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (this.isModelDead() && dmg != this.level().damageSources().fellOutOfWorld()) {
             return false;
         }
+
+        // A dragon must never be damaged by an attack/explosion whose source is itself.
+        // The 1.12.2 BlockBreakExplosion explicitly excluded its exploder from the
+        // affected-entity list.  Vanilla 1.20.1 Explosion does not preserve that
+        // Ice & Fire-specific guarantee, which made the ported stuck-tail explosion
+        // capable of killing the dragon that created it.
+        Entity directSource = dmg.getDirectEntity();
+        Entity causingSource = dmg.getEntity();
+        if (directSource == this || causingSource == this
+                || directSource != null && this.isPart(directSource)
+                || causingSource != null && this.isPart(causingSource)) {
+            return false;
+        }
         if (this.isVehicle() && dmg.getEntity() != null && this.getControllingPassenger() != null && dmg.getEntity() == this.getControllingPassenger()) {
             return false;
         }
