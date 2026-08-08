@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.server.item.CustomToolMaterial;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.datagen.tags.BannerPatternTagGenerator;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
+import com.github.alexthe666.iceandfire.entity.EntityDragonArrow;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
 import com.github.alexthe666.iceandfire.enums.*;
 import com.github.alexthe666.iceandfire.item.blooded.BloodedArmorMaterial;
@@ -227,8 +228,21 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> DRAGONBONE_SWORD_LIGHTNING = registerItem("dragonbone_sword_lightning",
             () -> new ItemAlchemySword(LIGHTNING_DRAGONBONE_TOOL_MATERIAL));
     public static final RegistryObject<Item> DRAGONBONE_ARROW = registerItem("dragonbone_arrow",
-            () -> new ItemDragonArrow());
-    public static final RegistryObject<Item> DRAGON_BOW = registerItem("dragonbone_bow", () -> new ItemDragonBow());
+            () -> new ItemDragonArrow(EntityDragonArrow.Type.DEFAULT));
+    public static final RegistryObject<Item> DRAGONBONE_ARROW_FIRE = registerItem("dragonbone_arrow_fire",
+            () -> new ItemDragonArrow(EntityDragonArrow.Type.FIRE));
+    public static final RegistryObject<Item> DRAGONBONE_ARROW_ICE = registerItem("dragonbone_arrow_ice",
+            () -> new ItemDragonArrow(EntityDragonArrow.Type.ICE));
+    public static final RegistryObject<Item> DRAGONBONE_ARROW_LIGHTNING = registerItem("dragonbone_arrow_lightning",
+            () -> new ItemDragonArrow(EntityDragonArrow.Type.LIGHTNING));
+    public static final RegistryObject<Item> DRAGON_BOW = registerItem("dragonbone_bow",
+            () -> new ItemDragonBow(EntityDragonArrow.Type.DEFAULT));
+    public static final RegistryObject<Item> DRAGON_BOW_FIRE = registerItem("dragonbone_bow_fire",
+            () -> new ItemDragonBow(EntityDragonArrow.Type.FIRE));
+    public static final RegistryObject<Item> DRAGON_BOW_ICE = registerItem("dragonbone_bow_ice",
+            () -> new ItemDragonBow(EntityDragonArrow.Type.ICE));
+    public static final RegistryObject<Item> DRAGON_BOW_LIGHTNING = registerItem("dragonbone_bow_lightning",
+            () -> new ItemDragonBow(EntityDragonArrow.Type.LIGHTNING));
     public static final RegistryObject<Item> DRAGON_SKULL_FIRE = registerItem(ItemDragonSkull.getName(0),
             () -> new ItemDragonSkull(0));
     public static final RegistryObject<Item> DRAGON_SKULL_ICE = registerItem(ItemDragonSkull.getName(1),

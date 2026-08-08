@@ -1373,8 +1373,14 @@
   "entity.iceandfire.gold_dragon_charge": "金龙吐息",
   "dragon_sword_gold.hurt2": "造成魔法伤害，对拥有正面效果的目标造成额外伤害",
   "dragon.gold": "烁金",
-  "entity.iceandfire.shivaxi_dragon": "史瓦西龙",
-  "entity.iceandfire.shivaxi_dragon_lightning": "史瓦西龙雷弹",
-  "item.iceandfire.spawn_egg_shivaxi_dragon": "史瓦西龙刷怪蛋",
-  "block.iceandfire.fulgurite": "电熔岩"
+  "entity.iceandfire.shivaxi_dragon": "施瓦西龙",
+  "entity.iceandfire.shivaxi_dragon_lightning": "施瓦西龙雷弹",
+  "item.iceandfire.spawn_egg_shivaxi_dragon": "施瓦西龙刷怪蛋",
+  "block.iceandfire.fulgurite": "电熔岩",
+  "item.iceandfire.dragonbone_arrow_fire": "烈火龙骨箭",
+  "item.iceandfire.dragonbone_arrow_ice": "寒冰龙骨箭",
+  "item.iceandfire.dragonbone_arrow_lightning": "雷霆龙骨箭",
+  "item.iceandfire.dragonbone_bow_fire": "烈火龙骨长弓",
+  "item.iceandfire.dragonbone_bow_ice": "霜龙骨长弓",
+  "item.iceandfire.dragonbone_bow_lightning": "雷霆龙骨长弓"
 }

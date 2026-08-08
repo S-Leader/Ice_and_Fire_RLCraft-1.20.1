@@ -1,0 +1,14 @@
+{
+  "type": "iceandfire:dragonforge",
+  "dragon_type": "ice",
+  "cook_time": 1000,
+  "input": {
+    "item": "iceandfire:dragonbone_arrow"
+  },
+  "blood": {
+    "item": "iceandfire:ice_dragon_blood"
+  },
+  "result": {
+    "item": "iceandfire:dragonbone_arrow_ice"
+  }
+}

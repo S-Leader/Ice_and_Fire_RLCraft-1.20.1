@@ -83,6 +83,45 @@ public class IafRecipeRegistry {
                     return entityarrow;
                 }
             });
+            DispenserBlock.registerBehavior(IafItemRegistry.DRAGONBONE_ARROW_FIRE.get(), new AbstractProjectileDispenseBehavior() {
+                /**
+                 * Return the projectile entity spawned by this dispense behavior.
+                 */
+                @Override
+                protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
+                    EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
+                        position.x(), position.y(), position.z(), worldIn);
+                    entityarrow.setType(EntityDragonArrow.Type.FIRE);
+                    entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
+                    return entityarrow;
+                }
+            });
+            DispenserBlock.registerBehavior(IafItemRegistry.DRAGONBONE_ARROW_ICE.get(), new AbstractProjectileDispenseBehavior() {
+                /**
+                 * Return the projectile entity spawned by this dispense behavior.
+                 */
+                @Override
+                protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
+                    EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
+                        position.x(), position.y(), position.z(), worldIn);
+                    entityarrow.setType(EntityDragonArrow.Type.ICE);
+                    entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
+                    return entityarrow;
+                }
+            });
+            DispenserBlock.registerBehavior(IafItemRegistry.DRAGONBONE_ARROW_LIGHTNING.get(), new AbstractProjectileDispenseBehavior() {
+                /**
+                 * Return the projectile entity spawned by this dispense behavior.
+                 */
+                @Override
+                protected @NotNull Projectile getProjectile(@NotNull Level worldIn, @NotNull Position position, @NotNull ItemStack stackIn) {
+                    EntityDragonArrow entityarrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(),
+                        position.x(), position.y(), position.z(), worldIn);
+                    entityarrow.setType(EntityDragonArrow.Type.LIGHTNING);
+                    entityarrow.pickup = AbstractArrow.Pickup.ALLOWED;
+                    return entityarrow;
+                }
+            });
             DispenserBlock.registerBehavior(IafItemRegistry.HYDRA_ARROW.get(), new AbstractProjectileDispenseBehavior() {
                 /**
                  * Return the projectile entity spawned by this dispense behavior.

@@ -27,12 +27,22 @@ public final class ChainLightningUtils {
 
     public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
             float baseWeaponDamage) {
+        createChainLightning(level, target, attacker, baseWeaponDamage, true);
+    }
+
+    /**
+     * Variant used by legacy projectile ports. The 1.12.2 lightning arrow did not put the
+     * bow itself on cooldown, so callers can suppress the held-item cooldown while keeping
+     * the same chain damage and visuals.
+     */
+    public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
+            float baseWeaponDamage, boolean applyPlayerCooldown) {
         if (level.isClientSide)
             return;
         if (!target.isAttackable())
             return;
 
-        if (attacker instanceof Player player) {
+        if (applyPlayerCooldown && attacker instanceof Player player) {
             if (player.getCooldowns().isOnCooldown(player.getMainHandItem().getItem())) {
                 return;
             }

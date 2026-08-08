@@ -89,7 +89,11 @@ public class IafItemTags extends ItemTagsProvider {
 
         tag(MAKE_ITEM_DROPS_FIREIMMUNE).add(IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get());
 
-        tag(DRAGON_ARROWS).add(IafItemRegistry.DRAGONBONE_ARROW.get());
+        tag(DRAGON_ARROWS)
+                .add(IafItemRegistry.DRAGONBONE_ARROW.get())
+                .add(IafItemRegistry.DRAGONBONE_ARROW_FIRE.get())
+                .add(IafItemRegistry.DRAGONBONE_ARROW_ICE.get())
+                .add(IafItemRegistry.DRAGONBONE_ARROW_LIGHTNING.get());
 
         tag(DRAGON_BLOODS).add(IafItemRegistry.FIRE_DRAGON_BLOOD.get()).add(IafItemRegistry.ICE_DRAGON_BLOOD.get()).add(IafItemRegistry.LIGHTNING_DRAGON_BLOOD.get()).add(IafItemRegistry.GOLD_DRAGON_BLOOD.get());
 

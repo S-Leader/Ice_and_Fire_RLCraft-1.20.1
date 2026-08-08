@@ -12,24 +12,42 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemDragonArrow extends ArrowItem {
+    private final EntityDragonArrow.Type type;
+
     public ItemDragonArrow() {
+        this(EntityDragonArrow.Type.DEFAULT);
+    }
+
+    public ItemDragonArrow(EntityDragonArrow.Type type) {
         super(new Properties());
+        this.type = type;
+    }
+
+    public EntityDragonArrow.Type getType() {
+        return this.type;
     }
 
     @Override
-    public @NotNull AbstractArrow createArrow(@NotNull final Level level, @NotNull final ItemStack arrow, @NotNull final LivingEntity shooter) {
-        return new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(), shooter, level);
-    }
-
-    @Override
-    public boolean isInfinite(@NotNull final ItemStack arrow, @NotNull final ItemStack bow, @NotNull final Player player) {
-        // Technically this would always return false - it's more a compat layer for Apotheosis' Endless Quiver enchantment
-        boolean isInfinite = super.isInfinite(arrow, bow, player);
-
-        if (!isInfinite) {
-            isInfinite = bow.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0 && getClass() == ItemDragonArrow.class;
+    public @NotNull AbstractArrow createArrow(@NotNull Level level, @NotNull ItemStack arrowStack,
+                                               @NotNull LivingEntity shooter) {
+        EntityDragonArrow arrow = new EntityDragonArrow(IafEntityRegistry.DRAGON_ARROW.get(), shooter, level);
+        EntityDragonArrow.Type resolvedType = this.type;
+        if (resolvedType == EntityDragonArrow.Type.DEFAULT
+                && shooter.getUseItem().getItem() instanceof ItemDragonBow dragonBow) {
+            resolvedType = dragonBow.getType();
         }
+        arrow.setType(resolvedType);
+        return arrow;
+    }
 
-        return isInfinite;
+    @Override
+    public boolean isInfinite(@NotNull ItemStack arrow, @NotNull ItemStack bow, @NotNull Player player) {
+        boolean infinite = super.isInfinite(arrow, bow, player);
+        if (!infinite && this.type == EntityDragonArrow.Type.DEFAULT) {
+            // Keep the 1.20.1 base dragonbone-arrow Infinity behavior, while the legacy
+            // elemental arrows remain consumable like their 1.12.2 counterparts.
+            infinite = bow.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0;
+        }
+        return infinite;
     }
 }

@@ -1385,5 +1385,11 @@
   "dragon.gold": "Gold",
   "entity.iceandfire.shivaxi_dragon": "Shivaxi Dragon",
   "entity.iceandfire.shivaxi_dragon_lightning": "Shivaxi Lightning",
-  "item.iceandfire.spawn_egg_shivaxi_dragon": "Shivaxi Dragon Spawn Egg"
+  "item.iceandfire.spawn_egg_shivaxi_dragon": "Shivaxi Dragon Spawn Egg",
+  "item.iceandfire.dragonbone_arrow_fire": "Flamed Dragon Bone Arrow",
+  "item.iceandfire.dragonbone_arrow_ice": "Iced Dragon Bone Arrow",
+  "item.iceandfire.dragonbone_arrow_lightning": "Shocked Dragon Bone Arrow",
+  "item.iceandfire.dragonbone_bow_fire": "Flamed Dragon Bone Bow",
+  "item.iceandfire.dragonbone_bow_ice": "Iced Dragon Bone Bow",
+  "item.iceandfire.dragonbone_bow_lightning": "Shocked Dragon Bone Bow"
 }

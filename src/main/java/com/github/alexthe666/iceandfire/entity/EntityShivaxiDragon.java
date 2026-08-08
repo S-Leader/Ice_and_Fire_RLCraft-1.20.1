@@ -69,7 +69,7 @@ public class EntityShivaxiDragon extends EntityLightningDragon {
 
     /**
      * Shivaxi has two ranged attacks in this port:
-     *  - normal breath: the three-colour elemental stream (fire + ice + lightning)
+     *  - normal breath: lightning stream whose targets receive legacy ShivaxiBlazed
      *  - charge attack: the RLC Shivaxi lightning orb
      *
      * The previous port replaced the entire breath with a projectile every 3 ticks, which is why
@@ -93,7 +93,7 @@ public class EntityShivaxiDragon extends EntityLightningDragon {
             return;
         }
 
-        // The normal attack is the three-colour continuous breath.
+        // The normal attack is a continuous Shivaxi breath; hit effects are handled by the destruction manager.
         if (this.isBreathingFire()) {
             if (this.isActuallyBreathingFire()) {
                 this.setYRot(this.yBodyRot);
@@ -144,36 +144,10 @@ public class EntityShivaxiDragon extends EntityLightningDragon {
     }
 
     /**
-     * Keep the 1.20.1 lightning breath's server-side hit/destruction/synchronisation, then layer
-     * the fire and ice breath particles over the lightning beam on the client.  This gives the
-     * Shivaxi breath its intended red + blue + electric-purple appearance without tripling damage.
+     * Continuous breath intentionally uses the inherited lightning beam. Damage handling is
+     * intercepted in IafDragonDestructionManager so targets receive the legacy ShivaxiBlazed
+     * capability effect instead of the previous fire/ice/lightning composite hit.
      */
-    @Override
-    public void stimulateFire(double burnX, double burnY, double burnZ, int syncType) {
-        super.stimulateFire(burnX, burnY, burnZ, syncType);
-
-        // Bomb sync types are handled as projectiles; only decorate the continuous breath.
-        if (!this.level().isClientSide() || syncType > 2 || !this.isActuallyBreathingFire()) {
-            return;
-        }
-
-        Vec3 head = this.getHeadPosition();
-        double distance = Math.max(2.5D * Math.sqrt(this.distanceToSqr(burnX, burnY, burnZ)), 0.0D);
-        double conqueredDistance = this.burnProgress / 40.0D * distance;
-        int particleSpacing = this.getDragonStage() <= 3 ? 6 : 3;
-        int attempts = Math.max(1, Math.min(12, (int) Math.ceil(conqueredDistance / 2.5D)));
-
-        // DragonFire and DragonIce particles use burnParticleX/Y/Z from stimulateFire() as their
-        // destination. The inherited lightning renderer supplies the third colour/element.
-        for (int i = 0; i < attempts; i++) {
-            if (this.getRandom().nextInt(particleSpacing) == 0) {
-                IceAndFire.PROXY.spawnDragonParticle(EnumParticles.DragonFire,
-                        head.x, head.y, head.z, 0.0D, 0.0D, 0.0D, this);
-                IceAndFire.PROXY.spawnDragonParticle(EnumParticles.DragonIce,
-                        head.x, head.y, head.z, 0.0D, 0.0D, 0.0D, this);
-            }
-        }
-    }
 
     private void spawnShivaxiProjectile(Vec3 direction) {
         Vec3 head = this.getHeadPosition();

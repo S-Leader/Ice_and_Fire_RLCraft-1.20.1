@@ -230,39 +230,15 @@ public class IafDragonDestructionManager {
     }
 
     /**
-     * Shivaxi breath is a real three-element hit.  Each component deals exactly one half of the
-     * normal breath damage for that element, so fire/ice/lightning resistances and damage types
-     * continue to work independently.  Vanilla hurt invulnerability would otherwise swallow the
-     * second and third component, therefore only the gaps inside this single composite hit clear
-     * invulnerability; after the composite hit the normal 20-tick hurt window is restored.
+     * Shivaxi breath replacement for the temporary three-element port.  The breath keeps the
+     * lightning dragon's normal direct breath damage, but its status component is the legacy
+     * RLCraft ShivaxiBlazed capability for 200 ticks.
      */
     private static void damageShivaxiBreathTarget(final LivingEntity target, final EntityShivaxiDragon dragon) {
-        final int stage = dragon.getDragonStage();
-        boolean damaged = false;
-
-        if (target.hurt(getDamageSource(dragon, DragonType.FIRE),
-                stage * (float) IafConfig.dragonAttackDamageFire * 0.5F)) {
-            applyDragonEffect(target, dragon, 5 + stage * 5, DragonType.FIRE);
-            damaged = true;
-            target.invulnerableTime = 0;
-        }
-
-        if (target.hurt(getDamageSource(dragon, DragonType.ICE),
-                stage * (float) IafConfig.dragonAttackDamageIce * 0.5F)) {
-            applyDragonEffect(target, dragon, 50 * stage, DragonType.ICE);
-            damaged = true;
-            target.invulnerableTime = 0;
-        }
-
-        if (target.hurt(getDamageSource(dragon, DragonType.LIGHTNING),
-                stage * (float) IafConfig.dragonAttackDamageLightning * 0.5F)) {
-            applyDragonEffect(target, dragon, 3, DragonType.LIGHTNING);
-            damaged = true;
-        }
-
-        if (damaged) {
-            target.invulnerableTime = 20;
-        }
+        float damage = dragon.getDragonStage() * (float) IafConfig.dragonAttackDamageLightning;
+        target.hurt(getDamageSource(dragon, DragonType.LIGHTNING), damage);
+        EntityDataProvider.getCapability(target)
+                .ifPresent(data -> data.shivaxiBlazeData.setShivaxiBlazed(200, 0));
     }
 
     private static void attackBlock(final Level level, final EntityDragonBase dragon, final BlockPos position,
