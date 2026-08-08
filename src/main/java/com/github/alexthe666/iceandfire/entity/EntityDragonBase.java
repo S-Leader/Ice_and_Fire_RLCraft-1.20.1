@@ -1433,10 +1433,14 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     public boolean isBeyondHeight() {
-        if (this.getY() > this.level().getMaxBuildHeight()) {
+        if (this.getY() >= this.level().getMaxBuildHeight()) {
             return true;
         }
-        return this.getY() > IafConfig.maxDragonFlight;
+        // Use the same local terrain-aware ceiling as normal AI flight instead of only the
+        // absolute config value.  This also stops the hover take-off phase from stair-stepping
+        // the dragon higher on every repeated flight attempt.
+        int localMaxFlightHeight = DragonUtils.getMaximumFlightHeightForPos(this.level(), this.blockPosition());
+        return this.getY() >= localMaxFlightHeight;
     }
 
     private int calculateDownY() {
@@ -2003,23 +2007,48 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
         if (isTargetInAir() && this.isFlying()
                 && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
-            double attackY = this.attackDecision ? Math.min(airTarget.getY(), maxFlightHeight) : this.getY();
+            // Ranged flight must hold altitude.  The previous port used getY() here and then
+            // added +1 below, which made targetY permanently positive and caused dragons to
+            // climb forever while breathing at a target.
+            double desiredY;
+            if (this.getY() > maxFlightHeight) {
+                // If some previous motion/AI already pushed us above the local ceiling, descend.
+                desiredY = maxFlightHeight;
+            } else if (this.attackDecision) {
+                // Melee/tackle flight follows the target vertically, but never above the ceiling.
+                desiredY = Math.min(airTarget.getY() + 0.5D, maxFlightHeight);
+            } else {
+                // Ranged flight keeps the current altitude exactly.
+                desiredY = this.getY();
+            }
+
             double targetX = airTarget.getX() + 0.5D - getX();
-            double targetY = attackY + 1D - getY();
+            double targetY = desiredY - getY();
             double targetZ = airTarget.getZ() + 0.5D - getZ();
 
             Vec3 mot = this.getDeltaMovement();
-            double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * 0.100000000372529D * getFlySpeed();
-            double newMotY = mot.y + (Math.signum(targetY) * 0.5D - mot.y) * 0.100000000372529D * getFlySpeed();
-            double newMotZ = mot.z + (Math.signum(targetZ) * 0.5D - mot.z) * 0.100000000372529D * getFlySpeed();
-            // Modern safety cap; the old global motion clamp had the same practical limit.
+            double correction = 0.100000000372529D * getFlySpeed();
+            double wantedYMotion = Math.abs(targetY) < 0.25D ? 0.0D : Mth.clamp(targetY, -0.5D, 0.5D);
+            double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * correction;
+            double newMotY = mot.y + (wantedYMotion - mot.y) * correction;
+            double newMotZ = mot.z + (Math.signum(targetZ) * 0.5D - mot.z) * correction;
             newMotY = Mth.clamp(newMotY, -0.5D, 0.5D);
+
+            // Hard ceiling: do not allow residual velocity or another flight state to continue
+            // carrying an AI-controlled dragon upward once the local flight limit is reached.
+            if (this.getY() >= maxFlightHeight && newMotY > 0.0D) {
+                newMotY = 0.0D;
+            }
+            if (this.getY() > maxFlightHeight + 1.0D) {
+                newMotY = Math.min(newMotY, -0.1D);
+            }
+
             this.setDeltaMovement(newMotX, newMotY, newMotZ);
             this.zza = 0.5F;
 
             double d0 = airTarget.getX() + 0.5D - this.getX();
             double d2 = airTarget.getZ() + 0.5D - this.getZ();
-            double d1 = attackY + 0.5D - this.getY();
+            double d1 = desiredY - this.getY();
             double d3 = Mth.sqrt((float) (d0 * d0 + d2 * d2));
             float yaw = (float) (Mth.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
             float pitch = (float) (-(Mth.atan2(d1, d3) * (180D / Math.PI)));

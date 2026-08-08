@@ -198,9 +198,15 @@ public class DragonServerTickManager {
             if (dragon.getControllingPassenger() == null && dragon.doesWantToLand() && !dragon.onGround() && !dragon.isInWater()) {
                 dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, -0.25, 0));
             } else {
-                if ((dragon.getControllingPassenger() == null || dragon.getControllingPassenger() instanceof EntityDreadQueen) && !dragon.isBeyondHeight()) {
-                    double up = dragon.isInWater() ? 0.12D : 0.08D;
-                    dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, up, 0));
+                if (dragon.getControllingPassenger() == null || dragon.getControllingPassenger() instanceof EntityDreadQueen) {
+                    if (!dragon.isBeyondHeight()) {
+                        double up = dragon.isInWater() ? 0.12D : 0.08D;
+                        dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, up, 0));
+                    } else if (!dragon.isInWater() && dragon.getDeltaMovement().y > 0.0D) {
+                        // Kill leftover upward momentum at the local flight ceiling.  Without
+                        // this, repeated hover/take-off cycles can still stair-step upward.
+                        dragon.setDeltaMovement(dragon.getDeltaMovement().x, 0.0D, dragon.getDeltaMovement().z);
+                    }
                 }
                 if (dragon.hoverTicks > 40) {
                     dragon.setHovering(false);
