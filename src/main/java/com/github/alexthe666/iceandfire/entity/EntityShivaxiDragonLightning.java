@@ -83,8 +83,12 @@ public class EntityShivaxiDragonLightning extends EntityDragonLightningCharge {
 
     private void explodeShivaxi(EntityDragonBase dragon) {
         float radius = dragon.getDragonStage() * 2.5F;
-        DamageSource source = IafDamageRegistry.causeDragonLightningDamage(dragon.getRidingPlayer() != null
-                ? dragon.getRidingPlayer() : dragon);
+        // Keep the dragon itself as the direct source even when ridden. Dragon multipart
+        // parts use the direct source to reject their parent's own explosion damage, matching
+        // the 1.12.2 EntityDragonPart self-damage guard.
+        DamageSource source = dragon.getRidingPlayer() != null
+                ? IafDamageRegistry.causeIndirectDragonLightningDamage(dragon, dragon.getRidingPlayer())
+                : IafDamageRegistry.causeDragonLightningDamage(dragon);
         boolean canGrief = DragonUtils.canGrief(dragon)
                 && ForgeEventFactory.getMobGriefingEvent(this.level(), dragon);
 
