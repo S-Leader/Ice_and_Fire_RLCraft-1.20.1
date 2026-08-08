@@ -1395,7 +1395,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         return this.level().isDay() || this.getCommand() == 2;
     }
 
-    private boolean isStuck() {
+    public boolean isStuck() {
         boolean skip = isChained() || isTame();
 
         if (skip) {
@@ -1771,14 +1771,8 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         level().getProfiler().pop();
         level().getProfiler().pop();
 
-        if (!level().isClientSide() && IafConfig.dragonDigWhenStuck && isStuck()) {
-            breakBlocks(true);
-            resetStuck();
-        }
-    }
-
-    private void resetStuck() {
-        ticksStill = 0;
+        // RLC-style stuck handling is performed by DragonServerTickManager so it can
+        // play the tail-whack and break terrain on the impact frame instead of instantly digging.
     }
 
     @Override
@@ -1983,36 +1977,21 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         return baseSpeed * tackleMultiplier * IafConfig.dragonFlightSpeedMod;
     }
 
-    // 飞行导航：朝airTarget飞行（移植自1.12.2 RLC）
+    // 1.12.2 RLC flight semantics: AI air target selection owns the target; no orbiting layer here.
     public void flyAround() {
         if (getControllingPassenger() != null) {
             airTarget = null;
             return;
         }
-        if (airTarget != null && (doesWantToLand() && getTarget() == null)) {
+        if (airTarget != null && doesWantToLand()) {
             airTarget = null;
-        }
-        // 撞墙改道：无攻击目标且横向碰撞持续2秒，丢弃当前目标重新选路
-        // （选路时isTargetBlocked射线会避开被挡方向；有攻击目标时不改道，交由isStuck挖掘处理）
-        if (this.horizontalCollision && this.getTarget() == null) {
-            flightStuckTicks++;
-            if (flightStuckTicks > 40) {
-                airTarget = null;
-                flightStuckTicks = 0;
-            }
-        } else {
-            flightStuckTicks = 0;
-        }
-        // 有攻击目标时动态追踪：近距离直扑，远距离绕目标盘旋接近
-        if (getTarget() != null && getTarget().isAlive()) {
-            airTarget = DragonUtils.updateAirAttackTarget(this, getTarget(), airTarget);
         }
         if (airTarget != null) {
             flyTowardsTarget();
         }
     }
 
-    // 向airTarget移动并转向（移植自1.12.2 RLC，适配1.20.1 API）
+    // 1.12.2 RLC: ranged attack keeps the dragon at its current Y, melee attackDecision follows target Y.
     public void flyTowardsTarget() {
         if (airTarget == null) {
             return;
@@ -2021,30 +2000,35 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (airTarget.getY() > maxFlightHeight) {
             airTarget = new BlockPos(airTarget.getX(), maxFlightHeight, airTarget.getZ());
         }
-        if (isTargetInAir() && this.isFlying() && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
-            // 统一使用airTarget高度，不再因attackDecision俯冲到地面
+
+        if (isTargetInAir() && this.isFlying()
+                && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
+            double attackY = this.attackDecision ? Math.min(airTarget.getY(), maxFlightHeight) : this.getY();
             double targetX = airTarget.getX() + 0.5D - getX();
-            double targetY = Math.min(airTarget.getY(), maxFlightHeight) + 1D - getY();
+            double targetY = attackY + 1D - getY();
             double targetZ = airTarget.getZ() + 0.5D - getZ();
+
             Vec3 mot = this.getDeltaMovement();
-            double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * 0.100000000372529 * getFlySpeed();
-            double newMotY = mot.y + (Math.signum(targetY) * 0.5D - mot.y) * 0.100000000372529 * getFlySpeed();
-            double newMotZ = mot.z + (Math.signum(targetZ) * 0.5D - mot.z) * 0.100000000372529 * getFlySpeed();
-            // Y轴速度限制器，防止无限加速飞天
+            double newMotX = mot.x + (Math.signum(targetX) * 0.5D - mot.x) * 0.100000000372529D * getFlySpeed();
+            double newMotY = mot.y + (Math.signum(targetY) * 0.5D - mot.y) * 0.100000000372529D * getFlySpeed();
+            double newMotZ = mot.z + (Math.signum(targetZ) * 0.5D - mot.z) * 0.100000000372529D * getFlySpeed();
+            // Modern safety cap; the old global motion clamp had the same practical limit.
             newMotY = Mth.clamp(newMotY, -0.5D, 0.5D);
             this.setDeltaMovement(newMotX, newMotY, newMotZ);
             this.zza = 0.5F;
+
             double d0 = airTarget.getX() + 0.5D - this.getX();
             double d2 = airTarget.getZ() + 0.5D - this.getZ();
-            double d1 = airTarget.getY() + 0.5D - this.getY();
-            double d3 = Mth.sqrt((float)(d0 * d0 + d2 * d2));
-            float f = (float) (Mth.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
-            float f1 = (float) (-(Mth.atan2(d1, d3) * (180D / Math.PI)));
-            this.setXRot(this.updateRotation(this.getXRot(), f1, 30F));
-            this.setYRot(this.updateRotation(this.getYRot(), f, 30F));
+            double d1 = attackY + 0.5D - this.getY();
+            double d3 = Mth.sqrt((float) (d0 * d0 + d2 * d2));
+            float yaw = (float) (Mth.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
+            float pitch = (float) (-(Mth.atan2(d1, d3) * (180D / Math.PI)));
+            this.setXRot(this.updateRotation(this.getXRot(), pitch, 30F));
+            this.setYRot(this.updateRotation(this.getYRot(), yaw, 30F));
         } else {
             this.airTarget = null;
         }
+
         if (airTarget != null) {
             if (!isFlying()) {
                 this.setFlying(true);

@@ -63,6 +63,8 @@ public class IafClientSetup {
                 manager -> new RenderDragonBase(manager, ICE_DRAGON_BASE_MODEL, 1));
         EntityRenderers.register(IafEntityRegistry.LIGHTNING_DRAGON.get(),
                 manager -> new RenderLightningDragon(manager, LIGHTNING_DRAGON_BASE_MODEL, 2));
+        EntityRenderers.register(IafEntityRegistry.SHIVAXI_DRAGON.get(),
+                manager -> new RenderLightningDragon(manager, LIGHTNING_DRAGON_BASE_MODEL, 2));
         EntityRenderers.register(IafEntityRegistry.GOLD_DRAGON.get(),
                 manager -> new RenderDragonBase(manager, FIRE_DRAGON_BASE_MODEL, 3));
         EntityRenderers.register(IafEntityRegistry.DRAGON_EGG.get(), RenderDragonEgg::new);
@@ -74,7 +76,9 @@ public class IafClientSetup {
         EntityRenderers.register(IafEntityRegistry.ICE_DRAGON_CHARGE.get(),
                 manager -> new RenderDragonFireCharge(manager, false));
         EntityRenderers.register(IafEntityRegistry.LIGHTNING_DRAGON_CHARGE.get(),
-                manager -> new RenderDragonLightningCharge(manager));
+                manager -> new RenderDragonLightningCharge<>(manager));
+        EntityRenderers.register(IafEntityRegistry.SHIVAXI_DRAGON_LIGHTNING.get(),
+                manager -> new RenderDragonLightningCharge<>(manager));
         EntityRenderers.register(IafEntityRegistry.GOLD_DRAGON_CHARGE.get(),
                 manager -> new RenderDragonGoldCharge(manager));
         EntityRenderers.register(IafEntityRegistry.HIPPOGRYPH_EGG.get(), ThrownItemRenderer::new);

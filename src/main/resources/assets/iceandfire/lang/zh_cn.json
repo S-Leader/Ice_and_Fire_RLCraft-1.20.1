@@ -1372,5 +1372,9 @@
   "entity.iceandfire.gold_dragon": "金龙",
   "entity.iceandfire.gold_dragon_charge": "金龙吐息",
   "dragon_sword_gold.hurt2": "造成魔法伤害，对拥有正面效果的目标造成额外伤害",
-  "dragon.gold": "烁金"
+  "dragon.gold": "烁金",
+  "entity.iceandfire.shivaxi_dragon": "施瓦西龙",
+  "entity.iceandfire.shivaxi_dragon_lightning": "施瓦西龙雷弹",
+  "item.iceandfire.spawn_egg_shivaxi_dragon": "施瓦西龙刷怪蛋",
+  "block.iceandfire.fulgurite": "电熔岩"
 }

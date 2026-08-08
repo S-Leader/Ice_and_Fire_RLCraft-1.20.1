@@ -5,7 +5,10 @@ import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.github.alexthe666.iceandfire.entity.EntityDreadQueen;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 
 
 public class DragonServerTickManager {
@@ -84,7 +87,51 @@ public class DragonServerTickManager {
             dragon.roar();
         }
 
-        // 龙在空中不再俯冲近战，改为纯远程攻击（喷火/火球）
+        // 1.12.2 RLC: a wild adult dragon that is stuck against terrain uses a tail-whack
+        // and breaks open the obstruction on the impact frame.
+        if (IafConfig.dragonDigWhenStuck && dragon.getDragonStage() >= 3 && dragon.isStuck() && dragon.getControllingPassenger() == null) {
+            if (dragon.getAnimation() != EntityDragonBase.ANIMATION_TAILWHACK) {
+                dragon.setAnimation(EntityDragonBase.ANIMATION_TAILWHACK);
+            }
+            if (dragon.getAnimationTick() == 10 && DragonUtils.canGrief(dragon)
+                    && ForgeEventFactory.getMobGriefingEvent(dragon.level(), dragon)) {
+                Explosion.BlockInteraction mode = Explosion.BlockInteraction.DESTROY;
+                Explosion explosion = new Explosion(dragon.level(), dragon, dragon.getX(), dragon.getY(), dragon.getZ(),
+                        (4F * dragon.getDragonStage()) - 2F, false, mode);
+                explosion.explode();
+                explosion.finalizeExplosion(true);
+                dragon.ticksStill = 0;
+            }
+        }
+
+        // 1.12.2 RLC aerial melee: attackDecision=true makes the dragon dive/tackle its target.
+        LivingEntity aerialTarget = dragon.getTarget();
+        if (dragon.getControllingPassenger() == null && aerialTarget != null && aerialTarget.isAlive()) {
+            if (dragon.isFlying() && dragon.attackDecision
+                    && dragon.isDirectPathBetweenPoints(dragon.position().add(0, dragon.getBbHeight() * 0.5D, 0),
+                    aerialTarget.position().add(0, aerialTarget.getBbHeight() * 0.5D, 0))) {
+                dragon.setTackling(true);
+            }
+
+            if (dragon.isTackling() && dragon.getBoundingBox().inflate(2.0D).intersects(aerialTarget.getBoundingBox())) {
+                dragon.attackDecision = true;
+                aerialTarget.hurt(aerialTarget.level().damageSources().mobAttack(dragon), dragon.getDragonStage() * 3.0F);
+                dragon.spawnGroundEffects();
+                dragon.setTackling(false);
+                dragon.setFlying(false);
+                dragon.setHovering(false);
+            } else if (dragon.isFlying() && dragon.getBoundingBox().inflate(3.0D).intersects(aerialTarget.getBoundingBox())) {
+                dragon.doHurtTarget(aerialTarget);
+            }
+
+            // Old behavior switches a distant adult dragon from melee dive to ranged attack.
+            double averageEdge = (dragon.getBbWidth() + dragon.getBbHeight() + dragon.getBbWidth()) / 3.0D;
+            double rangedThreshold = Math.min(averageEdge * 5.0D, 25.0D);
+            if (dragon.attackDecision && dragon.getDragonStage() > 1 && dragon.distanceTo(aerialTarget) > rangedThreshold) {
+                dragon.attackDecision = false;
+                dragon.setTackling(false);
+            }
+        }
 
         if (dragon.getControllingPassenger() == null && dragon.isTackling() && (dragon.getTarget() == null || !dragon.attackDecision)) {
             dragon.setTackling(false);

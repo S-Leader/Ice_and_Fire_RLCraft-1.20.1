@@ -36,8 +36,9 @@ public class DragonCombatManager {
                         dragon.randomizeAttacks();
                     }
                 } else if (dragon.getAnimation() == EntityDragonBase.ANIMATION_WINGBLAST) {
-                    if ((dragon.getAnimationTick() == 15 || dragon.getAnimationTick() == 25 || dragon.getAnimationTick() == 35)) {
-                        attackTarget(target, ridingPlayer, (int) dragon.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
+                    if ((dragon.getAnimationTick() == 17 || dragon.getAnimationTick() == 22 || dragon.getAnimationTick() == 28)) {
+                        attackTarget(target, ridingPlayer, (float) dragon.getAttribute(Attributes.ATTACK_DAMAGE).getValue() / 4.0F);
+                        dragon.spawnGroundEffects();
                         target.knockback(dragon.getDragonStage() * 0.6F, Mth.sin(dragon.getYRot() * 0.017453292F), -Mth.cos(dragon.getYRot() * 0.017453292F));
                         dragon.attackDecision = dragon.getRandom().nextBoolean();
                         dragon.randomizeAttacks();

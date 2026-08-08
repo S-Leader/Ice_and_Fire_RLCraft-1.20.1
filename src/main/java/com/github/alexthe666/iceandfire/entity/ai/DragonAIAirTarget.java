@@ -11,8 +11,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 
 /**
- * 龙空中飞行目标选择AI（移植自1.12.2 RLC）
- * 核心逻辑：给空中飞行的龙寻找并更新airTarget巡航点/攻击点，并独占MOVE标志。
+ * 1.12.2 RLCraft dragon air-target AI, adapted to 1.20.1.
+ * Attack targets are followed directly instead of orbiting around them.
  */
 public class DragonAIAirTarget extends Goal {
     private final EntityDragonBase dragon;
@@ -24,34 +24,23 @@ public class DragonAIAirTarget extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!dragon.isFlying() && !dragon.isHovering()) {
+        if ((!dragon.isFlying() && !dragon.isHovering()) || dragon.onGround()) {
             return false;
         }
-        if (dragon.isOrderedToSit() || dragon.isSleeping()) {
-            return false;
-        }
-        if (dragon.isBaby()) {
-            return false;
-        }
-        if (dragon.getControllingPassenger() != null) {
+        if (dragon.isOrderedToSit() || dragon.isSleeping() || dragon.isBaby() || dragon.getControllingPassenger() != null) {
             return false;
         }
 
-        // 已到达目标附近，清除目标，促使寻找下一个目标
-        if (dragon.airTarget != null && dragon.distanceToSqr(Vec3.atCenterOf(dragon.airTarget)) < 16) {
-            dragon.airTarget = null;
-        }
-
-        if (dragon.airTarget == null) {
-            // 有攻击目标时：近距离直扑，远距离绕目标盘旋接近
+        if (dragon.airTarget == null || dragon.isTargetBlocked(Vec3.atCenterOf(dragon.airTarget))) {
             LivingEntity attackTarget = dragon.getTarget();
             if (attackTarget != null && attackTarget.isAlive()) {
-                dragon.airTarget = DragonUtils.updateAirAttackTarget(dragon, attackTarget, dragon.airTarget);
+                dragon.airTarget = BlockPos.containing(attackTarget.position());
                 return true;
             }
-            // 无攻击目标时，选择随机空中巡航点
+
             BlockPos pos = getNearbyAirTarget();
             if (pos == null) {
+                dragon.airTarget = null;
                 return false;
             }
             dragon.airTarget = pos;
@@ -65,28 +54,32 @@ public class DragonAIAirTarget extends Goal {
         if (!dragon.isFlying() && !dragon.isHovering()) {
             return false;
         }
-        if (dragon.isOrderedToSit() || dragon.isSleeping()) {
+        if (dragon.isOrderedToSit() || dragon.isSleeping() || dragon.isBaby() || dragon.getControllingPassenger() != null) {
             return false;
         }
-        if (dragon.isBaby()) {
-            return false;
-        }
-        if (dragon.getControllingPassenger() != null) {
-            return false;
-        }
+
         LivingEntity attackTarget = dragon.getTarget();
         if (attackTarget != null && attackTarget.isAlive()) {
-            // 近距离直扑，远距离绕目标盘旋接近（与flyAround策略一致）
-            dragon.airTarget = DragonUtils.updateAirAttackTarget(dragon, attackTarget, dragon.airTarget);
+            dragon.airTarget = BlockPos.containing(attackTarget.position());
             return true;
         }
-        return dragon.airTarget != null && !dragon.isTargetBlocked(Vec3.atCenterOf(dragon.airTarget));
+
+        if (dragon.airTarget != null) {
+            if (dragon.isTargetBlocked(Vec3.atCenterOf(dragon.airTarget))) {
+                dragon.airTarget = null;
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private BlockPos getNearbyAirTarget() {
+        // Keep the modern ice-dragon water adaptation; old RLC logic otherwise uses getBlockInView directly.
         if (dragon instanceof EntityIceDragon && dragon.isInWater()) {
             return DragonUtils.getWaterBlockInView(dragon);
         }
-        return DragonUtils.getBlockInView(dragon);
+        BlockPos pos = DragonUtils.getBlockInView(dragon);
+        return pos != null && dragon.level().isEmptyBlock(pos) ? pos : null;
     }
 }

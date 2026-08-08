@@ -7,6 +7,7 @@ import com.github.alexthe666.iceandfire.client.render.entity.layer.LayerDragonEy
 import com.github.alexthe666.iceandfire.client.render.entity.layer.LayerDragonRider;
 import com.github.alexthe666.iceandfire.client.texture.ArrayLayeredTexture;
 import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
+import com.github.alexthe666.iceandfire.entity.EntityShivaxiDragon;
 import com.github.alexthe666.iceandfire.enums.EnumDragonTextures;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -56,7 +57,10 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(EntityDragonBase entity) {
-        String baseTexture = entity.getVariantName(entity.getVariant()) + entity.getDragonStage() + entity.isModelDead()
+        // Shivaxi reports the normal lightning variant name for legacy gameplay compatibility.
+        // Give it a distinct cache namespace so it can never reuse an ordinary electric dragon's layered texture.
+        String baseTexture = (entity instanceof EntityShivaxiDragon ? "shivaxi_" : "")
+                + entity.getVariantName(entity.getVariant()) + entity.getDragonStage() + entity.isModelDead()
                 + entity.isMale() + entity.isSkeletal() + entity.isSleeping() + entity.isBlinking();
         ResourceLocation resourcelocation = LAYERED_TEXTURE_CACHE.get(baseTexture);
         if (resourcelocation == null) {
@@ -67,7 +71,7 @@ public class RenderDragonBase extends MobRenderer<EntityDragonBase, AdvancedEnti
             } else {
                 tex.add(EnumDragonTextures.getTextureFromDragon(entity).toString());
             }
-            if (entity.isMale() && !entity.isSkeletal()) {
+            if (entity.isMale() && !entity.isSkeletal() && !(entity instanceof EntityShivaxiDragon)) {
                 if (dragonType == 0) {
                     tex.add(EnumDragonTextures.getDragonEnum(entity).FIRE_MALE_OVERLAY.toString());
                 } else if (dragonType == 1) {

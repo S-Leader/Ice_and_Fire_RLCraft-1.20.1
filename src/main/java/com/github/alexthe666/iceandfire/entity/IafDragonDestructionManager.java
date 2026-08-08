@@ -106,8 +106,12 @@ public class IafDragonDestructionManager {
                 .forEach(target -> {
                     if (!DragonUtils.onSameTeam(dragon, target) && !dragon.is(target)
                             && dragon.hasLineOfSight(target)) {
-                        target.hurt(damageSource, stageDamage);
-                        applyDragonEffect(target, dragon, statusDuration);
+                        if (dragon instanceof EntityShivaxiDragon shivaxi) {
+                            damageShivaxiBreathTarget(target, shivaxi);
+                        } else {
+                            target.hurt(damageSource, stageDamage);
+                            applyDragonEffect(target, dragon, statusDuration);
+                        }
                     }
                 });
     }
@@ -205,19 +209,59 @@ public class IafDragonDestructionManager {
     }
 
     private static DamageSource getDamageSource(final EntityDragonBase dragon) {
+        return getDamageSource(dragon, dragon.dragonType);
+    }
+
+    private static DamageSource getDamageSource(final EntityDragonBase dragon, final DragonType type) {
         Player player = dragon.getRidingPlayer();
 
-        if (dragon.dragonType == DragonType.FIRE) {
+        if (type == DragonType.FIRE) {
             return player != null ? IafDamageRegistry.causeIndirectDragonFireDamage(dragon, player)
                     : IafDamageRegistry.causeDragonFireDamage(dragon);
-        } else if (dragon.dragonType == DragonType.ICE) {
+        } else if (type == DragonType.ICE) {
             return player != null ? IafDamageRegistry.causeIndirectDragonIceDamage(dragon, player)
                     : IafDamageRegistry.causeDragonIceDamage(dragon);
-        } else if (dragon.dragonType == DragonType.LIGHTNING) {
+        } else if (type == DragonType.LIGHTNING) {
             return player != null ? IafDamageRegistry.causeIndirectDragonLightningDamage(dragon, player)
                     : IafDamageRegistry.causeDragonLightningDamage(dragon);
         } else {
             return dragon.level().damageSources().mobAttack(dragon);
+        }
+    }
+
+    /**
+     * Shivaxi breath is a real three-element hit.  Each component deals exactly one half of the
+     * normal breath damage for that element, so fire/ice/lightning resistances and damage types
+     * continue to work independently.  Vanilla hurt invulnerability would otherwise swallow the
+     * second and third component, therefore only the gaps inside this single composite hit clear
+     * invulnerability; after the composite hit the normal 20-tick hurt window is restored.
+     */
+    private static void damageShivaxiBreathTarget(final LivingEntity target, final EntityShivaxiDragon dragon) {
+        final int stage = dragon.getDragonStage();
+        boolean damaged = false;
+
+        if (target.hurt(getDamageSource(dragon, DragonType.FIRE),
+                stage * (float) IafConfig.dragonAttackDamageFire * 0.5F)) {
+            applyDragonEffect(target, dragon, 5 + stage * 5, DragonType.FIRE);
+            damaged = true;
+            target.invulnerableTime = 0;
+        }
+
+        if (target.hurt(getDamageSource(dragon, DragonType.ICE),
+                stage * (float) IafConfig.dragonAttackDamageIce * 0.5F)) {
+            applyDragonEffect(target, dragon, 50 * stage, DragonType.ICE);
+            damaged = true;
+            target.invulnerableTime = 0;
+        }
+
+        if (target.hurt(getDamageSource(dragon, DragonType.LIGHTNING),
+                stage * (float) IafConfig.dragonAttackDamageLightning * 0.5F)) {
+            applyDragonEffect(target, dragon, 3, DragonType.LIGHTNING);
+            damaged = true;
+        }
+
+        if (damaged) {
+            target.invulnerableTime = 20;
         }
     }
 
@@ -270,18 +314,23 @@ public class IafDragonDestructionManager {
 
     private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
             int statusDuration) {
-        if (dragon.dragonType == DragonType.FIRE) {
+        applyDragonEffect(target, dragon, statusDuration, dragon.dragonType);
+    }
+
+    private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
+            int statusDuration, final DragonType type) {
+        if (type == DragonType.FIRE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.FIRE))
                 return;
             target.setSecondsOnFire(statusDuration);
-        } else if (dragon.dragonType == DragonType.ICE) {
+        } else if (type == DragonType.ICE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.ICE))
                 return;
             EntityDataProvider.getCapability(target)
                     .ifPresent(data -> data.frozenData.setFrozen(target, statusDuration));
-        } else if (dragon.dragonType == DragonType.LIGHTNING) {
+        } else if (type == DragonType.LIGHTNING) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.LIGHTNING))
                 return;

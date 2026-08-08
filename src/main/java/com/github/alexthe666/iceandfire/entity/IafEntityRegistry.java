@@ -65,6 +65,10 @@ public class IafEntityRegistry {
             EntityType.Builder.<EntityLightningDragon>of(EntityLightningDragon::new, MobCategory.CREATURE)
                     .sized(0.78F, 1.2F).setTrackingRange(256).clientTrackingRange(10),
             "lightning_dragon");
+    public static final RegistryObject<EntityType<EntityShivaxiDragon>> SHIVAXI_DRAGON = registerEntity(
+            EntityType.Builder.<EntityShivaxiDragon>of(EntityShivaxiDragon::new, MobCategory.CREATURE)
+                    .sized(0.78F, 1.2F).setTrackingRange(256).clientTrackingRange(10),
+            "shivaxi_dragon");
     public static final RegistryObject<EntityType<EntityGoldDragon>> GOLD_DRAGON = registerEntity(
             EntityType.Builder.<EntityGoldDragon>of(EntityGoldDragon::new, MobCategory.CREATURE).sized(0.78F, 1.2F)
                     .fireImmune().setTrackingRange(256).clientTrackingRange(10),
@@ -81,6 +85,10 @@ public class IafEntityRegistry {
             EntityType.Builder.<EntityDragonLightningCharge>of(EntityDragonLightningCharge::new, MobCategory.MISC)
                     .sized(0.9F, 0.9F).setCustomClientFactory(EntityDragonLightningCharge::new),
             "lightning_dragon_charge");
+    public static final RegistryObject<EntityType<EntityShivaxiDragonLightning>> SHIVAXI_DRAGON_LIGHTNING = registerEntity(
+            EntityType.Builder.<EntityShivaxiDragonLightning>of(EntityShivaxiDragonLightning::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).setCustomClientFactory(EntityShivaxiDragonLightning::new),
+            "shivaxi_dragon_lightning");
     public static final RegistryObject<EntityType<EntityDragonGoldCharge>> GOLD_DRAGON_CHARGE = registerEntity(
             EntityType.Builder.<EntityDragonGoldCharge>of(EntityDragonGoldCharge::new, MobCategory.MISC)
                     .sized(0.9F, 0.9F).setCustomClientFactory(EntityDragonGoldCharge::new),
@@ -223,6 +231,7 @@ public class IafEntityRegistry {
         creationEvent.put(FIRE_DRAGON.get(), EntityFireDragon.bakeAttributes().build());
         creationEvent.put(ICE_DRAGON.get(), EntityIceDragon.bakeAttributes().build());
         creationEvent.put(LIGHTNING_DRAGON.get(), EntityLightningDragon.bakeAttributes().build());
+        creationEvent.put(SHIVAXI_DRAGON.get(), EntityShivaxiDragon.bakeAttributes().build());
         creationEvent.put(GOLD_DRAGON.get(), EntityGoldDragon.bakeAttributes().build());
         creationEvent.put(HIPPOGRYPH.get(), EntityHippogryph.bakeAttributes().build());
         creationEvent.put(GORGON.get(), EntityGorgon.bakeAttributes().build());

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class RenderDragonLightningCharge extends EntityRenderer<EntityDragonLightningCharge> {
+public class RenderDragonLightningCharge<T extends EntityDragonLightningCharge> extends EntityRenderer<T> {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation("iceandfire:textures/models/lightningdragon/charge.png");
     public static final ResourceLocation TEXTURE_CORE = new ResourceLocation("iceandfire:textures/models/lightningdragon/charge_core.png");
@@ -27,7 +27,7 @@ public class RenderDragonLightningCharge extends EntityRenderer<EntityDragonLigh
 
 
     @Override
-    public void render(EntityDragonLightningCharge entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void render(T entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
         float f = (float) entity.tickCount + partialTicks;
         float yaw = entity.yRotO + (entity.getYRot() - entity.yRotO) * partialTicks;
         VertexConsumer ivertexbuilder2 = bufferIn.getBuffer(RenderType.eyes(TEXTURE_CORE));
@@ -71,7 +71,7 @@ public class RenderDragonLightningCharge extends EntityRenderer<EntityDragonLigh
 
     @Nullable
     @Override
-    public ResourceLocation getTextureLocation(@NotNull EntityDragonLightningCharge entity) {
+    public ResourceLocation getTextureLocation(@NotNull T entity) {
         return TEXTURE;
     }
 }

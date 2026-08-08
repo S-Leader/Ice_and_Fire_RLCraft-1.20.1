@@ -70,7 +70,8 @@ public class IafBlockTags extends BlockTagsProvider {
         tag(DRAGON_ENVIRONMENT_BLOCKS)
                 .addTag(CHARRED_BLOCKS)
                 .addTag(FROZEN_BLOCKS)
-                .addTag(CRACKLED_BLOCKS);
+                .addTag(CRACKLED_BLOCKS)
+                .add(IafBlockRegistry.FULGURITE.get());
 
         tag(DRAGON_CAVE_RARE_ORES)
                 .add(Blocks.DIAMOND_ORE)

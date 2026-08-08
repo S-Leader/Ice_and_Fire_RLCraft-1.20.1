@@ -41,7 +41,7 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> PODIUM_WARPED = register("podium_warped", BlockPodium::new);
     public static final RegistryObject<Block> PODIUM_MANGROVE = register("podium_mangrove", BlockPodium::new);
     public static final RegistryObject<Block> PODIUM_CHERRY = register("podium_cherry", BlockPodium::new);
-    
+
     public static final RegistryObject<Block> FIRE_LILY = register("fire_lily", BlockElementalFlower::new);
     public static final RegistryObject<Block> FROST_LILY = register("frost_lily", BlockElementalFlower::new);
     public static final RegistryObject<Block> LIGHTNING_LILY = register("lightning_lily", BlockElementalFlower::new);
@@ -49,13 +49,13 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> SILVER_PILE = register("silver_pile", BlockGoldPile::new);
     public static final RegistryObject<Block> COPPER_PILE = register("copper_pile", BlockGoldPile::new);
     public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3, 3).requiresCorrectToolForDrops()));
-    public static final RegistryObject<Block> DEEPSLATE_SILVER_ORE = register("deepslate_silver_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE).strength(3,3).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> DEEPSLATE_SILVER_ORE = register("deepslate_silver_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE).strength(3, 3).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> SILVER_BLOCK = register("silver_block", () -> BlockGeneric.builder(3.0F, 5.0F, SoundType.METAL, MapColor.METAL, null, null, false));
-    public static final RegistryObject<Block> RUBY_ORE = register("ruby_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4,3).requiresCorrectToolForDrops(), UniformInt.of(3,7)));
-    public static final RegistryObject<Block> CHARED_RUBY_ORE = register("chared_ruby_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4,3).requiresCorrectToolForDrops(), UniformInt.of(3,7)));
-    public static final RegistryObject<Block> SAPPHIRE_ORE = register("sapphire_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4,3).requiresCorrectToolForDrops(), UniformInt.of(3,7)));
-    public static final RegistryObject<Block> CRACKLED_AMETHYST_ORE = register("crackled_amethyst_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4,3).requiresCorrectToolForDrops(), UniformInt.of(3,7)));
-    public static final RegistryObject<Block> FROZEN_SAPPHIRE_ORE = register("frozen_sapphire_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4,3).requiresCorrectToolForDrops(), UniformInt.of(3,7)));
+    public static final RegistryObject<Block> RUBY_ORE = register("ruby_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4, 3).requiresCorrectToolForDrops(), UniformInt.of(3, 7)));
+    public static final RegistryObject<Block> CHARED_RUBY_ORE = register("chared_ruby_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4, 3).requiresCorrectToolForDrops(), UniformInt.of(3, 7)));
+    public static final RegistryObject<Block> SAPPHIRE_ORE = register("sapphire_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4, 3).requiresCorrectToolForDrops(), UniformInt.of(3, 7)));
+    public static final RegistryObject<Block> CRACKLED_AMETHYST_ORE = register("crackled_amethyst_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4, 3).requiresCorrectToolForDrops(), UniformInt.of(3, 7)));
+    public static final RegistryObject<Block> FROZEN_SAPPHIRE_ORE = register("frozen_sapphire_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4, 3).requiresCorrectToolForDrops(), UniformInt.of(3, 7)));
     public static final RegistryObject<Block> RUBY_BLOCK = register("ruby_block", () -> BlockGeneric.builder(3.0F, 6.0F, SoundType.METAL, MapColor.METAL, null, null, false));
     public static final RegistryObject<Block> SAPPHIRE_BLOCK = register("sapphire_block", () -> BlockGeneric.builder(3.0F, 6.0F, SoundType.METAL, MapColor.METAL, null, null, false));
     public static final RegistryObject<Block> RAW_SILVER_BLOCK = register("raw_silver_block", () -> BlockGeneric.builder(3.0F, 5.0F, SoundType.STONE, MapColor.METAL, NoteBlockInstrument.BASEDRUM, null, false));
@@ -81,6 +81,8 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> CRACKLED_COBBLESTONE = register("crackled_cobblestone", () -> BlockReturningState.builder(2F, 2F, SoundType.STONE, MapColor.STONE, NoteBlockInstrument.BASEDRUM, null, false, Blocks.COBBLESTONE.defaultBlockState()));
     public static final RegistryObject<Block> CRACKLED_GRAVEL = register("crackled_gravel", () -> new BlockFallingReturningState(0.6F, 0F, SoundType.GRAVEL, MapColor.DIRT, Blocks.GRAVEL.defaultBlockState()));
     public static final RegistryObject<Block> CRACKLED_DIRT_PATH = register(BlockCharedPath.getNameFromType(2), () -> new BlockCharedPath(2));
+
+    public static final RegistryObject<Block> FULGURITE = register("fulgurite", () -> BlockGeneric.builder(1.5F, 10.0F, SoundType.GLASS, true, MapColor.STONE, NoteBlockInstrument.BASS, null, true));
 
     public static final RegistryObject<Block> NEST = register("nest", () -> BlockGeneric.builder(0.5F, 0F, SoundType.GRAVEL, false, MapColor.PLANT, null, PushReaction.DESTROY, false));
 

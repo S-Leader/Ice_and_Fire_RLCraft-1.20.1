@@ -141,6 +141,7 @@
   "block.iceandfire.ghost_chest": "Cursed Chest",
   "block.iceandfire.graveyard_soil": "Graveyard Soil",
   "block.iceandfire.graveyard_soil.desc": "Spawns Ghosts at night",
+  "block.iceandfire.fulgurite": "Fulgurite",
   "item.iceandfire.bestiary": "Bestiary",
   "item.iceandfire.manuscript": "Manuscript",
   "item.iceandfire.ruby_gem": "Ruby",
@@ -1381,5 +1382,8 @@
   "entity.iceandfire.gold_dragon": "Gold Dragon",
   "entity.iceandfire.gold_dragon_charge": "Gold Dragon Charge",
   "dragon_sword_gold.hurt2": "Converts damage to magic and deals extra damage to targets with positive effects",
-  "dragon.gold": "Gold"
+  "dragon.gold": "Gold",
+  "entity.iceandfire.shivaxi_dragon": "Shivaxi Dragon",
+  "entity.iceandfire.shivaxi_dragon_lightning": "Shivaxi Lightning",
+  "item.iceandfire.spawn_egg_shivaxi_dragon": "Shivaxi Dragon Spawn Egg"
 }

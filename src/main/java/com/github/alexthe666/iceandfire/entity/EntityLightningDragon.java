@@ -319,7 +319,7 @@ public class EntityLightningDragon extends EntityDragonBase {
         }
     }
 
-    private void shootFireAtMob(LivingEntity entity) {
+    protected void shootFireAtMob(LivingEntity entity) {
         if (!this.attackDecision) {
             if (this.getRandom().nextInt(5) == 0) {
                 if (this.getAnimation() != ANIMATION_FIRECHARGE) {

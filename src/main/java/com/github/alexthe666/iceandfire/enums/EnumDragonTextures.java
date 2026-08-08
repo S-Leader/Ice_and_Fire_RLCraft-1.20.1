@@ -4,10 +4,27 @@ import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.github.alexthe666.iceandfire.entity.EntityDragonSkull;
 import com.github.alexthe666.iceandfire.entity.EntityIceDragon;
 import com.github.alexthe666.iceandfire.entity.EntityLightningDragon;
+import com.github.alexthe666.iceandfire.entity.EntityShivaxiDragon;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 
 public enum EnumDragonTextures {
+    private static final ResourceLocation[] SHIVAXI_TEXTURES = shivaxiTextures("shivaxi_");
+    private static final ResourceLocation[] SHIVAXI_SLEEPING_TEXTURES = shivaxiTextures("shivaxi_sleeping_");
+    private static final ResourceLocation[] SHIVAXI_EYE_TEXTURES = shivaxiTextures("shivaxi_eyes_");
+
+    private static ResourceLocation[] shivaxiTextures(String prefix) {
+        ResourceLocation[] textures = new ResourceLocation[5];
+        for (int i = 0; i < textures.length; i++) {
+            textures[i] = new ResourceLocation("iceandfire:textures/models/shivaxi/" + prefix + (i + 1) + ".png");
+        }
+        return textures;
+    }
+
+    private static int dragonStageIndex(EntityDragonBase dragon) {
+        return Math.max(0, Math.min(4, dragon.getDragonStage() - 1));
+    }
+
     VARIANT1("red_", "blue_", "electric_"),
     VARIANT2("green_", "white_", "amythest_"),
     VARIANT3("bronze_", "sapphire_", "copper_"),
@@ -149,7 +166,11 @@ public enum EnumDragonTextures {
 
 
     public static ResourceLocation getTextureFromDragon(EntityDragonBase dragon) {
-        if (dragon instanceof EntityIceDragon) {
+        // Shivaxi is a lightning dragon subclass, so it must be checked before
+        // EntityLightningDragon or it falls through to the ordinary electric variant.
+        if (dragon instanceof EntityShivaxiDragon) {
+            return getShivaxiDragonTextures(dragon);
+        } else if (dragon instanceof EntityIceDragon) {
             return getIceDragonTextures(dragon);
         } else if (dragon instanceof EntityLightningDragon) {
             return getLightningDragonTextures(dragon);
@@ -160,6 +181,9 @@ public enum EnumDragonTextures {
 
 
     public static ResourceLocation getEyeTextureFromDragon(EntityDragonBase dragon) {
+        if (dragon instanceof EntityShivaxiDragon) {
+            return SHIVAXI_EYE_TEXTURES[dragonStageIndex(dragon)];
+        }
         EnumDragonTextures textures = getDragonEnum(dragon);
         if (dragon instanceof EntityIceDragon) {
             switch (dragon.getDragonStage()) {
@@ -343,6 +367,29 @@ public enum EnumDragonTextures {
                     return textures.ICESTAGE4TEXTURE;
             }
         }
+    }
+
+    private static ResourceLocation getShivaxiDragonTextures(EntityDragonBase dragon) {
+        int stage = dragonStageIndex(dragon);
+        if (dragon.isModelDead()) {
+            // The RLCraft Shivaxi uses the normal lightning skeleton once the corpse
+            // reaches the skeletal death stage, but keeps its own sleeping corpse texture before that.
+            if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
+                EnumDragonTextures textures = getDragonEnum(dragon);
+                return switch (dragon.getDragonStage()) {
+                    case 1 -> textures.LIGHTNINGSTAGE1SKELETONTEXTURE;
+                    case 2 -> textures.LIGHTNINGSTAGE2SKELETONTEXTURE;
+                    case 3 -> textures.LIGHTNINGSTAGE3SKELETONTEXTURE;
+                    case 4 -> textures.LIGHTNINGSTAGE4SKELETONTEXTURE;
+                    case 5 -> textures.LIGHTNINGSTAGE5SKELETONTEXTURE;
+                    default -> textures.LIGHTNINGSTAGE4SKELETONTEXTURE;
+                };
+            }
+            return SHIVAXI_SLEEPING_TEXTURES[stage];
+        }
+        return dragon.isSleeping() || dragon.isBlinking()
+                ? SHIVAXI_SLEEPING_TEXTURES[stage]
+                : SHIVAXI_TEXTURES[stage];
     }
 
     private static ResourceLocation getLightningDragonTextures(EntityDragonBase dragon) {
