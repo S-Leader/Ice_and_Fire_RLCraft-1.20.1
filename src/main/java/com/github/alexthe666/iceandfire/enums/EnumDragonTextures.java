@@ -1,14 +1,15 @@
 package com.github.alexthe666.iceandfire.enums;
 
-import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
-import com.github.alexthe666.iceandfire.entity.EntityDragonSkull;
-import com.github.alexthe666.iceandfire.entity.EntityIceDragon;
-import com.github.alexthe666.iceandfire.entity.EntityLightningDragon;
-import com.github.alexthe666.iceandfire.entity.EntityShivaxiDragon;
+import com.github.alexthe666.iceandfire.entity.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 
 public enum EnumDragonTextures {
+    VARIANT1("red_", "blue_", "electric_"),
+    VARIANT2("green_", "white_", "amythest_"),
+    VARIANT3("bronze_", "sapphire_", "copper_"),
+    VARIANT4("gray_", "silver_", "black_");
+
     private static final ResourceLocation[] SHIVAXI_TEXTURES = shivaxiTextures("shivaxi_");
     private static final ResourceLocation[] SHIVAXI_SLEEPING_TEXTURES = shivaxiTextures("shivaxi_sleeping_");
     private static final ResourceLocation[] SHIVAXI_EYE_TEXTURES = shivaxiTextures("shivaxi_eyes_");
@@ -25,10 +26,6 @@ public enum EnumDragonTextures {
         return Math.max(0, Math.min(4, dragon.getDragonStage() - 1));
     }
 
-    VARIANT1("red_", "blue_", "electric_"),
-    VARIANT2("green_", "white_", "amythest_"),
-    VARIANT3("bronze_", "sapphire_", "copper_"),
-    VARIANT4("gray_", "silver_", "black_");
 
     public final ResourceLocation FIRESTAGE1TEXTURE;
     public final ResourceLocation FIRESTAGE2TEXTURE;
