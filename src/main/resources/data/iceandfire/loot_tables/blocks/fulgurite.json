@@ -2,12 +2,12 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "dragonsteel_fire_block",
+      "name": "fulgurite",
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "iceandfire:dragonsteel_fire_block"
+          "name": "iceandfire:fulgurite"
         }
       ],
       "conditions": [
