@@ -120,37 +120,53 @@ public class DragonUtils {
     }
 
     public static BlockPos getBlockInView(EntityDragonBase dragon) {
-        float radius = 12 * (0.7F * dragon.getRenderSize() / 3);
+        // 1.12.2 RLI&F semantics: a dragon with a home position does not run a separate
+        // "return to roost" goal. Its ordinary aerial wandering is simply centered on home.
+        // This naturally brings a roaming dragon back toward the nest without fighting combat AI.
+        float radius = 0.75F * (0.7F * dragon.getRenderSize() / 3) * -7
+                - dragon.getRandom().nextInt(Math.max(1, dragon.getDragonStage() * 6));
         float neg = dragon.getRandom().nextBoolean() ? 1 : -1;
         float renderYawOffset = dragon.yBodyRot;
+        int maximumFlightHeight = getMaximumFlightHeightForPos(dragon.level(), dragon.blockPosition());
+
         if (dragon.hasHomePosition && dragon.homePos != null) {
             BlockPos dragonPos = dragon.blockPosition();
             BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, dragonPos);
-            int maxHeight = getMaximumFlightHeightForPos(dragon.level(), dragonPos);
+            int distFromGround = Mth.floor(dragon.getY()) - ground.getY();
+            int wander = Math.max(1, IafConfig.dragonWanderFromHomeDistance);
+
             for (int i = 0; i < 10; i++) {
-                BlockPos homePos = dragon.homePos.getPosition();
-                // 巡航高度固定为配置值，只保留XZ随机漫游，避免随机高度导致上下颠簸
-                int targetY = Math.min(maxHeight, ground.getY() + IafConfig.dragonFlightHeight);
+                BlockPos home = dragon.homePos.getPosition();
+                int targetY = distFromGround > 16
+                        ? (int) Math.min(maximumFlightHeight, dragon.getY() + dragon.getRandom().nextInt(17) - 8)
+                        : Mth.floor(dragon.getY()) + dragon.getRandom().nextInt(16) + 1;
+                targetY = Math.min(targetY, maximumFlightHeight);
+
                 BlockPos pos = new BlockPos(
-                    homePos.getX() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance,
-                    targetY,
-                    homePos.getZ() + dragon.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance);
-                if (dragon.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
+                        home.getX() + dragon.getRandom().nextInt(wander) - wander,
+                        targetY,
+                        home.getZ() + dragon.getRandom().nextInt(wander * 2) - wander
+                );
+                if (!dragon.isTargetBlocked(Vec3.atCenterOf(pos))
+                        && dragon.distanceToSqr(Vec3.atCenterOf(pos)) > 6) {
                     return pos;
                 }
             }
         }
+
         float angle = (0.01745329251F * renderYawOffset) + 3.15F + (dragon.getRandom().nextFloat() * neg);
         double extraX = radius * Mth.sin((float) (Math.PI + angle));
         double extraZ = radius * Mth.cos(angle);
         BlockPos radialPos = BlockPos.containing(dragon.getX() + extraX, 0, dragon.getZ() + extraZ);
         BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, radialPos);
-        int maxHeight = getMaximumFlightHeightForPos(dragon.level(), radialPos);
-        // 巡航高度固定为配置值，避免随机高度导致上下颠簸
-        int targetY = Math.min(maxHeight, ground.getY() + IafConfig.dragonFlightHeight);
+        int distFromGround = Mth.floor(dragon.getY()) - ground.getY();
+        int targetY = distFromGround > 16
+                ? (int) Math.min(getMaximumFlightHeightForPos(dragon.level(), radialPos), dragon.getY() + dragon.getRandom().nextInt(17) - 8)
+                : Mth.floor(dragon.getY()) + dragon.getRandom().nextInt(16) + 1;
         BlockPos newPos = new BlockPos(radialPos.getX(), targetY, radialPos.getZ());
         BlockPos pos = dragon.doesWantToLand() ? ground : newPos;
-        if (dragon.distanceToSqr(Vec3.atCenterOf(newPos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(newPos))) {
+        if (dragon.distanceToSqr(Vec3.atCenterOf(newPos)) > 6
+                && !dragon.isTargetBlocked(Vec3.atCenterOf(newPos))) {
             return pos;
         }
         return null;

@@ -27,9 +27,6 @@ public class DragonAITargetNonTamed<T extends LivingEntity> extends NearestAttac
             return false;
         }
 
-        if (dragon.lookingForRoostAIFlag) {
-            return false;
-        }
 
         boolean canUse = super.canUse();
         boolean isSleeping = dragon.isSleeping();

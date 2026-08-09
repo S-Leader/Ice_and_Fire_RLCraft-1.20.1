@@ -55,11 +55,6 @@ public class DragonAITargetItems<T extends ItemEntity> extends TargetGoal {
     public boolean canUse() {
         final EntityDragonBase dragon = (EntityDragonBase) this.mob;
 
-        if (dragon.lookingForRoostAIFlag) {
-            list = IAFMath.emptyItemEntityList;
-            return false;
-        }
-
         if (prioritizeItems && dragon.getHunger() >= 60) {
             return false;
         }
@@ -124,8 +119,7 @@ public class DragonAITargetItems<T extends ItemEntity> extends TargetGoal {
 
     @Override
     public boolean canContinueToUse() {
-        return !(this.mob instanceof EntityDragonBase dragon && dragon.lookingForRoostAIFlag)
-                && !this.mob.getNavigation().isDone();
+        return !this.mob.getNavigation().isDone();
     }
 
     public static class Sorter implements Comparator<Entity> {

@@ -28,9 +28,6 @@ public class DragonAITarget<T extends LivingEntity> extends NearestAttackableTar
         if (dragon.getCommand() == 1 || dragon.getCommand() == 2 || dragon.isSleeping()) {
             return false;
         }
-        if (!dragon.isTame() && dragon.lookingForRoostAIFlag) {
-            return false;
-        }
         if (target != null && !target.getClass().equals(this.dragon.getClass())) {
             if (!super.canUse())
                 return false;

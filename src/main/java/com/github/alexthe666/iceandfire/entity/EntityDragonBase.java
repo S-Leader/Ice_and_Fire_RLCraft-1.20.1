@@ -211,7 +211,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     public SimpleContainer dragonInventory;
     public String prevArmorResLoc = "0|0|0|0";
     public String armorResLoc = "0|0|0|0";
-    public boolean lookingForRoostAIFlag = false;
     protected int flyHovering;
     // 飞行中横向碰撞的连续tick数，用于撞墙改道
     private int flightStuckTicks;
@@ -314,7 +313,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         this.goalSelector.addGoal(2, new DragonAIMate(this, 1.0D));
         this.goalSelector.addGoal(3, new DragonAIAttackMelee(this, 1.5D, false));
         this.goalSelector.addGoal(4, new DragonAIEscort(this, 1.0D));
-        this.goalSelector.addGoal(5, new DragonAIReturnToRoost(this, 1.0D));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.0D, Ingredient.of(IafItemTags.TEMPT_DRAGON), false));
         this.goalSelector.addGoal(7, new DragonAIAirTarget(this));
         this.goalSelector.addGoal(8, new DragonAIWander(this, 1.0D));
@@ -1991,7 +1989,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             airTarget = null;
             return;
         }
-        if (airTarget != null && doesWantToLand() && !lookingForRoostAIFlag) {
+        if (airTarget != null && doesWantToLand()) {
             airTarget = null;
         }
         if (airTarget != null) {
@@ -2882,9 +2880,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         // 清空旧目标点，下tick由flyAround()/DragonAIAirTarget按距离策略选点
         // （直接覆写为目标位置会锁死"直扑目标脚底"直到近距离，破坏远距离盘旋）
         if (target != null) {
-            // Combat takes priority over the night-time return-to-roost state.  Clearing this
-            // immediately prevents one tick of ReturnToRoost and AirTarget fighting over MOVE.
-            this.lookingForRoostAIFlag = false;
             this.airTarget = null;
         }
     }
