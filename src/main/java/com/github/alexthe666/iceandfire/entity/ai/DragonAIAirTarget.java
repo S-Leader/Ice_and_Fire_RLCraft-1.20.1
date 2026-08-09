@@ -24,6 +24,9 @@ public class DragonAIAirTarget extends Goal {
 
     @Override
     public boolean canUse() {
+        if (dragon.lookingForRoostAIFlag) {
+            return false;
+        }
         if ((!dragon.isFlying() && !dragon.isHovering()) || dragon.onGround()) {
             return false;
         }
@@ -51,6 +54,9 @@ public class DragonAIAirTarget extends Goal {
 
     @Override
     public boolean canContinueToUse() {
+        if (dragon.lookingForRoostAIFlag) {
+            return false;
+        }
         if (!dragon.isFlying() && !dragon.isHovering()) {
             return false;
         }

@@ -1443,17 +1443,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         return this.getY() >= localMaxFlightHeight;
     }
 
-    private int calculateDownY() {
-        if (this.getNavigation().getPath() != null) {
-            Path path = this.getNavigation().getPath();
-            Vec3 p = path.getEntityPosAtNode(this, Math.min(path.getNodeCount() - 1, path.getNextNodeIndex() + 1));
-            if (p.y < this.getY() - 1) {
-                return -1;
-            }
-        }
-        return 1;
-    }
-
     public void breakBlock(final BlockPos position) {
         if (MinecraftForge.EVENT_BUS.post(new GenericGriefEvent(this, position.getX(), position.getY(), position.getZ()))) {
             return;
@@ -1485,17 +1474,19 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                 if (DragonUtils.canGrief(this)) {
                     // TODO :: make `force` ignore the dragon stage?
                     if (!isModelDead() && this.getDragonStage() >= 3 && (this.canMove() || this.getControllingPassenger() != null)) {
-                        final int bounds = 1;
-                        final int flightModifier = isFlying() && this.getTarget() != null ? -1 : 1;
-                        final int yMinus = calculateDownY();
-                        BlockPos.betweenClosedStream(
-                                (int) Math.floor(this.getBoundingBox().minX) - bounds,
-                                (int) Math.floor(this.getBoundingBox().minY) + yMinus,
-                                (int) Math.floor(this.getBoundingBox().minZ) - bounds,
-                                (int) Math.floor(this.getBoundingBox().maxX) + bounds,
-                                (int) Math.floor(this.getBoundingBox().maxY) + bounds + flightModifier,
-                                (int) Math.floor(this.getBoundingBox().maxZ) + bounds
-                        ).forEach(this::breakBlock);
+                        // Match the 1.12.2 RLC breakBlock() volume. Normal body clearing must
+                        // never dig below the dragon's feet: downward digging is reserved for the
+                        // explicit stuck-tail explosion. The 1.20.1 calculateDownY() port made a
+                        // downhill path expand this volume to minY - 1, causing perfectly mobile
+                        // ground dragons to continuously excavate their supporting terrain.
+                        final int minX = (int) Math.round(this.getBoundingBox().minX) - 1;
+                        final int minY = (int) Math.round(this.getBoundingBox().minY) + 1;
+                        final int minZ = (int) Math.round(this.getBoundingBox().minZ) - 1;
+                        final int maxX = (int) Math.round(this.getBoundingBox().maxX) + 1;
+                        final int maxY = (int) Math.round(this.getBoundingBox().maxY) + 2;
+                        final int maxZ = (int) Math.round(this.getBoundingBox().maxZ) + 1;
+                        BlockPos.betweenClosedStream(minX, minY, minZ, maxX, maxY, maxZ)
+                                .forEach(this::breakBlock);
                     }
                 }
             }
@@ -2000,7 +1991,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             airTarget = null;
             return;
         }
-        if (airTarget != null && doesWantToLand()) {
+        if (airTarget != null && doesWantToLand() && !lookingForRoostAIFlag) {
             airTarget = null;
         }
         if (airTarget != null) {
@@ -2891,6 +2882,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         // 清空旧目标点，下tick由flyAround()/DragonAIAirTarget按距离策略选点
         // （直接覆写为目标位置会锁死"直扑目标脚底"直到近距离，破坏远距离盘旋）
         if (target != null) {
+            // Combat takes priority over the night-time return-to-roost state.  Clearing this
+            // immediately prevents one tick of ReturnToRoost and AirTarget fighting over MOVE.
+            this.lookingForRoostAIFlag = false;
             this.airTarget = null;
         }
     }

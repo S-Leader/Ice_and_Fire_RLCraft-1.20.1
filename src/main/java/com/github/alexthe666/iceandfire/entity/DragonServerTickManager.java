@@ -26,24 +26,55 @@ public class DragonServerTickManager {
         // Update dragon pitch
         dragon.updatePitch(dragon.yo - dragon.getY());
 
-        if (dragon.lookingForRoostAIFlag && dragon.getLastHurtByMob() != null || dragon.isSleeping()) {
-            dragon.lookingForRoostAIFlag = false;
+        // Clear dead/stale combat targets before deciding whether the dragon should return home.
+        // The old sleep behavior gives an active combat target priority over sleeping.  The
+        // previous port set lookingForRoostAIFlag even while a live target was still assigned,
+        // creating two mutually-exclusive intents at the same time: the roost goal refused to
+        // start because getTarget() was non-null, while the air-combat goal kept rewriting
+        // airTarget.  That is the main cause of the night-time hover loop.
+        if (dragon.getTarget() != null && !DragonUtils.isAlive(dragon.getTarget())) {
+            dragon.setTarget(null);
+            ticksAfterClearingTarget = dragon.level().getGameTime();
         }
-        if (IafConfig.doDragonsSleep && !dragon.isSleeping() && !dragon.isTimeToWake() && dragon.getPassengers().isEmpty() && this.dragon.getCommand() != 2) {
-            if (dragon.hasHomePosition
-                    && dragon.getRestrictCenter() != null
-                    && DragonUtils.isInHomeDimension(dragon)
-                    && dragon.distanceToSqr(Vec3.atCenterOf(dragon.getRestrictCenter())) > dragon.getBbWidth() * 10
-                    && this.dragon.getCommand() != 2 && this.dragon.getCommand() != 1) {
-                dragon.lookingForRoostAIFlag = true;
-            } else {
-                dragon.lookingForRoostAIFlag = false;
-                if ((/* Avoid immediately sleeping after killing the target */ dragon.level().getGameTime() - ticksAfterClearingTarget >= 20) && !dragon.isInWater() && dragon.onGround() && !dragon.isFlying() && !dragon.isHovering() && dragon.getTarget() == null) {
-                    dragon.setInSittingPose(true);
-                }
-            }
+        final boolean hasLiveCombatTarget = dragon.getTarget() != null && dragon.getTarget().isAlive();
+        final boolean wasRecentlyHurt = dragon.getLastHurtByMob() != null
+                && dragon.tickCount - dragon.getLastHurtByMobTimestamp() < 100;
+        final boolean canReturnToRoost = IafConfig.doDragonsSleep
+                && !dragon.isSleeping()
+                && !dragon.isTimeToWake()
+                && dragon.getPassengers().isEmpty()
+                && dragon.getCommand() != 2
+                && dragon.getCommand() != 1
+                && !hasLiveCombatTarget
+                && !wasRecentlyHurt;
+
+        if (canReturnToRoost
+                && dragon.hasHomePosition
+                && dragon.getRestrictCenter() != null
+                && DragonUtils.isInHomeDimension(dragon)
+                && !isAtUsableRoostArea()) {
+            // Do not require the dragon to stand on the exact saved home block.  A roost can be
+            // excavated after generation; a dragon that successfully lands on nearby intact
+            // ground should still count as having returned home and be allowed to sleep.
+            dragon.lookingForRoostAIFlag = true;
         } else {
+            // Combat and return-to-roost are deliberately exclusive.  If a target becomes valid
+            // while returning home, combat wins immediately and the roost goal releases MOVE.
             dragon.lookingForRoostAIFlag = false;
+            if (!hasLiveCombatTarget
+                    && IafConfig.doDragonsSleep
+                    && !dragon.isSleeping()
+                    && !dragon.isTimeToWake()
+                    && dragon.getPassengers().isEmpty()
+                    && dragon.getCommand() != 2
+                    && dragon.getCommand() != 1
+                    && (dragon.level().getGameTime() - ticksAfterClearingTarget >= 20)
+                    && !dragon.isInWater()
+                    && dragon.onGround()
+                    && !dragon.isFlying()
+                    && !dragon.isHovering()) {
+                dragon.setInSittingPose(true);
+            }
         }
         if (dragon.isSleeping() && (dragon.isFlying() || dragon.isHovering() || dragon.isInWater() || (dragon.level().canSeeSkyFromBelowWater(dragon.blockPosition()) && dragon.isTimeToWake() && !dragon.isTame() || dragon.isTimeToWake() && dragon.isTame()) || dragon.getTarget() != null || !dragon.getPassengers().isEmpty())) {
             dragon.setInSittingPose(false);
@@ -193,7 +224,7 @@ public class DragonServerTickManager {
             dragon.switchNavigator(0);
         }
         // 龙降落：仅在不在空中且想要降落时取消飞行
-        if (dragon.getControllingPassenger() == null && !dragon.isOverAir() && dragon.doesWantToLand() && (dragon.isFlying() || dragon.isHovering()) && !dragon.isInWater()) {
+        if (dragon.getControllingPassenger() == null && !dragon.lookingForRoostAIFlag && !dragon.isOverAir() && dragon.doesWantToLand() && (dragon.isFlying() || dragon.isHovering()) && !dragon.isInWater()) {
             dragon.setFlying(false);
             dragon.setHovering(false);
         }
@@ -212,7 +243,16 @@ public class DragonServerTickManager {
             }
             // Slowly land the hovering dragon.  Landing is a real descending state: do not
             // allow residual take-off/upward velocity to cancel the descent.
-            if (dragon.getControllingPassenger() == null && dragon.doesWantToLand() && !dragon.onGround() && !dragon.isInWater()) {
+            final boolean roostLanding = isRoostLandingPhase();
+            if (roostLanding && dragon.onGround()) {
+                dragon.setHovering(false);
+                dragon.setFlying(false);
+                dragon.setDeltaMovement(dragon.getDeltaMovement().x * 0.5D, 0.0D, dragon.getDeltaMovement().z * 0.5D);
+                dragon.hoverTicks = 0;
+                dragon.flyTicks = 0;
+            } else if (dragon.getControllingPassenger() == null
+                    && ((!dragon.lookingForRoostAIFlag && dragon.doesWantToLand()) || roostLanding)
+                    && !dragon.onGround() && !dragon.isInWater()) {
                 Vec3 motion = dragon.getDeltaMovement();
                 double landingY = Math.min(motion.y - 0.25D, -0.12D);
                 dragon.setDeltaMovement(motion.x * 0.9D, landingY, motion.z * 0.9D);
@@ -246,7 +286,7 @@ public class DragonServerTickManager {
         // that method deliberately requires onGround()/water because it answers whether a
         // grounded dragon may TAKE OFF.  Using it here made this branch impossible for an
         // airborne dragon, leaving it stuck in Flying/Hovering forever.
-        if (dragon.getControllingPassenger() == null && dragon.isFlying() && dragon.doesWantToLand() && !dragon.isInWater()) {
+        if (dragon.getControllingPassenger() == null && !dragon.lookingForRoostAIFlag && dragon.isFlying() && dragon.doesWantToLand() && !dragon.isInWater()) {
             dragon.airTarget = null;
             dragon.setFlying(false);
             dragon.setHovering(!dragon.onGround());
@@ -276,12 +316,6 @@ public class DragonServerTickManager {
                     dragon.hoverTicks = 0;
                     dragon.flyTicks = 0;
                 }
-            }
-        }
-        if (dragon.getTarget() != null) {
-            if (!DragonUtils.isAlive(dragon.getTarget())) {
-                dragon.setTarget(null);
-                ticksAfterClearingTarget = dragon.level().getGameTime();
             }
         }
         if (!dragon.isAgingDisabled()) {
@@ -325,4 +359,32 @@ public class DragonServerTickManager {
             dragon.setHovering(false);
         }
     }
+    /**
+     * Return-to-roost has its own landing phase and must not depend on flyTicks/doesWantToLand().
+     * The latter is a general flight-fatigue decision and used to be reset every tick by the
+     * roost goal, which made landing at the nest impossible.
+     */
+    private boolean isRoostLandingPhase() {
+        if (!dragon.lookingForRoostAIFlag
+                || dragon.getRestrictCenter() == null
+                || (dragon.getTarget() != null && dragon.getTarget().isAlive())
+                || !DragonUtils.isInHomeDimension(dragon)) {
+            return false;
+        }
+        // DragonAIReturnToRoost only switches to Hovering=true/Flying=false after it has found
+        // and reached a validated landingTarget.  Do not infer landing from distance to the saved
+        // home block: that block may now be a hole.
+        return dragon.isHovering() && !dragon.isFlying();
+    }
+
+    private boolean isAtUsableRoostArea() {
+        if (!dragon.onGround() || dragon.getRestrictCenter() == null) {
+            return false;
+        }
+        final double dx = dragon.getX() - (dragon.getRestrictCenter().getX() + 0.5D);
+        final double dz = dragon.getZ() - (dragon.getRestrictCenter().getZ() + 0.5D);
+        final double acceptanceRadius = Mth.clamp(dragon.getBbWidth() * 3.0D, 12.0D, 32.0D);
+        return dx * dx + dz * dz <= acceptanceRadius * acceptanceRadius;
+    }
+
 }
