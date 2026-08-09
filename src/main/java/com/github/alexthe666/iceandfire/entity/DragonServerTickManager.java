@@ -210,9 +210,12 @@ public class DragonServerTickManager {
             if (dragon.isSleeping()) {
                 dragon.setHovering(false);
             }
-            // Slowly land the hovering dragon
+            // Slowly land the hovering dragon.  Landing is a real descending state: do not
+            // allow residual take-off/upward velocity to cancel the descent.
             if (dragon.getControllingPassenger() == null && dragon.doesWantToLand() && !dragon.onGround() && !dragon.isInWater()) {
-                dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, -0.25, 0));
+                Vec3 motion = dragon.getDeltaMovement();
+                double landingY = Math.min(motion.y - 0.25D, -0.12D);
+                dragon.setDeltaMovement(motion.x * 0.9D, landingY, motion.z * 0.9D);
             } else {
                 if (dragon.getControllingPassenger() == null || dragon.getControllingPassenger() instanceof EntityDreadQueen) {
                     if (!dragon.isBeyondHeight()) {
@@ -239,12 +242,17 @@ public class DragonServerTickManager {
         if ((dragon.onGround() || dragon.isInWater()) && dragon.flyTicks != 0) {
             dragon.flyTicks = 0;
         }
-        if (dragon.isAllowedToTriggerFlight() && dragon.isFlying() && dragon.doesWantToLand()) {
+        // 1.12.2 landing transition.  Do NOT gate this with isAllowedToTriggerFlight():
+        // that method deliberately requires onGround()/water because it answers whether a
+        // grounded dragon may TAKE OFF.  Using it here made this branch impossible for an
+        // airborne dragon, leaving it stuck in Flying/Hovering forever.
+        if (dragon.getControllingPassenger() == null && dragon.isFlying() && dragon.doesWantToLand() && !dragon.isInWater()) {
+            dragon.airTarget = null;
             dragon.setFlying(false);
-            dragon.setHovering(dragon.isOverAir());
-            if (!dragon.isOverAir()) {
+            dragon.setHovering(!dragon.onGround());
+            if (dragon.onGround()) {
+                dragon.hoverTicks = 0;
                 dragon.flyTicks = 0;
-                dragon.setFlying(false);
             }
         }
         if (dragon.isFlying()) {

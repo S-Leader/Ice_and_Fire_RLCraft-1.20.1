@@ -2027,11 +2027,14 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
             if (this.getY() > maxFlightHeight) {
                 // If some previous motion/AI already pushed us above the local ceiling, descend.
                 desiredY = maxFlightHeight;
-            } else if (this.attackDecision) {
-                // Melee/tackle flight follows the target vertically, but never above the ceiling.
+            } else if (this.getTarget() == null || this.attackDecision) {
+                // Outside ranged combat (wandering/returning to roost/landing approach), always
+                // follow the air target vertically.  The previous port used attackDecision alone;
+                // if a dragon finished combat with attackDecision=false it would keep its current
+                // altitude forever and could never descend toward its roost.
                 desiredY = Math.min(airTarget.getY() + 0.5D, maxFlightHeight);
             } else {
-                // Ranged flight keeps the current altitude exactly.
+                // Only an actual ranged-combat flight holds its current altitude.
                 desiredY = this.getY();
             }
 
