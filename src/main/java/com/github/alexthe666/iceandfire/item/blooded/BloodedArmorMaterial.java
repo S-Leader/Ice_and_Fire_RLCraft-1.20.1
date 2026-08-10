@@ -5,7 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 
 public class BloodedArmorMaterial {
 
-    private static final int[] PROTECTION = {5, 7, 9, 5};
+    private static final int[] PROTECTION = {5, 9, 7, 5};
 
     public static final IafArmorMaterial FIRE = new IafArmorMaterial(
             "iceandfire:blooded_fire", 43, PROTECTION, 25,

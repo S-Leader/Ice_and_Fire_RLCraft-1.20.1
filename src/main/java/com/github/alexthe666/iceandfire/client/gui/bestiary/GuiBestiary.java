@@ -58,7 +58,7 @@ public class GuiBestiary extends Screen {
         this.book = book;
         if (!book.isEmpty() && book.getItem() != null && book.getItem() == IafItemRegistry.BESTIARY.get()) {
             if (book.getTag() != null) {
-                Set<EnumBestiaryPages> pages = EnumBestiaryPages
+                List<EnumBestiaryPages> pages = EnumBestiaryPages
                         .containedPages(Ints.asList(book.getTag().getIntArray("Pages")));
                 allPageTypes.addAll(pages);
                 // Make sure the pages are sorted according to the enum

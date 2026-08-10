@@ -72,7 +72,7 @@ public class ItemBestiary extends Item {
         if (stack.getTag() != null) {
             if (IceAndFire.PROXY.shouldSeeBestiaryContents()) {
                 tooltip.add(Component.translatable("bestiary.contains").withStyle(ChatFormatting.GRAY));
-                final Set<EnumBestiaryPages> pages = EnumBestiaryPages
+                final List<EnumBestiaryPages> pages = EnumBestiaryPages
                         .containedPages(Ints.asList(stack.getTag().getIntArray("Pages")));
                 for (EnumBestiaryPages page : pages) {
                     tooltip.add(Component.literal(ChatFormatting.WHITE + "-").append(Component.translatable("bestiary." + EnumBestiaryPages.values()[page.ordinal()].toString().toLowerCase())).withStyle(ChatFormatting.GRAY));

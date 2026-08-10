@@ -1,16 +1,11 @@
 package com.github.alexthe666.iceandfire.enums;
 
 import com.github.alexthe666.iceandfire.item.ItemBestiary;
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public enum EnumBestiaryPages {
 
@@ -19,10 +14,11 @@ public enum EnumBestiaryPages {
     FIREDRAGONEGG(1),
     ICEDRAGON(4),
     ICEDRAGONEGG(1),
+    LIGHTNINGDRAGON(5),
+    LIGHTNINGDRAGONEGG(1),
     TAMEDDRAGONS(3),
     MATERIALS(2),
     ALCHEMY(1),
-    DRAGONFORGE(3),
     HIPPOGRYPH(1),
     GORGON(1),
     PIXIE(1),
@@ -38,42 +34,61 @@ public enum EnumBestiaryPages {
     SEASERPENT(2),
     HYDRA(2),
     DREAD_MOBS(1),
-    LIGHTNINGDRAGON(5),
-    LIGHTNINGDRAGONEGG(1),
+    DRAGONFORGE(1),
     GHOST(1);
 
-    public static final ImmutableList<EnumBestiaryPages> ALL_PAGES = ImmutableList.copyOf(EnumBestiaryPages.values());
-    public static final ImmutableList<Integer> ALL_INDEXES = ImmutableList
-        .copyOf(IntStream.range(0, EnumBestiaryPages.values().length).iterator());
-
-    public int pages;
+    public final int pages;
 
     EnumBestiaryPages(int pages) {
         this.pages = pages;
     }
 
-    public static Set<EnumBestiaryPages> containedPages(Collection<Integer> pages) {
-        return pages.stream().map(ALL_PAGES::get).collect(Collectors.toSet());
+    public static List<Integer> toList(int[] containedPages) {
+        List<Integer> intList = new ArrayList<>();
+        if (containedPages == null) {
+            return intList;
+        }
+        for (int containedPage : containedPages) {
+            intList.add(containedPage);
+        }
+        return intList;
     }
 
-    public static boolean hasAllPages(ItemStack book) {
-        return Ints.asList(book.getTag().getIntArray("Pages")).containsAll(ALL_INDEXES);
+    public static int[] fromList(List<Integer> containedPages) {
+        int[] pages = new int[containedPages.size()];
+        for (int i = 0; i < pages.length; i++)
+            pages[i] = containedPages.get(i);
+        return pages;
+    }
+
+    public static List<EnumBestiaryPages> containedPages(List<Integer> pages) {
+        Iterator<Integer> itr = pages.iterator();
+        List<EnumBestiaryPages> list = new ArrayList<>();
+        while (itr.hasNext()) {
+            list.add(EnumBestiaryPages.values()[itr.next()]);
+        }
+        return list;
     }
 
     public static List<Integer> enumToInt(List<EnumBestiaryPages> pages) {
-        return pages.stream().map(EnumBestiaryPages::ordinal).collect(Collectors.toList());
+        Iterator<com.github.alexthe666.iceandfire.enums.EnumBestiaryPages> itr = pages.iterator();
+        List<Integer> list = new ArrayList<>();
+        while (itr.hasNext()) {
+            list.add(EnumBestiaryPages.values()[(itr.next()).ordinal()].ordinal());
+        }
+        return list;
     }
 
     public static EnumBestiaryPages getRand() {
-        return EnumBestiaryPages.values()[ThreadLocalRandom.current().nextInt(EnumBestiaryPages.values().length)];
+        return EnumBestiaryPages.values()[new Random().nextInt(EnumBestiaryPages.values().length)];
 
     }
 
     public static void addRandomPage(ItemStack book) {
         if (book.getItem() instanceof ItemBestiary) {
             List<EnumBestiaryPages> list = EnumBestiaryPages.possiblePages(book);
-            if (!list.isEmpty()) {
-                addPage(list.get(ThreadLocalRandom.current().nextInt(list.size())), book);
+            if (list != null && !list.isEmpty()) {
+                addPage(list.get(new Random().nextInt(list.size())), book);
             }
         }
     }
@@ -81,29 +96,42 @@ public enum EnumBestiaryPages {
     public static List<EnumBestiaryPages> possiblePages(ItemStack book) {
         if (book.getItem() instanceof ItemBestiary) {
             CompoundTag tag = book.getTag();
-            Collection<EnumBestiaryPages> containedPages = containedPages(Ints.asList(tag.getIntArray("Pages")));
-            List<EnumBestiaryPages> possiblePages = new ArrayList<>(ALL_PAGES);
-            possiblePages.removeAll(containedPages);
+            List<EnumBestiaryPages> allPages = new ArrayList<>();
+            Collections.addAll(allPages, EnumBestiaryPages.values());
+            List<EnumBestiaryPages> containedPages = getContainedPages(tag);
+            List<EnumBestiaryPages> possiblePages = new ArrayList<>();
+            for (EnumBestiaryPages page : allPages) {
+                if (!containedPages.contains(page)) {
+                    possiblePages.add(page);
+                }
+            }
             return possiblePages;
         }
-        return Collections.emptyList();
+        return null;
     }
 
 
-    public static boolean addPage(EnumBestiaryPages page, ItemStack book) {
-        boolean flag = false;
+    public static void addPage(EnumBestiaryPages page, ItemStack book) {
         if (book.getItem() instanceof ItemBestiary) {
             CompoundTag tag = book.getTag();
-            final List<Integer> already = new ArrayList<>(Ints.asList(tag.getIntArray("Pages")));
-            if (!already.contains(page.ordinal())) {
-                already.add(page.ordinal());
-                flag = true;
+            if (tag == null) {
+                return;
             }
-            tag.putIntArray("Pages", Ints.toArray(already));
+            List<EnumBestiaryPages> enumlist = getContainedPages(tag);
+            if (!enumlist.contains(page)) {
+                enumlist.add(page);
+            }
+            tag.putIntArray("Pages", fromList(enumToInt(enumlist)));
         }
-        return flag;
     }
 
+    private static List<EnumBestiaryPages> getContainedPages(CompoundTag tag) {
+        if (tag == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> pages = toList(tag.getIntArray("Pages"));
+        return containedPages(pages);
+    }
 
     @Nullable
     public static EnumBestiaryPages fromInt(int index) {

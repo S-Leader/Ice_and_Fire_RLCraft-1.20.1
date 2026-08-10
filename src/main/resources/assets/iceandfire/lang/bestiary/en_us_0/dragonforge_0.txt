@@ -1,10 +1,34 @@
-The magical aura of dragon bones
-and dragon scales definitely has
-some powerful properties, as is
-well known. When combined with
-stone, they become indestructible
-to dragon frost and flame.
-<recipe><iceandfire:dragonforge_fire_brick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 5 76 1>
+The dragonforge is made
+of three layers, each
+containing nine blocks.
+
+<item><iceandfire:dragon_bone_block 0 40 30 1 200>
+<item><iceandfire:dread_stone_bricks 0 48 34 1 210>
+<item><iceandfire:dragon_bone_block 0 56 38 1 220>
+<item><iceandfire:dread_stone_bricks 0 32 34 1 230>
+<item><iceandfire:dread_stone_bricks 0 40 38 1 240>
+<item><iceandfire:dread_stone_bricks 0 48 42 1 250>
+<item><iceandfire:dragon_bone_block 0 24 38 1 260>
+<item><iceandfire:dread_stone_bricks 0 32 42 1 270>
+<item><iceandfire:dragon_bone_block 0 40 46 1 280>
+Layer 1
+
+
+
+
+
+
+
+<item><iceandfire:dread_stone_bricks 0 40 70 1 200>
+<item><iceandfire:dragonforge_brick 0 48 74 1 210>
+<item><iceandfire:dread_stone_bricks 0 56 78 1 220>
+<item><iceandfire:dragonforge_brick 0 32 74 1 230>
+<item><iceandfire:dragonforge_core 0 40 78 1 240>
+<item><iceandfire:dragonforge_brick 0 48 82 1 250>
+<item><iceandfire:dread_stone_bricks 0 24 78 1 260>
+<item><iceandfire:dragonforge_input 0 32 82 1 270>
+<item><iceandfire:dread_stone_bricks 0 40 86 1 280>
+Layer 2
 
 
 
@@ -13,32 +37,24 @@ to dragon frost and flame.
 
 
 
-
-it appears there are several
-constructs that can be made
-with dragonforge bricks. It
-is also known that there are
-ice dragon variants as well.
-<recipe><iceandfire:dragonforge_fire_core 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:fire_dragon_heart 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 190 3 1>
-<recipe><iceandfire:dragonforge_fire_input 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 minecraft:air 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 190 90 1>
-
-
-
-
+<item><iceandfire:dragon_bone_block 0 140 10 1 200>
+<item><iceandfire:dread_stone_bricks 0 148 14 1 210>
+<item><iceandfire:dragon_bone_block 0 156 18 1 220>
+<item><iceandfire:dread_stone_bricks 0 132 14 1 230>
+<item><iceandfire:dread_stone_bricks 0 140 18 1 240>
+<item><iceandfire:dread_stone_bricks 0 148 22 1 250>
+<item><iceandfire:dragon_bone_block 0 124 18 1 260>
+<item><iceandfire:dread_stone_bricks 0 132 22 1 270>
+<item><iceandfire:dragon_bone_block 0 140 26 1 280>
+Layer 3
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-Once you have acquired a
-dragon forge core, a dragon
-forge input, 8 dragon bone
+Construct the forge by placing
+Layer 1, then Layer 2 on top of
+Layer 1, then Layer 3 above Layer
+2. Once the forge is complete, it
+will need some sort of power.

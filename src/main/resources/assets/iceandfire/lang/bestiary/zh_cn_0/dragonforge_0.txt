@@ -1,26 +1,17 @@
-众所周知，龙鳞和龙骨上附有飞龙的魔法
-气息，这意味着它们必定具备某些强大的
-性质。譬如，它们与石材相结合制成的砖
-块，就拥有着抵御龙霜和龙炎的能力。
+龙炉由三层组成，
+每层包含九个方块。
 
 
-<recipe><iceandfire:dragonforge_fire_brick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 5 76 1>
-
-
-
-
-
-
-
-
-
-据记载，龙息锻炉砖块似乎可以用于
-建造某些建筑。这些建筑依据龙种
-的不同，可分为龙炎和龙霜两类。
-
-
-<recipe><iceandfire:dragonforge_fire_core 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:fire_dragon_heart 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 190 3 1>
-<recipe><iceandfire:dragonforge_fire_input 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 minecraft:air 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 190 90 1>
+<item><iceandfire:dragon_bone_block 0 40 30 1 200>
+<item><iceandfire:dread_stone_bricks 0 48 34 1 210>
+<item><iceandfire:dragon_bone_block 0 56 38 1 220>
+<item><iceandfire:dread_stone_bricks 0 32 34 1 230>
+<item><iceandfire:dread_stone_bricks 0 40 38 1 240>
+<item><iceandfire:dread_stone_bricks 0 48 42 1 250>
+<item><iceandfire:dragon_bone_block 0 24 38 1 260>
+<item><iceandfire:dread_stone_bricks 0 32 42 1 270>
+<item><iceandfire:dragon_bone_block 0 40 46 1 280>
+第一层
 
 
 
@@ -28,9 +19,16 @@
 
 
 
-
-
-
+<item><iceandfire:dread_stone_bricks 0 40 70 1 200>
+<item><iceandfire:dragonforge_brick 0 48 74 1 210>
+<item><iceandfire:dread_stone_bricks 0 56 78 1 220>
+<item><iceandfire:dragonforge_brick 0 32 74 1 230>
+<item><iceandfire:dragonforge_core 0 40 78 1 240>
+<item><iceandfire:dragonforge_brick 0 48 82 1 250>
+<item><iceandfire:dread_stone_bricks 0 24 78 1 260>
+<item><iceandfire:dragonforge_input 0 32 82 1 270>
+<item><iceandfire:dread_stone_bricks 0 40 86 1 280>
+第二层
 
 
 
@@ -39,6 +37,22 @@
 
 
 
-准备好一台龙息锻炉核心、一口
-龙息锻炉焰孔、八方龙骨块和十
-七块龙息锻炉砖块，你就可以建
+<item><iceandfire:dragon_bone_block 0 140 10 1 200>
+<item><iceandfire:dread_stone_bricks 0 148 14 1 210>
+<item><iceandfire:dragon_bone_block 0 156 18 1 220>
+<item><iceandfire:dread_stone_bricks 0 132 14 1 230>
+<item><iceandfire:dread_stone_bricks 0 140 18 1 240>
+<item><iceandfire:dread_stone_bricks 0 148 22 1 250>
+<item><iceandfire:dragon_bone_block 0 124 18 1 260>
+<item><iceandfire:dread_stone_bricks 0 132 22 1 270>
+<item><iceandfire:dragon_bone_block 0 140 26 1 280>
+第三层
+
+
+
+
+
+
+依照图样，自上而下逐层搭建锻炉的第
+一层、第二层、第三层。建成的锻炉并
+不能立刻开始运作，它需要特殊的能量。

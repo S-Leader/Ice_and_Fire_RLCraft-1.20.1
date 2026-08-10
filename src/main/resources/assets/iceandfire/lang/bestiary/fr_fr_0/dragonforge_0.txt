@@ -1,10 +1,34 @@
-L'aura magique des os et des
-écailles de dragon possède de
-puissantes propriétés, c'est bien
-connu. Combinés à la pierre, ils
-deviennent indestructibles au gel et
-aux flammes des dragons.
-<recipe><iceandfire:dragonforge_fire_brick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 5 76 1>
+La forge du dragon est
+faite de trois couches,
+chacune avec neuf blocs.
+
+<item><iceandfire:dragon_bone_block 0 40 30 1 200>
+<item><iceandfire:dread_stone_bricks 0 48 34 1 210>
+<item><iceandfire:dragon_bone_block 0 56 38 1 220>
+<item><iceandfire:dread_stone_bricks 0 32 34 1 230>
+<item><iceandfire:dread_stone_bricks 0 40 38 1 240>
+<item><iceandfire:dread_stone_bricks 0 48 42 1 250>
+<item><iceandfire:dragon_bone_block 0 24 38 1 260>
+<item><iceandfire:dread_stone_bricks 0 32 42 1 270>
+<item><iceandfire:dragon_bone_block 0 40 46 1 280>
+Couche 1
+
+
+
+
+
+
+
+<item><iceandfire:dread_stone_bricks 0 40 70 1 200>
+<item><iceandfire:dragonforge_brick 0 48 74 1 210>
+<item><iceandfire:dread_stone_bricks 0 56 78 1 220>
+<item><iceandfire:dragonforge_brick 0 32 74 1 230>
+<item><iceandfire:dragonforge_core 0 40 78 1 240>
+<item><iceandfire:dragonforge_brick 0 48 82 1 250>
+<item><iceandfire:dread_stone_bricks 0 24 78 1 260>
+<item><iceandfire:dragonforge_input 0 32 82 1 270>
+<item><iceandfire:dread_stone_bricks 0 40 86 1 280>
+Couche 2
 
 
 
@@ -13,32 +37,24 @@ aux flammes des dragons.
 
 
 
-
-Il semble qu'il y ait plusieurs
-constructions qui peuvent être
-faites avec des briques de
-dragonforge. On sait également qu'il
-existe des variantes de dragons de
-glace.
-<recipe><iceandfire:dragonforge_fire_core 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:fire_dragon_heart 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 190 3 1>
-<recipe><iceandfire:dragonforge_fire_input 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 minecraft:air 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 190 90 1>
-
-
-
+<item><iceandfire:dragon_bone_block 0 140 10 1 200>
+<item><iceandfire:dread_stone_bricks 0 148 14 1 210>
+<item><iceandfire:dragon_bone_block 0 156 18 1 220>
+<item><iceandfire:dread_stone_bricks 0 132 14 1 230>
+<item><iceandfire:dread_stone_bricks 0 140 18 1 240>
+<item><iceandfire:dread_stone_bricks 0 148 22 1 250>
+<item><iceandfire:dragon_bone_block 0 124 18 1 260>
+<item><iceandfire:dread_stone_bricks 0 132 22 1 270>
+<item><iceandfire:dragon_bone_block 0 140 26 1 280>
+Couche 3
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-Une fois que vous avez acquis un
-noyau de forge de dragon, une entrée
-de forge de dragon, 8 os de dragon
+Placez la couche 1, puis la 2
+par-dessus, puis la couche 3
+au-dessus de la couche 2. Une
+fois la forge finie, une source
+d’énergie sera nécessaire.

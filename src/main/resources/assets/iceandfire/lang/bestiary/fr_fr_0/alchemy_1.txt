@@ -1,26 +1,20 @@
-CombinÃ© Ã  un diamant, une perle
-d'ender et une Ã©meraude ou un
-saphir, il permet de crÃ©er un
-cristal d'invocation.
-<item><iceandfire:summoning_crystal_fire 0 15 22 1.25>
-<item><iceandfire:summoning_crystal_ice 0 45 22 1.25>
+Les cristaux d'invocation de dragon 
+peuvent être fabriqués pour se lier
+à un dragon, ce qui permet de le 
 
 
 
 
-Lorsque vous cliquez avec le bouton
-droit de la souris sur un dragon, le
-cristal y est liÃ©. Si vous cliquez Ã 
-nouveau n'importe oÃ¹ dans la mÃªme
-dimension, le cristal se tÃ©lÃ©porte
-et libÃ¨re le dragon.
-
-Si le dragon est tuÃ© ou introuvable,
-le cristal ne se dÃ©fera pas.
 
 
+téléporter à l'endroit où vous 
+vous trouvez.
+Lorsqu'il est utilisé sur un dragon, 
+le cristal se lie à lui.
+En cliquant à nouveau sur le cristal
+dans la même dimension, le dragon 
+sera téléporté.
 
-
-Pour dÃ©lier le cristal manuellement,
-placez-le seul dans la grille
-d'artisanat.
+Pour délier le cristal, il suffit de le 
+placer seul dans la grille de 
+fabrication.

@@ -1,10 +1,34 @@
-Магическая аура драконьих костей
-и чешуек определённо имеет мощные 
-свойства. Камень, объединённый с 
-ними, становится невозможно 
-повредить драконьим льдом и 
-пламенем.
-<recipe><iceandfire:dragonforge_fire_brick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 minecraft:stonebrick 0 iceandfire:dragonscale_red 0 5 76 1>
+Кузня дракона состоит
+из трёх слоёв, каждый из
+которых имеет девять блоков.
+
+<item><iceandfire:dragon_bone_block 0 40 30 1 200>
+<item><iceandfire:dread_stone_bricks 0 48 34 1 210>
+<item><iceandfire:dragon_bone_block 0 56 38 1 220>
+<item><iceandfire:dread_stone_bricks 0 32 34 1 230>
+<item><iceandfire:dread_stone_bricks 0 40 38 1 240>
+<item><iceandfire:dread_stone_bricks 0 48 42 1 250>
+<item><iceandfire:dragon_bone_block 0 24 38 1 260>
+<item><iceandfire:dread_stone_bricks 0 32 42 1 270>
+<item><iceandfire:dragon_bone_block 0 40 46 1 280>
+Слой 1
+
+
+
+
+
+
+
+<item><iceandfire:dread_stone_bricks 0 40 70 1 200>
+<item><iceandfire:dragonforge_brick 0 48 74 1 210>
+<item><iceandfire:dread_stone_bricks 0 56 78 1 220>
+<item><iceandfire:dragonforge_brick 0 32 74 1 230>
+<item><iceandfire:dragonforge_core 0 40 78 1 240>
+<item><iceandfire:dragonforge_brick 0 48 82 1 250>
+<item><iceandfire:dread_stone_bricks 0 24 78 1 260>
+<item><iceandfire:dragonforge_input 0 32 82 1 270>
+<item><iceandfire:dread_stone_bricks 0 40 86 1 280>
+Слой 2
 
 
 
@@ -13,32 +37,23 @@
 
 
 
-
-Похоже, что из этих драконьих
-кирпичей можно создать несколько 
-устройств. Известно, что 
-существуют и их ледяные варианты.
-<recipe><iceandfire:dragonforge_fire_core 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:fire_dragon_heart 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 iceandfire:dragonforge_fire_brick 0 190 3 1>
-<recipe><iceandfire:dragonforge_fire_input 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 minecraft:air 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 minecraft:iron_ingot 0 iceandfire:dragonforge_fire_brick 0 190 90 1>
-
-
-
-
-
+<item><iceandfire:dragon_bone_block 0 140 10 1 200>
+<item><iceandfire:dread_stone_bricks 0 148 14 1 210>
+<item><iceandfire:dragon_bone_block 0 156 18 1 220>
+<item><iceandfire:dread_stone_bricks 0 132 14 1 230>
+<item><iceandfire:dread_stone_bricks 0 140 18 1 240>
+<item><iceandfire:dread_stone_bricks 0 148 22 1 250>
+<item><iceandfire:dragon_bone_block 0 124 18 1 260>
+<item><iceandfire:dread_stone_bricks 0 132 22 1 270>
+<item><iceandfire:dragon_bone_block 0 140 26 1 280>
+Слой 3
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-Как только вы собрали сердце 
-драконьей кузни, вход драконьей
-кузни, 8 блоков костей
+Постройте кузню, разместив Слой 1
+на земле, Слой 2 на Слое 1 и
+Слой 3 на Слое 2. Готовая кузня
+требует некого питания.

@@ -6,7 +6,7 @@ import net.minecraft.world.item.ArmorItem;
 
 public class IafArmorMaterial extends CustomArmorMaterial {
 
-    protected static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
+    protected static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 16, 15, 11};
     private final int maxDamageFactor;
 
     public IafArmorMaterial(String name, int durability, int[] damageReduction, int encantability, SoundEvent sound, float toughness) {
