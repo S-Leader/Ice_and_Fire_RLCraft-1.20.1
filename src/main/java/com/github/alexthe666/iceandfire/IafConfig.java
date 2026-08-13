@@ -144,13 +144,14 @@ public class IafConfig {
     public static boolean enableMeltEffect = true;
     public static boolean enableFrostbiteEffect = true;
     public static boolean enableVoltageEffect = true;
+    public static boolean scaleArmorBreathProtect = false;
 
 
     public static void bakeClient(final ModConfig config) {
         try {
             customMainMenu = ConfigHolder.CLIENT.customMainMenu.get();
             useVanillaFont = ConfigHolder.CLIENT.useVanillaFont.get();
-         dragonAuto3rdPerson = ConfigHolder.CLIENT.dragonAuto3rdPerson.get();
+            dragonAuto3rdPerson = ConfigHolder.CLIENT.dragonAuto3rdPerson.get();
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the client config for Ice and Fire.");
             e.printStackTrace();
@@ -294,6 +295,7 @@ public class IafConfig {
             enableMeltEffect = ConfigHolder.SERVER.enableMeltEffect.get();
             enableFrostbiteEffect = ConfigHolder.SERVER.enableFrostbiteEffect.get();
             enableVoltageEffect = ConfigHolder.SERVER.enableVoltageEffect.get();
+            scaleArmorBreathProtect = ConfigHolder.SERVER.scaleArmorBreathProtect.get();
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the common config for Ice and Fire.");
             e.printStackTrace();

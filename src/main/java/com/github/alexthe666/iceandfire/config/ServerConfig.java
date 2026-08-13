@@ -68,7 +68,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue spawnCockatrices;
     public final ForgeConfigSpec.IntValue cockatriceSpawnRate;
     public final ForgeConfigSpec.IntValue stymphalianBirdTargetSearchLength;
-    public final ForgeConfigSpec.IntValue stymphalianBirdFeatherDropChance ;
+    public final ForgeConfigSpec.IntValue stymphalianBirdFeatherDropChance;
     public final ForgeConfigSpec.DoubleValue stymphalianBirdFeatherAttackStength;
     public final ForgeConfigSpec.IntValue stymphalianBirdFlockLength;
     public final ForgeConfigSpec.IntValue stymphalianBirdFlightHeight;
@@ -85,14 +85,14 @@ public class ServerConfig {
     public final ForgeConfigSpec.IntValue myrmexPregnantTicks;
     public final ForgeConfigSpec.IntValue myrmexEggTicks;
     public final ForgeConfigSpec.IntValue myrmexLarvaTicks;
-    public final ForgeConfigSpec.IntValue myrmexColonyGenChance ;
+    public final ForgeConfigSpec.IntValue myrmexColonyGenChance;
     public final ForgeConfigSpec.IntValue myrmexColonySize;
-    public final ForgeConfigSpec.DoubleValue myrmexBaseAttackStrength ;
+    public final ForgeConfigSpec.DoubleValue myrmexBaseAttackStrength;
     public final ForgeConfigSpec.IntValue myrmexMaximumWanderRadius;
     public final ForgeConfigSpec.BooleanValue myrmexHiveIgnoreDaytime;
     public final ForgeConfigSpec.BooleanValue spawnAmphitheres;
     public final ForgeConfigSpec.IntValue amphithereSpawnRate;
-    public final ForgeConfigSpec.IntValue amphithereVillagerSearchLength ;
+    public final ForgeConfigSpec.IntValue amphithereVillagerSearchLength;
     public final ForgeConfigSpec.IntValue amphithereTameTime;
     public final ForgeConfigSpec.DoubleValue amphithereFlightSpeed;
     public final ForgeConfigSpec.DoubleValue amphithereMaxHealth;
@@ -138,6 +138,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue enableMeltEffect;
     public final ForgeConfigSpec.BooleanValue enableFrostbiteEffect;
     public final ForgeConfigSpec.BooleanValue enableVoltageEffect;
+    public final ForgeConfigSpec.BooleanValue scaleArmorBreathProtect;
 
 
     public ServerConfig(final ForgeConfigSpec.Builder builder) {
@@ -266,7 +267,7 @@ public class ServerConfig {
         this.myrmexColonyGenChance = buildInt(builder, "Myrmex Colony Gen Chance", "all", 150, 1, 10000, "One out of this number chance per chunk to generate a myrmex hive.");
         this.myrmexColonySize = buildInt(builder, "Myrmex Colony Max Size", "all", 80, 10, 10000, "How many maximum individuals a myrmex colony can have.");
         this.myrmexBaseAttackStrength = buildDouble(builder, "Myrmex Base Attack Strength", "all", 3, 1, 10000, "Base Myrmex(worker) attack strength");
-        this.myrmexMaximumWanderRadius = buildInt(builder,"Myrmex Maximum Wander Radius","all",50,25,4000,"The maximum radius myrmex area allowed to wander/forage");
+        this.myrmexMaximumWanderRadius = buildInt(builder, "Myrmex Maximum Wander Radius", "all", 50, 25, 4000, "The maximum radius myrmex area allowed to wander/forage");
         this.myrmexHiveIgnoreDaytime = buildBoolean(builder, "Myrmex Hive Ignore Daytime", "all", false, "Myrmex hives will ignore daytime");
         builder.pop();
         builder.push("Amphitheres");
@@ -372,18 +373,21 @@ public class ServerConfig {
                         ),
                         obj -> obj instanceof String
                 );
+
+        this.scaleArmorBreathProtect = buildBoolean(builder, "Scale armor protect dragonbreath", "all", false, "Enable dragon scale armor extra protect for dragon breath attacks.");
+
         builder.pop();
     }
 
-    private static ForgeConfigSpec.BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String name, String catagory, boolean defaultValue, String comment){
+    private static ForgeConfigSpec.BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String name, String catagory, boolean defaultValue, String comment) {
         return builder.comment(comment).translation(name).define(name, defaultValue);
     }
 
-    private static ForgeConfigSpec.IntValue buildInt(ForgeConfigSpec.Builder builder, String name, String catagory, int defaultValue, int min, int max, String comment){
+    private static ForgeConfigSpec.IntValue buildInt(ForgeConfigSpec.Builder builder, String name, String catagory, int defaultValue, int min, int max, String comment) {
         return builder.comment(comment).translation(name).defineInRange(name, defaultValue, min, max);
     }
 
-    private static ForgeConfigSpec.DoubleValue buildDouble(ForgeConfigSpec.Builder builder, String name, String catagory, double defaultValue, double min, double max, String comment){
+    private static ForgeConfigSpec.DoubleValue buildDouble(ForgeConfigSpec.Builder builder, String name, String catagory, double defaultValue, double min, double max, String comment) {
         return builder.comment(comment).translation(name).defineInRange(name, defaultValue, min, max);
     }
 }

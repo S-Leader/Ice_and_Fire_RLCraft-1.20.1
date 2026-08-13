@@ -1,6 +1,7 @@
 package com.github.alexthe666.iceandfire.item;
 
 import com.github.alexthe666.citadel.server.item.CustomArmorMaterial;
+import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.client.model.armor.ModelFireDragonScaleArmor;
 import com.github.alexthe666.iceandfire.client.model.armor.ModelIceDragonScaleArmor;
 import com.github.alexthe666.iceandfire.client.model.armor.ModelLightningDragonScaleArmor;
@@ -82,6 +83,7 @@ public class ItemScaleArmor extends ArmorItem implements IProtectAgainstDragonIt
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         tooltip.add(Component.translatable("dragon." + eggType.toString().toLowerCase()).withStyle(eggType.color));
-        tooltip.add(Component.translatable("item.dragonscales_armor.desc").withStyle(ChatFormatting.GRAY));
+        if (IafConfig.scaleArmorBreathProtect)
+            tooltip.add(Component.translatable("item.dragonscales_armor.desc").withStyle(ChatFormatting.GRAY));
     }
 }

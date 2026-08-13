@@ -1,5 +1,6 @@
 package com.github.alexthe666.iceandfire.item.blooded;
 
+import com.github.alexthe666.iceandfire.item.IProtectAgainstDragonItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemBloodedArmor extends ArmorItem {
+public class ItemBloodedArmor extends ArmorItem implements IProtectAgainstDragonItem {
 
     private final BloodedDragonType dragonType;
 
