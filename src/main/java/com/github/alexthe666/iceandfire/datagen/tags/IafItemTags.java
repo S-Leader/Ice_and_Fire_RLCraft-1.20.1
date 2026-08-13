@@ -73,6 +73,9 @@ public class IafItemTags extends ItemTagsProvider {
     public static TagKey<Item> TEMPT_HIPPOCAMPUS = createKey("tempt_hippocampus");
     public static TagKey<Item> TEMPT_HIPPOGRYPH = createKey("tempt_hippogryph");
 
+    public static TagKey<Item> CHITIN_DESERT = createForgeKey("chitin_desert");
+    public static TagKey<Item> CHITIN_JUNGLE = createForgeKey("chitin_jungle");
+
     public IafItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, ExistingFileHelper helper) {
         super(output, lookupProvider, blockTags, IceAndFire.MODID, helper);
     }
@@ -197,6 +200,8 @@ public class IafItemTags extends ItemTagsProvider {
         tag(DRAGON_HEARTS).add(IafItemRegistry.FIRE_DRAGON_HEART.get()).add(IafItemRegistry.ICE_DRAGON_HEART.get()).add(IafItemRegistry.LIGHTNING_DRAGON_HEART.get()).add(IafItemRegistry.GOLD_DRAGON_HEART.get());
 
         tag(DRAGON_BONES).add(IafItemRegistry.DRAGON_BONE.get());
+        tag(CHITIN_DESERT).add(IafItemRegistry.MYRMEX_DESERT_CHITIN.get());
+        tag(CHITIN_JUNGLE).add(IafItemRegistry.MYRMEX_JUNGLE_CHITIN.get());
 
         IafItemRegistry.ITEMS.getEntries().forEach(registryObject -> {
             Item item = registryObject.get();
