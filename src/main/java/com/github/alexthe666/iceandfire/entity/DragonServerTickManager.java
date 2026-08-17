@@ -16,11 +16,6 @@ public class DragonServerTickManager {
         this.dragon = dragon;
     }
 
-    private boolean isActiveRangedCombat() {
-        LivingEntity target = dragon.getTarget();
-        return target != null && target.isAlive() && !dragon.attackDecision;
-    }
-
     public void updateDragonServer() {
         // Update dragon rider
         dragon.updateRider();
@@ -192,15 +187,26 @@ public class DragonServerTickManager {
         if (dragon.getControllingPassenger() == null && !dragon.useFlyingPathFinder() && !dragon.isHovering() && dragon.navigatorType != 0) {
             dragon.switchNavigator(0);
         }
-        // 龙降落：仅在不在空中且想要降落时取消飞行
+        // Touchdown: once an AI dragon has actually reached solid ground, end flight instead of
+        // allowing no-gravity flight to skim along the surface forever.  doesWantToLand() contains
+        // a short post-takeoff grace period and an airborne-target exception, so this does not
+        // immediately cancel normal takeoff or a real aerial pursuit.
         if (dragon.getControllingPassenger() == null
                 && !dragon.isOverAir()
                 && dragon.doesWantToLand()
                 && (dragon.isFlying() || dragon.isHovering())
-                && !dragon.isInWater()
-                && !isActiveRangedCombat()) {
+                && !dragon.isInWater()) {
+            dragon.airTarget = null;
             dragon.setFlying(false);
             dragon.setHovering(false);
+            dragon.setNoGravity(false);
+            dragon.flyTicks = 0;
+            dragon.hoverTicks = 0;
+
+            Vec3 motion = dragon.getDeltaMovement();
+            // Remove the last bit of upward/level flight momentum so the feet settle onto the
+            // support block on this tick instead of gliding just above it for several more ticks.
+            dragon.setDeltaMovement(motion.x * 0.8D, Math.min(motion.y, -0.08D), motion.z * 0.8D);
         }
         if (dragon.isHovering()) {
             if (dragon.isFlying() && dragon.flyTicks > 40) {
@@ -220,8 +226,7 @@ public class DragonServerTickManager {
             // in a special hovering state.
             if (dragon.getControllingPassenger() == null
                     && dragon.doesWantToLand()
-                    && !dragon.onGround() && !dragon.isInWater()
-                    && !isActiveRangedCombat()) {
+                    && !dragon.onGround() && !dragon.isInWater()) {
                 Vec3 motion = dragon.getDeltaMovement();
                 double landingY = Math.min(motion.y - 0.25D, -0.12D);
                 dragon.setDeltaMovement(motion.x * 0.9D, landingY, motion.z * 0.9D);
@@ -255,11 +260,7 @@ public class DragonServerTickManager {
         // that method deliberately requires onGround()/water because it answers whether a
         // grounded dragon may TAKE OFF.  Using it here made this branch impossible for an
         // airborne dragon, leaving it stuck in Flying/Hovering forever.
-        if (dragon.getControllingPassenger() == null
-                && dragon.isFlying()
-                && dragon.doesWantToLand()
-                && !dragon.isInWater()
-                && !isActiveRangedCombat()) {
+        if (dragon.getControllingPassenger() == null && dragon.isFlying() && dragon.doesWantToLand() && !dragon.isInWater()) {
             dragon.airTarget = null;
             dragon.setFlying(false);
             dragon.setHovering(!dragon.onGround());
