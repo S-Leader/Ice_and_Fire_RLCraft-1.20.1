@@ -281,8 +281,7 @@ public class DragonServerTickManager {
                 if (dragon.getRandom().nextInt(dragon.getFlightChancePerTick()) == 0
                         || dragon.getY() < dragon.level().getMinBuildHeight()
                         || (dragon.getTarget() != null && Math.abs(dragon.getTarget().getY() - dragon.getY()) > 5)
-                        || dragon.isInWater()
-                        || (dragon.getTarget() != null && !dragon.attackDecision && dragon.getRandom().nextInt(15) == 0)) {
+                        || dragon.isInWater()) {
                     dragon.setHovering(true);
                     dragon.setInSittingPose(false);
                     dragon.setOrderedToSit(false);

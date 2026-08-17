@@ -1403,7 +1403,6 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         boolean checkNavigation = ticksStill > 80 && canMove() && !isHovering();
 
         if (checkNavigation) {
-            // 飞行中有airTarget却长时间未移动同样视为卡住（1.12.2 RLC语义，飞行撞墙可触发挖掘）
             if (airTarget != null) {
                 return true;
             }
