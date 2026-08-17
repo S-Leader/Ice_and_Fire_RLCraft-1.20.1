@@ -1,8 +1,6 @@
 package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IafConfig;
-import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
-import com.github.alexthe666.iceandfire.entity.EntityDreadQueen;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +14,11 @@ public class DragonServerTickManager {
 
     public DragonServerTickManager(EntityDragonBase dragon) {
         this.dragon = dragon;
+    }
+
+    private boolean isActiveRangedCombat() {
+        LivingEntity target = dragon.getTarget();
+        return target != null && target.isAlive() && !dragon.attackDecision;
     }
 
     public void updateDragonServer() {
@@ -190,7 +193,12 @@ public class DragonServerTickManager {
             dragon.switchNavigator(0);
         }
         // 龙降落：仅在不在空中且想要降落时取消飞行
-        if (dragon.getControllingPassenger() == null && !dragon.isOverAir() && dragon.doesWantToLand() && (dragon.isFlying() || dragon.isHovering()) && !dragon.isInWater()) {
+        if (dragon.getControllingPassenger() == null
+                && !dragon.isOverAir()
+                && dragon.doesWantToLand()
+                && (dragon.isFlying() || dragon.isHovering())
+                && !dragon.isInWater()
+                && !isActiveRangedCombat()) {
             dragon.setFlying(false);
             dragon.setHovering(false);
         }
@@ -212,7 +220,8 @@ public class DragonServerTickManager {
             // in a special hovering state.
             if (dragon.getControllingPassenger() == null
                     && dragon.doesWantToLand()
-                    && !dragon.onGround() && !dragon.isInWater()) {
+                    && !dragon.onGround() && !dragon.isInWater()
+                    && !isActiveRangedCombat()) {
                 Vec3 motion = dragon.getDeltaMovement();
                 double landingY = Math.min(motion.y - 0.25D, -0.12D);
                 dragon.setDeltaMovement(motion.x * 0.9D, landingY, motion.z * 0.9D);
@@ -246,7 +255,11 @@ public class DragonServerTickManager {
         // that method deliberately requires onGround()/water because it answers whether a
         // grounded dragon may TAKE OFF.  Using it here made this branch impossible for an
         // airborne dragon, leaving it stuck in Flying/Hovering forever.
-        if (dragon.getControllingPassenger() == null && dragon.isFlying() && dragon.doesWantToLand() && !dragon.isInWater()) {
+        if (dragon.getControllingPassenger() == null
+                && dragon.isFlying()
+                && dragon.doesWantToLand()
+                && !dragon.isInWater()
+                && !isActiveRangedCombat()) {
             dragon.airTarget = null;
             dragon.setFlying(false);
             dragon.setHovering(!dragon.onGround());
@@ -264,9 +277,9 @@ public class DragonServerTickManager {
         }
         if (!dragon.isFlying() && !dragon.isHovering()) {
             if (dragon.isAllowedToTriggerFlight() || dragon.getY() < dragon.level().getMinBuildHeight()) {
-                if (dragon.getRandom().nextInt(dragon.getFlightChancePerTick()) == 0 
-                        || dragon.getY() < dragon.level().getMinBuildHeight() 
-                        || (dragon.getTarget() != null && Math.abs(dragon.getTarget().getY() - dragon.getY()) > 5) 
+                if (dragon.getRandom().nextInt(dragon.getFlightChancePerTick()) == 0
+                        || dragon.getY() < dragon.level().getMinBuildHeight()
+                        || (dragon.getTarget() != null && Math.abs(dragon.getTarget().getY() - dragon.getY()) > 5)
                         || dragon.isInWater()
                         || (dragon.getTarget() != null && !dragon.attackDecision && dragon.getRandom().nextInt(15) == 0)) {
                     dragon.setHovering(true);

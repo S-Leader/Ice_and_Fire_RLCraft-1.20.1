@@ -10,6 +10,7 @@ import com.github.alexthe666.iceandfire.api.event.GenericGriefEvent;
 import com.github.alexthe666.iceandfire.block.IDragonProof;
 import com.github.alexthe666.iceandfire.client.model.IFChainBuffer;
 import com.github.alexthe666.iceandfire.client.model.util.LegSolverQuadruped;
+import com.github.alexthe666.iceandfire.compat.CuriosUtil;
 import com.github.alexthe666.iceandfire.datagen.tags.IafBlockTags;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
 import com.github.alexthe666.iceandfire.entity.ai.*;
@@ -19,7 +20,6 @@ import com.github.alexthe666.iceandfire.entity.util.*;
 import com.github.alexthe666.iceandfire.enums.EnumDragonEgg;
 import com.github.alexthe666.iceandfire.inventory.ContainerDragon;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
-import com.github.alexthe666.iceandfire.compat.CuriosUtil;
 import com.github.alexthe666.iceandfire.item.ItemDragonArmor;
 import com.github.alexthe666.iceandfire.item.ItemSummoningCrystal;
 import com.github.alexthe666.iceandfire.message.MessageDragonSetBurnBlock;
@@ -184,7 +184,8 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     public static final float[] growth_stage_4 = new float[]{12.5F, 20F};
     public static final float[] growth_stage_5 = new float[]{20F, 30F};
 
-    public float[][] growth_stages = new float[][]{growth_stage_1, growth_stage_2, growth_stage_3, growth_stage_4, growth_stage_5};;
+    public float[][] growth_stages = new float[][]{growth_stage_1, growth_stage_2, growth_stage_3, growth_stage_4, growth_stage_5};
+    ;
 
     public LegSolverQuadruped legSolver;
     public int walkCycle;
@@ -1451,7 +1452,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         if (isBreakable(position, state, hardness, this)) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.6F, 1, 0.6F));
             if (!level().isClientSide()) {
-                level().destroyBlock(position, !state.is(IafBlockTags.DRAGON_BLOCK_BREAK_NO_DROPS) && random.nextFloat() <= IafConfig.dragonBlockBreakingDropChance );
+                level().destroyBlock(position, !state.is(IafBlockTags.DRAGON_BLOCK_BREAK_NO_DROPS) && random.nextFloat() <= IafConfig.dragonBlockBreakingDropChance);
             }
         }
     }
@@ -1983,21 +1984,46 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         return baseSpeed * tackleMultiplier * IafConfig.dragonFlightSpeedMod;
     }
 
-    // 1.12.2 RLC flight semantics: AI air target selection owns the target; no orbiting layer here.
+    // 1.12.2-style direct flight, with ranged combat kept mobile:
+    // breathing fire must not turn the dragon into a stationary hovering turret.
     public void flyAround() {
         if (getControllingPassenger() != null) {
             airTarget = null;
             return;
         }
-        if (airTarget != null && doesWantToLand()) {
+
+        LivingEntity combatTarget = this.getTarget();
+        boolean hasCombatTarget = combatTarget != null && combatTarget.isAlive();
+        boolean rangedCombat = hasCombatTarget && !this.attackDecision;
+
+        if (rangedCombat) {
+            // Continuously refresh the destination while using ranged attacks so a moving
+            // target cannot leave an old airTarget behind. Aim slightly above the target so
+            // large dragons do not drive their body into the ground while breathing.
+            double chaseHeight = Math.max(2.0D, this.getBbHeight() * 0.25D);
+            int maxFlightHeight = DragonUtils.getMaximumFlightHeightForPos(level(), combatTarget.blockPosition());
+            double targetY = Math.min(combatTarget.getEyeY() + chaseHeight, maxFlightHeight);
+            this.airTarget = BlockPos.containing(combatTarget.getX(), targetY, combatTarget.getZ());
+
+            // A dragon may have entered Hovering while taking off or after a previous landing
+            // decision. Ranged combat must resume real forward flight immediately.
+            if (this.isHovering() && !this.isFlying()) {
+                this.setHovering(false);
+                this.setFlying(true);
+                this.hoverTicks = 0;
+            }
+        } else if (airTarget != null && doesWantToLand()) {
+            // Landing is only allowed outside active ranged combat.
             airTarget = null;
         }
+
         if (airTarget != null) {
             flyTowardsTarget();
         }
     }
 
-    // 1.12.2 RLC: ranged attack keeps the dragon at its current Y, melee attackDecision follows target Y.
+    // During ranged combat the dragon now follows the target in 3D while breathing instead
+    // of locking itself to the altitude where the breath attack started.
     public void flyTowardsTarget() {
         if (airTarget == null) {
             return;
@@ -2009,22 +2035,18 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
         if (isTargetInAir() && this.isFlying()
                 && this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) > 3) {
-            // Ranged flight must hold altitude.  The previous port used getY() here and then
-            // added +1 below, which made targetY permanently positive and caused dragons to
-            // climb forever while breathing at a target.
+            // Follow the current air target continuously. During ranged combat flyAround()
+            // refreshes this point from the live enemy every tick, so the dragon keeps
+            // advancing while its breath attack is active instead of hovering in place.
             double desiredY;
             if (this.getY() > maxFlightHeight) {
                 // If some previous motion/AI already pushed us above the local ceiling, descend.
                 desiredY = maxFlightHeight;
-            } else if (this.getTarget() == null || this.attackDecision) {
-                // Outside ranged combat (wandering/returning to roost/landing approach), always
-                // follow the air target vertically.  The previous port used attackDecision alone;
-                // if a dragon finished combat with attackDecision=false it would keep its current
-                // altitude forever and could never descend toward its roost.
-                desiredY = Math.min(airTarget.getY() + 0.5D, maxFlightHeight);
             } else {
-                // Only an actual ranged-combat flight holds its current altitude.
-                desiredY = this.getY();
+                // airTarget is refreshed to the live enemy every tick during ranged combat,
+                // therefore following it vertically is safe and does not recreate the old
+                // "current Y + 1 every tick" infinite-climb bug.
+                desiredY = Math.min(airTarget.getY() + 0.5D, maxFlightHeight);
             }
 
             double targetX = airTarget.getX() + 0.5D - getX();
@@ -2069,7 +2091,11 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                 this.setHovering(false);
                 hoverTicks = 0;
             }
-            if (this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3 && this.doesWantToLand()) {
+            LivingEntity combatTarget = this.getTarget();
+            boolean activeRangedCombat = combatTarget != null && combatTarget.isAlive() && !this.attackDecision;
+            if (this.distanceToSqr(new Vec3(airTarget.getX(), this.getY(), airTarget.getZ())) < 3
+                    && this.doesWantToLand()
+                    && !activeRangedCombat) {
                 setFlying(false);
                 setHovering(true);
             }
