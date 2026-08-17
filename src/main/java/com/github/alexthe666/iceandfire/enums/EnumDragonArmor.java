@@ -20,7 +20,7 @@ public enum EnumDragonArmor {
     armor_sapphire(14, EnumDragonEgg.SAPPHIRE),
     armor_silver(15, EnumDragonEgg.SILVER),
     armor_electric(12, EnumDragonEgg.ELECTRIC),
-    armor_amythest(13, EnumDragonEgg.AMYTHEST),
+    armor_amethyst(13, EnumDragonEgg.AMYTHEST),
     armor_copper(14, EnumDragonEgg.COPPER),
     armor_black(15, EnumDragonEgg.BLACK);
 
@@ -66,7 +66,7 @@ public enum EnumDragonArmor {
             case armor_sapphire -> IafItemRegistry.DRAGONSCALES_SAPPHIRE.get();
             case armor_silver -> IafItemRegistry.DRAGONSCALES_SILVER.get();
             case armor_electric -> IafItemRegistry.DRAGONSCALES_ELECTRIC.get();
-            case armor_amythest -> IafItemRegistry.DRAGONSCALES_AMYTHEST.get();
+            case armor_amethyst -> IafItemRegistry.DRAGONSCALES_AMYTHEST.get();
             case armor_copper -> IafItemRegistry.DRAGONSCALES_COPPER.get();
             case armor_black -> IafItemRegistry.DRAGONSCALES_BLACK.get();
             default -> IafItemRegistry.DRAGONSCALES_RED.get();

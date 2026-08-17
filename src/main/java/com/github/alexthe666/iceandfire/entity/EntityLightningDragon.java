@@ -111,7 +111,7 @@ public class EntityLightningDragon extends EntityDragonBase {
             default:
                 return "electric_";
             case 1:
-                return "amythest_";
+                return "amethyst_";
             case 2:
                 return "copper_";
             case 3:

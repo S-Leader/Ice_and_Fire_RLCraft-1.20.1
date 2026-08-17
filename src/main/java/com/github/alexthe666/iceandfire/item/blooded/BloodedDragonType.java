@@ -14,7 +14,7 @@ public enum BloodedDragonType {
     ICE_SILVER("ice_silver", "silver", "iced", DragonElement.ICE, ChatFormatting.DARK_GRAY),
 
     LIGHTNING_ELECTRIC("lightning_electric", "electric", "shocked", DragonElement.LIGHTNING, ChatFormatting.DARK_BLUE),
-    LIGHTNING_AMETHYST("lightning_amethyst", "amythest", "shocked", DragonElement.LIGHTNING,
+    LIGHTNING_AMETHYST("lightning_amethyst", "amethyst", "shocked", DragonElement.LIGHTNING,
             ChatFormatting.LIGHT_PURPLE),
     LIGHTNING_COPPER("lightning_copper", "copper", "shocked", DragonElement.LIGHTNING, ChatFormatting.GOLD),
     LIGHTNING_BLACK("lightning_black", "black", "shocked", DragonElement.LIGHTNING, ChatFormatting.DARK_GRAY);

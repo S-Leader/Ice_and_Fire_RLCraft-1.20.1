@@ -139,6 +139,8 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue enableFrostbiteEffect;
     public final ForgeConfigSpec.BooleanValue enableVoltageEffect;
     public final ForgeConfigSpec.BooleanValue scaleArmorBreathProtect;
+    public final ForgeConfigSpec.BooleanValue hydraHeartPassRegen;
+    public final ForgeConfigSpec.BooleanValue cyclopsEyeWeaknessApply;
 
 
     public ServerConfig(final ForgeConfigSpec.Builder builder) {
@@ -375,6 +377,9 @@ public class ServerConfig {
                 );
 
         this.scaleArmorBreathProtect = buildBoolean(builder, "Scale armor protect dragonbreath", "all", false, "Enable dragon scale armor extra protect for dragon breath attacks.");
+
+        this.hydraHeartPassRegen = buildBoolean(builder, "Hydra Heart Passive Regenerate Health", "all", true, "Enable hydra heart passive regenerate health.");
+        this.cyclopsEyeWeaknessApply = buildBoolean(builder, "Cyclops Eye gives enemy weakness", "all", true, "Enable cyclops eye passive gives nearby enemies weakness.");
 
         builder.pop();
     }

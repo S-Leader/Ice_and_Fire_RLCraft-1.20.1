@@ -28,7 +28,7 @@ public class RenderDragonEgg extends LivingEntityRenderer<EntityDragonEgg, Model
     public static final ResourceLocation EGG_ELECTRIC = new ResourceLocation(
             "iceandfire:textures/models/lightningdragon/egg_electric.png");
     public static final ResourceLocation EGG_AMYTHEST = new ResourceLocation(
-            "iceandfire:textures/models/lightningdragon/egg_amythest.png");
+            "iceandfire:textures/models/lightningdragon/egg_amethyst.png");
     public static final ResourceLocation EGG_BLACK = new ResourceLocation(
             "iceandfire:textures/models/lightningdragon/egg_black.png");
     public static final ResourceLocation EGG_COPPER = new ResourceLocation(

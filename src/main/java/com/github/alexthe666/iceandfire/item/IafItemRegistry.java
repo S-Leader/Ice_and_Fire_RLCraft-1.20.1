@@ -172,7 +172,7 @@ public class IafItemRegistry {
             () -> new ItemDragonEgg(EnumDragonEgg.SILVER));
     public static final RegistryObject<Item> DRAGONEGG_ELECTRIC = registerItem("dragonegg_electric",
             () -> new ItemDragonEgg(EnumDragonEgg.ELECTRIC));
-    public static final RegistryObject<Item> DRAGONEGG_AMYTHEST = registerItem("dragonegg_amythest",
+    public static final RegistryObject<Item> DRAGONEGG_AMYTHEST = registerItem("dragonegg_amethyst",
             () -> new ItemDragonEgg(EnumDragonEgg.AMYTHEST));
     public static final RegistryObject<Item> DRAGONEGG_COPPER = registerItem("dragonegg_copper",
             () -> new ItemDragonEgg(EnumDragonEgg.COPPER));
@@ -198,7 +198,7 @@ public class IafItemRegistry {
             () -> new ItemDragonScales(EnumDragonEgg.SILVER));
     public static final RegistryObject<Item> DRAGONSCALES_ELECTRIC = registerItem("dragonscales_electric",
             () -> new ItemDragonScales(EnumDragonEgg.ELECTRIC));
-    public static final RegistryObject<Item> DRAGONSCALES_AMYTHEST = registerItem("dragonscales_amythest",
+    public static final RegistryObject<Item> DRAGONSCALES_AMYTHEST = registerItem("dragonscales_amethyst",
             () -> new ItemDragonScales(EnumDragonEgg.AMYTHEST));
     public static final RegistryObject<Item> DRAGONSCALES_COPPER = registerItem("dragonscales_copper",
             () -> new ItemDragonScales(EnumDragonEgg.COPPER));

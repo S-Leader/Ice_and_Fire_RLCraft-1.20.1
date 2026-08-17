@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "com.github.alexthe666.iceandfire.mixin",
+  "package": "com.github.alexthe666.iceandfire.mixins",
   "compatibilityLevel": "JAVA_17",
   "refmap": "iceandfire.refmap.json",
-  "plugin": "com.github.alexthe666.iceandfire.mixin.IceAndFireMixinPlugin",
+  "plugin": "com.github.alexthe666.iceandfire.mixins.IceAndFireMixinPlugin",
   "mixins": [
     "gen.NoLakesInStructuresMixin",
     "gen.WorldGenRegionMixin",

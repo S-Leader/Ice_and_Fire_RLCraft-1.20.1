@@ -85,10 +85,6 @@ public class ItemBloodedArmor extends ArmorItem implements IProtectAgainstDragon
                 Component.literal(wornCount + "/4: ").append(Component.translatable(effectKey)).withStyle(descColor));
     }
 
-    /**
-     * 计算本地玩家穿戴同元素浴血甲的件数（仅客户端有效）
-     * 使用 DistExecutor 隔离客户端类引用，避免服务端类加载 LocalPlayer
-     */
     private int countWornPiecesClient(@Nullable Level level) {
         if (level == null || !level.isClientSide()) return 0;
         BloodedDragonType.DragonElement myElement = dragonType.getElement();
@@ -96,9 +92,6 @@ public class ItemBloodedArmor extends ArmorItem implements IProtectAgainstDragon
                 () -> () -> ClientBloodedHelper.countWornPieces(myElement));
     }
 
-    /**
-     * 客户端专用辅助类 — 服务端永远不会加载此类
-     */
     private static class ClientBloodedHelper {
         static int countWornPieces(BloodedDragonType.DragonElement element) {
             try {

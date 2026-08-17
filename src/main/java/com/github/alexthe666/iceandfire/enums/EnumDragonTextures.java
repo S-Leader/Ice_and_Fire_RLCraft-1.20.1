@@ -6,7 +6,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 
 public enum EnumDragonTextures {
     VARIANT1("red_", "blue_", "electric_"),
-    VARIANT2("green_", "white_", "amythest_"),
+    VARIANT2("green_", "white_", "amethyst_"),
     VARIANT3("bronze_", "sapphire_", "copper_"),
     VARIANT4("gray_", "silver_", "black_");
 

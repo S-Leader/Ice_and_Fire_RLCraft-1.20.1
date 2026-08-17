@@ -3,7 +3,7 @@
   "dragon_type": "lightning",
   "cook_time": 1000,
   "input": {
-    "item": "iceandfire:armor_amythest_boots"
+    "item": "iceandfire:armor_amethyst_boots"
   },
   "blood": {
     "item": "iceandfire:lightning_dragon_blood"

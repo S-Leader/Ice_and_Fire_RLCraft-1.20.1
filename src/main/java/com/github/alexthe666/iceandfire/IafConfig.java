@@ -145,6 +145,8 @@ public class IafConfig {
     public static boolean enableFrostbiteEffect = true;
     public static boolean enableVoltageEffect = true;
     public static boolean scaleArmorBreathProtect = false;
+    public static boolean hydraHeartPassRegen = true;
+    public static boolean cyclopsEyeWeaknessApply = true;
 
 
     public static void bakeClient(final ModConfig config) {
@@ -296,6 +298,8 @@ public class IafConfig {
             enableFrostbiteEffect = ConfigHolder.SERVER.enableFrostbiteEffect.get();
             enableVoltageEffect = ConfigHolder.SERVER.enableVoltageEffect.get();
             scaleArmorBreathProtect = ConfigHolder.SERVER.scaleArmorBreathProtect.get();
+            hydraHeartPassRegen = ConfigHolder.SERVER.hydraHeartPassRegen.get();
+            cyclopsEyeWeaknessApply = ConfigHolder.SERVER.cyclopsEyeWeaknessApply.get();
         } catch (Exception e) {
             IceAndFire.LOGGER.warn("An exception was caused trying to load the common config for Ice and Fire.");
             e.printStackTrace();
