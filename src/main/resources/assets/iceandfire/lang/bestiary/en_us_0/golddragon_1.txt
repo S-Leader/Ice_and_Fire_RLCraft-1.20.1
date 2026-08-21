@@ -1,40 +1,35 @@
-    After harvesting dragon
-blood by using a glass bottle
-on a dragon's corpse, I finally
-figured out how to use it
-effectively as a weapon.
+A Gold Dragon Egg does not seem
+to answer to flame, water, ice, or
+storms in the way other dragon
+eggs do. Instead, it reacts to an
+unusual concentration of knowledge
+and enchantment around it.
+
+I found that the egg only began to
+develop when at least fifteen
+bookshelves were placed within five
+blocks around it.
+
+When enough shelves are present,
+small enchanting motes drift from
+the surrounding bookshelves toward
+the shell. This is the clearest sign
+that incubation has begun.
 
 
+<image><drawings_golddragon.png 278 70 435 4 72 83 1>
 
+The arrangement does not need fire
+or water. The bookshelves themselves
+are the important part. As long as
+the egg remains surrounded by enough
+of them, it slowly absorbs this
+enchanted power and continues to
+mature.
 
-
-
-
-
-
-By combining either fire or
-ice blood with a dragon bone
-sword, I was able to infuse
-the two and make them into
-potent weapons to the
-opposite dragon.
-
-
-
-
-
-
-
-Fire Infused swords ignite
-their target into flames,
-and do extra damage against
-Ice Dragons. Ice Infused swords
-slow down their target, and do
-extra damage to Fire Dragons.
-Both swords also have large
-knockback effects.
-
-
-
-Dragon blood can also be used
-to preserve dragons.
+After sufficient time, the golden
+shell finally breaks and a young
+Gold Dragon emerges. Like other
+properly incubated dragon eggs, the
+hatchling recognizes the keeper of
+the egg as its owner.

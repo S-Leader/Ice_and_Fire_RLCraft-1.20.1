@@ -11,6 +11,7 @@ import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -134,6 +135,26 @@ public class EntityDragonEgg extends LivingEntity implements IBlacklistedFromSta
         if (!this.level().isClientSide()) {
             this.setAirSupply(200);
             updateEggCondition();
+        } else if (getEggType().dragonType == DragonType.GOLD) {
+            BlockPos eggPos = blockPosition();
+            int bookshelves = 0;
+            BlockPos particleShelf = null;
+
+            for (BlockPos pos : BlockPos.betweenClosed(eggPos.offset(-5, -5, -5), eggPos.offset(5, 5, 5))) {
+                if (level().getBlockState(pos).is(Blocks.BOOKSHELF)) {
+                    bookshelves++;
+                    if (getRandom().nextInt(bookshelves) == 0) {
+                        particleShelf = pos.immutable();
+                    }
+                }
+            }
+
+            if (bookshelves >= 15 && particleShelf != null && getRandom().nextInt(2) == 0) {
+                double dx = particleShelf.getX() + 0.5D - getX();
+                double dy = particleShelf.getY() + 0.5D - (getY() + 0.5D);
+                double dz = particleShelf.getZ() + 0.5D - getZ();
+                level().addParticle(ParticleTypes.ENCHANT, getX(), getY() + 0.5D, getZ(), dx, dy, dz);
+            }
         }
     }
 

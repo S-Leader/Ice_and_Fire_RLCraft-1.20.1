@@ -1,0 +1,29 @@
+Un œuf de Dragon Doré ne réagit ni au
+feu, ni à la glace, ni aux orages comme
+les autres œufs de dragon. Il semble au
+contraire réclamer une forte concentration
+de savoir et de magie.
+
+Il ne commença à se développer qu'avec
+au moins quinze bibliothèques placées
+dans un rayon de cinq blocs autour de lui.
+
+Lorsque leur nombre est suffisant, des
+particules d'enchantement dérivent des
+bibliothèques vers la coquille.
+
+
+
+
+<image><drawings_golddragon.png 278 70 435 4 72 83 1>
+
+Ni feu, ni eau, ni pluie ne sont requis.
+Tant que suffisamment de bibliothèques
+entourent l'œuf, il absorbe lentement
+cette énergie enchantée et mûrit.
+
+Après assez de temps, la coquille dorée
+se brise et un jeune Dragon Doré éclot.
+Comme les autres dragons correctement
+incubés, il reconnaît le propriétaire de
+l'œuf comme son maître.

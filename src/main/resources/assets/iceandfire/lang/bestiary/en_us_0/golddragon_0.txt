@@ -1,8 +1,8 @@
-    After harvesting dragon
-blood by using a glass bottle
-on a dragon's corpse, I finally
-figured out how to use it
-effectively as a weapon.
+There is a curious rumor among
+naturalists. In the corrupted
+biomes of the Defiled Lands live
+creatures said to be distant
+relatives of true dragons.
 
 
 
@@ -12,29 +12,22 @@ effectively as a weapon.
 
 
 
-By combining either fire or
-ice blood with a dragon bone
-sword, I was able to infuse
-the two and make them into
-potent weapons to the
-opposite dragon.
+<image><drawings_golddragon.png 11 62 11 20 180 70 1>
 
+Through careful breeding, these
+creatures may very rarely produce
+an unusual golden individual.
 
+Old field notes claim that these
+golden relatives have a strange
+connection to a far greater beast:
+the Gold Dragon. Golden specimens
+have occasionally been associated
+with the appearance of a genuine
+Gold Dragon Egg.
 
-
-
-
-
-Fire Infused swords ignite
-their target into flames,
-and do extra damage against
-Ice Dragons. Ice Infused swords
-slow down their target, and do
-extra damage to Fire Dragons.
-Both swords also have large
-knockback effects.
-
-
-
-Dragon blood can also be used
-to preserve dragons.
+The exact reason remains unclear.
+Bloodline, accumulated magic, and
+the enchanted books these creatures
+consume may all play some part in
+this extraordinary occurrence.
