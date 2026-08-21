@@ -30,7 +30,7 @@ import java.util.List;
 public class ItemDragonHorn extends Item {
 
     public ItemDragonHorn() {
-        super((new Item.Properties())/*.tab(IceAndFire.TAB_ITEMS)*/.stacksTo(1));
+        super(new Item.Properties().stacksTo(1));
     }
 
     public static int getDragonType(ItemStack stack) {
@@ -46,6 +46,9 @@ public class ItemDragonHorn extends Item {
 
                 if (entityType == IafEntityRegistry.LIGHTNING_DRAGON.get())
                     return 3;
+
+                if (entityType == IafEntityRegistry.GOLD_DRAGON.get())
+                    return 4;
             }
         }
 
@@ -163,6 +166,9 @@ public class ItemDragonHorn extends Item {
 
         if (type == IafEntityRegistry.LIGHTNING_DRAGON.get())
             return ChatFormatting.DARK_PURPLE;
+
+        if (type == IafEntityRegistry.GOLD_DRAGON.get())
+            return ChatFormatting.GOLD;
 
         return ChatFormatting.GRAY;
     }

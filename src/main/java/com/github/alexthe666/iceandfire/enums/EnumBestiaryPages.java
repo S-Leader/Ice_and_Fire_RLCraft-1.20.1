@@ -35,6 +35,7 @@ public enum EnumBestiaryPages {
     HYDRA(2),
     DREAD_MOBS(1),
     DRAGONFORGE(1),
+    GOLDDRAGON(2),
     GHOST(1);
 
     public final int pages;
