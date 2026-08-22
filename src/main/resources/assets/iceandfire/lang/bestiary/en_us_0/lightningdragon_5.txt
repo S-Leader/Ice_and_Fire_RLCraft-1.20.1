@@ -26,9 +26,9 @@ scale blocks, and more.
 
 <item><iceandfire:dragonscale_amethyst 100 120 40 1>
 <item><iceandfire:armor_amethyst_helmet 100 140 30 1>
-<item><iceandfire:dragon_bow_lightning 100 160 40 1>
+<item><iceandfire:dragonbone_bow_lightning 100 160 40 1>
 
-<item><iceandfire:dragon_forge_core 100 140 50 1>
+<item><iceandfire:dragonforge_core 100 140 50 1>
 
 <item><iceandfire:summoning_crystal_lightning 100 120 60 1>
 <item><iceandfire:lightning_dragon_blood 100 140 70 1>

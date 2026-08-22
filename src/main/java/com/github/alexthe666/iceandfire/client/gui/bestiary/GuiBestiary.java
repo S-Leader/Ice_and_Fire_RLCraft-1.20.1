@@ -162,14 +162,13 @@ public class GuiBestiary extends Screen {
         ms.pose().pushPose();
         ms.pose().translate(cornerX, cornerY, 0.0F);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int centerX = (width - X) / 2;
-        int centerY = (height - Y) / 2;
         if (!index) {
             drawPerPage(ms, bookPages);
             int pageLeft = bookPages * 2 + 1;
             int pageRight = pageLeft + 1;
-            font.drawInBatch("" + pageLeft, (float) centerX, (float) (centerY - (Y * 0.13)), 0X303030, false, ms.pose().last().pose(), ms.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
-            font.drawInBatch("" + pageRight, (float) centerX, (float) (centerY - (Y * 0.13)), 0X303030, false, ms.pose().last().pose(), ms.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            float pageY = Y - (int) (Y * 0.13F);
+            font.drawInBatch(String.valueOf(pageLeft), (float) X / 4.0F, pageY, 0X303030, false, ms.pose().last().pose(), ms.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            font.drawInBatch(String.valueOf(pageRight), X - (int) (X * 0.24F), pageY, 0X303030, false, ms.pose().last().pose(), ms.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
         }
         ms.pose().popPose();
         this.renderables.forEach((widget -> widget.render(ms, mouseX, mouseY, partialTicks)));
