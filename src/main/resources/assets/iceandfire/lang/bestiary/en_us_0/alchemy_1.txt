@@ -3,7 +3,8 @@ crafted to bind with a dragon,
 enabling you to teleport it to
 your location.
 
-
+<item><iceandfire:summoning_crystal_fire 0 15 23 1.25>
+<item><iceandfire:summoning_crystal_ice 0 45 23 1.25>
 
 
 

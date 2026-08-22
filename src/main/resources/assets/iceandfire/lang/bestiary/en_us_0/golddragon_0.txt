@@ -12,7 +12,7 @@ relatives of true dragons.
 
 
 
-<image><drawings_golddragon.png 11 62 11 20 180 120 1>
+<image><drawings_golddragon.png 11 62 11 20 180 85 1>
 
 Through careful breeding, these
 creatures may very rarely produce
