@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "sapphire_gem",
+  "ingredient": {
+    "item": "iceandfire:frozen_sapphire_ore"
+  },
+  "result": "iceandfire:sapphire_gem"
+}

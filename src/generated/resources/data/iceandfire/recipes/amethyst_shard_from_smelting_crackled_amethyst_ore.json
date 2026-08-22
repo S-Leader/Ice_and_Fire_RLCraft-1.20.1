@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "amethyst_shard",
+  "ingredient": {
+    "item": "iceandfire:crackled_amethyst_ore"
+  },
+  "result": "minecraft:amethyst_shard"
+}
