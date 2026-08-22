@@ -32,6 +32,7 @@ public class IafConfig {
     public static boolean canDragonsHealFromBiting;
     public static boolean canDragonsDespawn = true;
     public static boolean doDragonsSleep = true;
+    public static boolean dragonDigWhenStuck = true;
     public static int dragonBreakBlockCooldown = 5;
     public static boolean dragonDropSkull = true;
     public static boolean dragonDropHeart = true;
@@ -185,6 +186,7 @@ public class IafConfig {
             canDragonsHealFromBiting = ConfigHolder.SERVER.canDragonsHealFromBiting.get();
             canDragonsDespawn = ConfigHolder.SERVER.canDragonsDespawn.get();
             doDragonsSleep = ConfigHolder.SERVER.doDragonsSleep.get();
+            dragonDigWhenStuck = ConfigHolder.SERVER.dragonDigWhenStuck.get();
             dragonBreakBlockCooldown = ConfigHolder.SERVER.dragonBreakBlockCooldown.get();
             dragonDropSkull = ConfigHolder.SERVER.dragonDropSkull.get();
             dragonDropHeart = ConfigHolder.SERVER.dragonDropHeart.get();

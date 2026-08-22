@@ -1472,8 +1472,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
                     // TODO :: make `force` ignore the dragon stage?
                     if (!isModelDead() && this.getDragonStage() >= 3 && (this.canMove() || this.getControllingPassenger() != null)) {
                         // Match the 1.12.2 RLC breakBlock() volume. Normal body clearing must
-                        // never dig below the dragon's feet. The 1.20.1 calculateDownY() port made
-                        // a downhill path expand this volume to minY - 1, causing perfectly mobile
+                        // never dig below the dragon's feet: downward digging is reserved for the
+                        // explicit stuck-tail explosion. The 1.20.1 calculateDownY() port made a
+                        // downhill path expand this volume to minY - 1, causing perfectly mobile
                         // ground dragons to continuously excavate their supporting terrain.
                         final int minX = (int) Math.round(this.getBoundingBox().minX) - 1;
                         final int minY = (int) Math.round(this.getBoundingBox().minY) + 1;
@@ -1688,30 +1689,16 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     @Override
-    public boolean isInvulnerableTo(@NotNull DamageSource source) {
-        if (source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FALLING_BLOCK) || source.is(DamageTypes.CRAMMING)) {
-            return true;
-        }
-        return super.isInvulnerableTo(source);
-    }
-
-    @Override
-    public boolean isInWall() {
-        // Adult dragons actively clear breakable blocks out of their body volume.
-        // Do not let vanilla suffocation run while that wall-breaking behaviour is active.
-        if (!this.isModelDead() && this.getDragonStage() >= 3 && DragonUtils.canGrief(this)) {
-            return false;
-        }
-        return super.isInWall();
-    }
-
-    @Override
     public boolean hurt(@NotNull DamageSource dmg, float i) {
         if (this.isModelDead() && dmg != this.level().damageSources().fellOutOfWorld()) {
             return false;
         }
 
         // A dragon must never be damaged by an attack/explosion whose source is itself.
+        // The 1.12.2 BlockBreakExplosion explicitly excluded its exploder from the
+        // affected-entity list.  Vanilla 1.20.1 Explosion does not preserve that
+        // Ice & Fire-specific guarantee, which made the ported stuck-tail explosion
+        // capable of killing the dragon that created it.
         Entity directSource = dmg.getDirectEntity();
         Entity causingSource = dmg.getEntity();
         if (directSource == this || causingSource == this

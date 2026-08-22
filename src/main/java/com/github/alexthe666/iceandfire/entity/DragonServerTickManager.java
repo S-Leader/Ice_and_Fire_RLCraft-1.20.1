@@ -1,10 +1,12 @@
 package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IafConfig;
+import com.github.alexthe666.iceandfire.entity.explosion.BlockBreakExplosion;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 
 
 public class DragonServerTickManager {
@@ -79,6 +81,22 @@ public class DragonServerTickManager {
         }
         if (dragon.getRandom().nextInt(500) == 0 && !dragon.isModelDead() && !dragon.isSleeping()) {
             dragon.roar();
+        }
+
+        // 1.12.2 RLC: a wild adult dragon that is stuck against terrain uses a tail-whack
+        // and breaks open the obstruction on the impact frame.
+        if (IafConfig.dragonDigWhenStuck && dragon.getDragonStage() >= 3 && dragon.isStuck() && dragon.getControllingPassenger() == null) {
+            if (dragon.getAnimation() != EntityDragonBase.ANIMATION_TAILWHACK) {
+                dragon.setAnimation(EntityDragonBase.ANIMATION_TAILWHACK);
+            }
+            if (dragon.getAnimationTick() == 10 && DragonUtils.canGrief(dragon)
+                    && ForgeEventFactory.getMobGriefingEvent(dragon.level(), dragon)) {
+                BlockBreakExplosion explosion = new BlockBreakExplosion(dragon.level(), dragon, dragon.getX(), dragon.getY(), dragon.getZ(),
+                        (4F * dragon.getDragonStage()) - 2F);
+                explosion.explode();
+                explosion.finalizeExplosion(true);
+                dragon.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, 1.0F, 1.0F);
+            }
         }
 
         // 1.12.2 RLC aerial melee: attackDecision=true makes the dragon dive/tackle its target.
