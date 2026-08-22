@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "iceandfire:diamond_shard"
+    },
+    {
+      "item": "iceandfire:diamond_shard"
+    }
+  ],
+  "result": {
+    "item": "iceandfire:diamondpile",
+    "count": 1
+  }
+}

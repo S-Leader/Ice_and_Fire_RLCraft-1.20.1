@@ -2,10 +2,13 @@ package com.github.alexthe666.iceandfire.block;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.enums.EnumDragonEgg;
+import com.github.alexthe666.iceandfire.enums.EnumSeaSerpent;
 import com.github.alexthe666.iceandfire.item.BlockItemWithRender;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.item.IafTabRegistry;
+import com.github.alexthe666.iceandfire.item.ItemScalePileBlock;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
@@ -48,6 +51,29 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> GOLD_PILE = register("gold_pile", BlockGoldPile::new);
     public static final RegistryObject<Block> SILVER_PILE = register("silver_pile", BlockGoldPile::new);
     public static final RegistryObject<Block> COPPER_PILE = register("copper_pile", BlockGoldPile::new);
+    public static final RegistryObject<BlockDiamondCoinPile> DIAMOND_PILE = register("diamondpile", BlockDiamondCoinPile::new);
+
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_RED_PILE = registerScalePile("dragonscales_red_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.RED), "dragon.red", EnumDragonEgg.RED.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_GREEN_PILE = registerScalePile("dragonscales_green_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.GREEN), "dragon.green", EnumDragonEgg.GREEN.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_BRONZE_PILE = registerScalePile("dragonscales_bronze_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.BRONZE), "dragon.bronze", EnumDragonEgg.BRONZE.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_GRAY_PILE = registerScalePile("dragonscales_gray_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.GRAY), "dragon.gray", EnumDragonEgg.GRAY.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_BLUE_PILE = registerScalePile("dragonscales_blue_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.BLUE), "dragon.blue", EnumDragonEgg.BLUE.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_WHITE_PILE = registerScalePile("dragonscales_white_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.WHITE), "dragon.white", EnumDragonEgg.WHITE.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_SAPPHIRE_PILE = registerScalePile("dragonscales_sapphire_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.SAPPHIRE), "dragon.sapphire", EnumDragonEgg.SAPPHIRE.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_SILVER_PILE = registerScalePile("dragonscales_silver_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.SILVER), "dragon.silver", EnumDragonEgg.SILVER.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_ELECTRIC_PILE = registerScalePile("dragonscales_electric_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.ELECTRIC), "dragon.electric", EnumDragonEgg.ELECTRIC.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_AMYTHEST_PILE = registerScalePile("dragonscales_amethyst_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.AMYTHEST), "dragon.amethyst", EnumDragonEgg.AMYTHEST.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_COPPER_PILE = registerScalePile("dragonscales_copper_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.COPPER), "dragon.copper", EnumDragonEgg.COPPER.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_BLACK_PILE = registerScalePile("dragonscales_black_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.BLACK), "dragon.black", EnumDragonEgg.BLACK.color);
+    public static final RegistryObject<BlockDragonScalesPile> DRAGON_SCALE_GOLD_PILE = registerScalePile("dragonscales_gold_pile", () -> new BlockDragonScalesPile(EnumDragonEgg.GOLD), "dragon.gold", EnumDragonEgg.GOLD.color);
+
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_BLUE_PILE = registerScalePile("sea_serpent_scales_blue_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.BLUE.resourceName), "sea_serpent.blue", EnumSeaSerpent.BLUE.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_BRONZE_PILE = registerScalePile("sea_serpent_scales_bronze_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.BRONZE.resourceName), "sea_serpent.bronze", EnumSeaSerpent.BRONZE.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_DEEPBLUE_PILE = registerScalePile("sea_serpent_scales_deepblue_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.DEEPBLUE.resourceName), "sea_serpent.deepblue", EnumSeaSerpent.DEEPBLUE.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_GREEN_PILE = registerScalePile("sea_serpent_scales_green_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.GREEN.resourceName), "sea_serpent.green", EnumSeaSerpent.GREEN.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_PURPLE_PILE = registerScalePile("sea_serpent_scales_purple_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.PURPLE.resourceName), "sea_serpent.purple", EnumSeaSerpent.PURPLE.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_RED_PILE = registerScalePile("sea_serpent_scales_red_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.RED.resourceName), "sea_serpent.red", EnumSeaSerpent.RED.color);
+    public static final RegistryObject<BlockSeaSerpentScalesPile> SEA_SERPENT_SCALE_TEAL_PILE = registerScalePile("sea_serpent_scales_teal_pile", () -> new BlockSeaSerpentScalesPile(EnumSeaSerpent.TEAL.resourceName), "sea_serpent.teal", EnumSeaSerpent.TEAL.color);
     public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3, 3).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> DEEPSLATE_SILVER_ORE = register("deepslate_silver_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE).strength(3, 3).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> SILVER_BLOCK = register("silver_block", () -> BlockGeneric.builder(3.0F, 5.0F, SoundType.METAL, MapColor.METAL, null, null, false));
@@ -166,6 +192,13 @@ public class IafBlockRegistry {
     public static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block) {
         RegistryObject<T> ret = BLOCKS.register(name, block);
         IafItemRegistry.registerItem(name, () -> new BlockItem(ret.get(), new Item.Properties()), false);
+        IafTabRegistry.TAB_BLOCKS_LIST.add(ret);
+        return ret;
+    }
+
+    public static <T extends Block> RegistryObject<T> registerScalePile(String name, Supplier<T> block, String colorTranslationKey, ChatFormatting color) {
+        RegistryObject<T> ret = BLOCKS.register(name, block);
+        IafItemRegistry.registerItem(name, () -> new ItemScalePileBlock(ret.get(), new Item.Properties(), colorTranslationKey, color), false);
         IafTabRegistry.TAB_BLOCKS_LIST.add(ret);
         return ret;
     }

@@ -597,6 +597,8 @@ public class IafRecipes extends RecipeProvider {
         compact(consumer, IafItemRegistry.RUBY_GEM.get(), IafBlockRegistry.RUBY_BLOCK.get());
         compact(consumer, IafItemRegistry.SAPPHIRE_GEM.get(), IafBlockRegistry.SAPPHIRE_BLOCK.get());
 
+        compact(consumer, IafItemRegistry.DIAMOND_SHARD.get(), Items.DIAMOND);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, IafItemRegistry.TIDE_TRIDENT.get())
                 .pattern("TTT")
                 .pattern("SDS")

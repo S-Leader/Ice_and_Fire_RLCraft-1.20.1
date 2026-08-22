@@ -20,7 +20,7 @@ public class WorldGenLightningDragonRoosts extends WorldGenDragonRoosts {
     private static final ResourceLocation DRAGON_CHEST = new ResourceLocation("iceandfire", "chest/lightning_dragon_roost");
 
     public WorldGenLightningDragonRoosts(final Codec<NoneFeatureConfiguration> configuration) {
-        super(configuration, IafBlockRegistry.COPPER_PILE.get());
+        super(configuration, IafBlockRegistry.DIAMOND_PILE.get());
     }
 
     @Override

@@ -1383,5 +1383,9 @@
   "item.iceandfire.dragonbone_arrow_lightning": "雷霆龙骨箭",
   "item.iceandfire.dragonbone_bow_fire": "烈火龙骨长弓",
   "item.iceandfire.dragonbone_bow_ice": "霜龙骨长弓",
-  "item.iceandfire.dragonbone_bow_lightning": "雷霆龙骨长弓"
+  "item.iceandfire.dragonbone_bow_lightning": "雷霆龙骨长弓",
+  "block.iceandfire.dragonscales_pile": "龙鳞堆",
+  "block.iceandfire.sea_serpent_scales_pile": "海蟒鳞片堆",
+  "block.iceandfire.diamondpile": "钻石堆",
+  "item.iceandfire.diamond_shard": "钻石碎片"
 }

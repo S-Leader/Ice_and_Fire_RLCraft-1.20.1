@@ -21,7 +21,7 @@ public class WorldGenLightningDragonCave extends WorldGenDragonCave {
         CEILING_DECO = new WorldGenCaveStalactites(IafBlockRegistry.CRACKLED_STONE.get(), 6);
         PALETTE_BLOCK1 = IafBlockRegistry.CRACKLED_STONE.get().defaultBlockState();
         PALETTE_BLOCK2 = IafBlockRegistry.CRACKLED_COBBLESTONE.get().defaultBlockState();
-        TREASURE_PILE = IafBlockRegistry.COPPER_PILE.get().defaultBlockState();
+        TREASURE_PILE = IafBlockRegistry.DIAMOND_PILE.get().defaultBlockState();
         dragonTypeOreTag = IafBlockTags.LIGHTNING_DRAGON_CAVE_ORES;
     }
 

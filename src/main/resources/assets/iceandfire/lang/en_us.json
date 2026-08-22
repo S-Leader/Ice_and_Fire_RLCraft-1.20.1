@@ -1393,5 +1393,9 @@
   "item.iceandfire.dragonbone_arrow_lightning": "Shocked Dragon Bone Arrow",
   "item.iceandfire.dragonbone_bow_fire": "Flamed Dragon Bone Bow",
   "item.iceandfire.dragonbone_bow_ice": "Iced Dragon Bone Bow",
-  "item.iceandfire.dragonbone_bow_lightning": "Shocked Dragon Bone Bow"
+  "item.iceandfire.dragonbone_bow_lightning": "Shocked Dragon Bone Bow",
+  "block.iceandfire.dragonscales_pile": "Pile of Dragon Scales",
+  "block.iceandfire.sea_serpent_scales_pile": "Pile of Sea Serpent Scales",
+  "block.iceandfire.diamondpile": "Pile of Diamonds",
+  "item.iceandfire.diamond_shard": "Diamond Shard"
 }

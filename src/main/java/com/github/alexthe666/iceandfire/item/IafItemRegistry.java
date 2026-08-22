@@ -211,6 +211,7 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> FISHING_SPEAR = registerItem("fishing_spear",
             () -> new ItemFishingSpear());
     public static final RegistryObject<Item> WITHER_SHARD = registerItem("wither_shard", ItemGeneric::new);
+    public static final RegistryObject<Item> DIAMOND_SHARD = registerItem("diamond_shard", ItemGeneric::new);
     public static final RegistryObject<Item> DRAGONBONE_SWORD = registerItem("dragonbone_sword",
             () -> new ItemModSword(DRAGONBONE_TOOL_MATERIAL));
     public static final RegistryObject<Item> DRAGONBONE_SHOVEL = registerItem("dragonbone_shovel",

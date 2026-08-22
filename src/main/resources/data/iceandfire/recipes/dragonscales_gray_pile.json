@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "iceandfire:dragonscales_gray"
+    },
+    {
+      "item": "iceandfire:dragonscales_gray"
+    }
+  ],
+  "result": {
+    "item": "iceandfire:dragonscales_gray_pile",
+    "count": 1
+  }
+}

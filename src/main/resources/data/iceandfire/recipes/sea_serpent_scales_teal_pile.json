@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "iceandfire:sea_serpent_scales_teal"
+    },
+    {
+      "item": "iceandfire:sea_serpent_scales_teal"
+    }
+  ],
+  "result": {
+    "item": "iceandfire:sea_serpent_scales_teal_pile",
+    "count": 1
+  }
+}
