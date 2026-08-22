@@ -6,6 +6,7 @@ package com.github.alexthe666.iceandfire.pathfinding.raycoms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
+import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -232,7 +233,7 @@ public class PathingStuckHandler implements IStuckHandler
                 entity.teleportTo(tpPos.getX() + 0.5, tpPos.getY(), tpPos.getZ() + 0.5);
             }
         }
-        if (takeDamageOnCompleteStuck) {
+        if (takeDamageOnCompleteStuck && !(entity instanceof EntityDragonBase)) {
             entity.hurt(new DamageSource(entity.level().damageSources().inWall().typeHolder(), entity), entity.getMaxHealth() * damagePct);
         }
 

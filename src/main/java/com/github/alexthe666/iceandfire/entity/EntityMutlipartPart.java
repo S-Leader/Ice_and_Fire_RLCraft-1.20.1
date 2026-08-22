@@ -291,6 +291,9 @@ public abstract class EntityMutlipartPart extends Entity {
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float damage) {
+        if (this.isInvulnerableTo(source)) {
+            return false;
+        }
         Entity parent = getParent();
         if (level().isClientSide && source.getEntity() instanceof Player && parent != null) {
             IceAndFire.NETWORK_WRAPPER.sendToServer(new MessageMultipartInteract(parent.getId(), damage * damageMultiplier));
