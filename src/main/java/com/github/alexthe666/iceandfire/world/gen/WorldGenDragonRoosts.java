@@ -50,6 +50,15 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
     @Override
     public boolean place(@NotNull final FeaturePlaceContext<NoneFeatureConfiguration> context) {
         BlockPos origin = WorldGenChunkSafety.centeredSurfaceOrigin(context.level(), context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
+
+        // Dragon roosts are land features.  WORLD_SURFACE_WG returns the air block above
+        // the water surface, so WorldUtil's checkFluid test alone cannot distinguish an
+        // ocean from dry land.  Validate the maximum roost footprint before registering
+        // this position in dangerous-worldgen spacing data.
+        if (!hasDryRoostFootprint(context.level(), origin, 19)) {
+            return false;
+        }
+
         if (!WorldUtil.canGenerate(IafConfig.generateDragonRoostChance, context.level(), context.random(), origin, getId(), true)) {
             return false;
         }
@@ -65,6 +74,32 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
         int decorationRadius = Math.min(radius + 15, 23);
         generateDecoration(context, origin, decorationRadius, isMale);
 
+        return true;
+    }
+
+    private boolean hasDryRoostFootprint(final WorldGenLevel level, final BlockPos origin, final int radius) {
+        int edge = Math.max(6, radius - 2);
+        int diagonal = Math.max(4, (edge * 3) / 4);
+        int[][] offsets = new int[][]{
+                {0, 0},
+                {edge, 0}, {-edge, 0}, {0, edge}, {0, -edge},
+                {diagonal, diagonal}, {diagonal, -diagonal},
+                {-diagonal, diagonal}, {-diagonal, -diagonal}
+        };
+
+        for (int[] offset : offsets) {
+            BlockPos sample = origin.offset(offset[0], 0, offset[1]);
+            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, sample);
+            BlockPos oceanFloor = level.getHeightmapPos(Heightmap.Types.OCEAN_FLOOR_WG, sample);
+            BlockState support = level.getBlockState(surface.below());
+
+            // WORLD_SURFACE_WG resolves to the top of a water column.  The position itself is
+            // air, which made the old checkFluid test accept oceans.  Reject either a fluid
+            // directly below the surface or a surface sitting above an ocean-floor column.
+            if (!support.getFluidState().isEmpty() || surface.getY() > oceanFloor.getY() + 1) {
+                return false;
+            }
+        }
         return true;
     }
 

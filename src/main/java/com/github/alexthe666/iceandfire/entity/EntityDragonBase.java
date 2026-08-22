@@ -1688,6 +1688,24 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     @Override
+    public boolean isInvulnerableTo(@NotNull DamageSource source) {
+        if (source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FALLING_BLOCK) || source.is(DamageTypes.CRAMMING)) {
+            return true;
+        }
+        return super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public boolean isInWall() {
+        // Adult dragons actively clear breakable blocks out of their body volume.
+        // Do not let vanilla suffocation run while that wall-breaking behaviour is active.
+        if (!this.isModelDead() && this.getDragonStage() >= 3 && DragonUtils.canGrief(this)) {
+            return false;
+        }
+        return super.isInWall();
+    }
+
+    @Override
     public boolean hurt(@NotNull DamageSource dmg, float i) {
         if (this.isModelDead() && dmg != this.level().damageSources().fellOutOfWorld()) {
             return false;
