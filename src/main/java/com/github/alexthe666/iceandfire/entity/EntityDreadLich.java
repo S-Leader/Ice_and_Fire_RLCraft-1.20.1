@@ -53,8 +53,8 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
     private static final EntityDataAccessor<Integer> MINION_COUNT = SynchedEntityData.defineId(EntityDreadLich.class, EntityDataSerializers.INT);
     public static Animation ANIMATION_SPAWN = Animation.create(40);
     public static Animation ANIMATION_SUMMON = Animation.create(15);
-    private final DreadLichAIStrife aiArrowAttack = new DreadLichAIStrife(this, 1.0D, 20, 15.0F);
-    private final MeleeAttackGoal aiAttackOnCollide = new MeleeAttackGoal(this, 1.0D, false);
+    private final DreadLichAIStrife aiArrowAttack;
+    private final MeleeAttackGoal aiAttackOnCollide;
     private int animationTick;
     private Animation currentAnimation;
     private int fireCooldown = 0;
@@ -62,6 +62,28 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
 
     public EntityDreadLich(EntityType<? extends EntityDreadMob> type, Level worldIn) {
         super(type, worldIn);
+        this.aiArrowAttack = new DreadLichAIStrife(this, 1.0D, 100, 15.0F);
+        this.aiAttackOnCollide = new MeleeAttackGoal(this, 1.0D, false) {
+            @Override
+            public boolean canUse() {
+                return !EntityDreadLich.this.hasLichStaff() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !EntityDreadLich.this.hasLichStaff() && super.canContinueToUse();
+            }
+        };
+
+        // Keep both goals registered for the lifetime of the entity. Removing or
+        // adding a goal from setItemSlot can modify GoalSelector while it is being
+        // iterated, which crashes with ConcurrentModificationException.
+        this.goalSelector.addGoal(4, this.aiArrowAttack);
+        this.goalSelector.addGoal(4, this.aiAttackOnCollide);
+    }
+
+    private boolean hasLichStaff() {
+        return this.getMainHandItem().is(IafItemRegistry.LICH_STAFF.get());
     }
 
     public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
@@ -157,7 +179,6 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
         this.setAnimation(ANIMATION_SPAWN);
         this.populateDefaultEquipmentSlots(worldIn.getRandom(), difficultyIn);
         this.setVariant(random.nextInt(5));
-        this.setCombatTask();
         return data;
     }
 
@@ -183,7 +204,6 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
         this.setMinionCount(compound.getInt("MinionCount"));
-        this.setCombatTask();
     }
 
     public int getVariant() {
@@ -235,25 +255,15 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
     @Override
     public void setItemSlot(@NotNull EquipmentSlot slotIn, @NotNull ItemStack stack) {
         super.setItemSlot(slotIn, stack);
-
-        if (!this.level().isClientSide && slotIn == EquipmentSlot.MAINHAND) {
-            this.setCombatTask();
-        }
     }
 
+    /**
+     * Kept for binary/source compatibility. Combat goals are registered once in
+     * the constructor and select themselves from the currently held item.
+     */
+    @Deprecated
     public void setCombatTask() {
-        if (this.level()!= null && !this.level().isClientSide) {
-            this.goalSelector.removeGoal(this.aiAttackOnCollide);
-            this.goalSelector.removeGoal(this.aiArrowAttack);
-            ItemStack itemstack = this.getMainHandItem();
-            if (itemstack.getItem() == IafItemRegistry.LICH_STAFF.get()) {
-                int i = 100;
-                this.aiArrowAttack.setAttackCooldown(i);
-                this.goalSelector.addGoal(4, this.aiArrowAttack);
-            } else {
-                this.goalSelector.addGoal(4, this.aiAttackOnCollide);
-            }
-        }
+        // No-op: mutating GoalSelector here is unsafe during an entity AI tick.
     }
 
     @Override
