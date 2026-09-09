@@ -3,7 +3,6 @@ package com.github.alexthe666.iceandfire.event;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
-import com.github.alexthe666.iceandfire.compat.LycanitesMobsCompat;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
 import com.github.alexthe666.iceandfire.entity.*;
 import com.github.alexthe666.iceandfire.entity.ai.AiDebug;
@@ -295,24 +294,6 @@ public class ServerEvents {
                 multi -= 0.1f;
             }
             event.setAmount(event.getAmount() * multi);
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void applyLightningDragonParalysis(LivingDamageEvent event) {
-        Entity directEntity = event.getSource().getDirectEntity();
-        boolean lightningDragonProjectile = event.getSource().is(IafDamageRegistry.DRAGON_LIGHTNING_TYPE);
-        boolean lightningDragonArrow = directEntity instanceof EntityDragonArrow arrow
-                && arrow.getArrowType() == EntityDragonArrow.ArrowType.LIGHTNING
-                && event.getSource().getEntity() instanceof Player;
-        boolean playerLightningSword = directEntity instanceof Player player
-                && player.getMainHandItem().is(IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get());
-
-        if (!event.getEntity().level().isClientSide
-                && event.getAmount() > 0.0F
-                && IafConfig.lightningDragonParalysis
-                && (lightningDragonProjectile || lightningDragonArrow || playerLightningSword)) {
-            LycanitesMobsCompat.applyParalysis(event.getEntity(), IafConfig.lightningDragonParalysisTicks);
         }
     }
 

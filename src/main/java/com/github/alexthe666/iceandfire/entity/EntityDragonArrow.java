@@ -16,7 +16,6 @@ import net.minecraft.world.entity.EntityType;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -123,8 +122,7 @@ public class EntityDragonArrow extends AbstractArrow {
                     target.hurt(this.level().damageSources().lightningBolt(), 4.0F);
                 }
                 if (owner instanceof LivingEntity livingOwner) {
-                    ChainLightningUtils.createChainLightning(this.level(), target, livingOwner,
-                            (float) this.getBaseDamage(), false, livingOwner instanceof Player);
+                    ChainLightningUtils.createChainLightning(this.level(), target, livingOwner, (float) this.getBaseDamage(), false);
                 }
             }
             default -> { }

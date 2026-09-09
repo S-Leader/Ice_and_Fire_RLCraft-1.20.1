@@ -22,8 +22,6 @@ public class ServerConfig {
     public final ForgeConfigSpec.DoubleValue dragonAttackDamageFire;
     public final ForgeConfigSpec.DoubleValue dragonAttackDamageIce;
     public final ForgeConfigSpec.DoubleValue dragonAttackDamageLightning;
-    public final ForgeConfigSpec.BooleanValue lightningDragonParalysis;
-    public final ForgeConfigSpec.IntValue lightningDragonParalysisTicks;
     public final ForgeConfigSpec.IntValue maxDragonFlight;
     public final ForgeConfigSpec.IntValue dragonFlightHeight;
     public final ForgeConfigSpec.IntValue dragonGoldSearchLength;
@@ -185,8 +183,6 @@ public class ServerConfig {
         this.dragonAttackDamageFire = buildDouble(builder, "Dragon Attack Damage(Fire breath)", "all", 2.0F, 0, 10000, "Damage dealt from a successful fire breath attack. Attack Damage is scaled to by age, so a stage 5 dragon will deal 5x as much as this number");
         this.dragonAttackDamageIce = buildDouble(builder, "Dragon Attack Damage(Ice breath)", "all", 2.5F, 0, 10000, "Damage dealt from a successful ice breath attack. Attack Damage is scaled to by age, so a stage 5 dragon will deal 5x as much as this number");
         this.dragonAttackDamageLightning = buildDouble(builder, "Dragon Attack Damage(Lightning breath)", "all", 3.5F, 0, 10000, "Damage dealt from a successful lightning breath attack. Attack Damage is scaled to by age, so a stage 5 dragon will deal 5x as much as this number");
-        this.lightningDragonParalysis = buildBoolean(builder, "Lightning Dragon Paralysis", "all", true, "If true, lightning dragon breath and charge attacks and player-used lightning dragon weapons apply Lycanites Mobs paralysis when that mod is installed. Dragon melee attacks are not affected.");
-        this.lightningDragonParalysisTicks = buildInt(builder, "Lightning Dragon Paralysis Ticks", "all", 10, 1, 1000, "How many ticks of Lycanites Mobs paralysis are applied by lightning dragon projectiles and lightning dragon weapons.");
         this.dragonFlightSpeedMod = buildDouble(builder, "Dragon Flight Speed Modifier", "all", 1F, 0.0F, 2.0F, "Change this to slow down or speed up dragon or amphithere flight.");
         this.dragonMovedWronglyFix = buildBoolean(builder, "Dragon Moved Wrongly Error Fix", "all", false, "Enable this if your server is being bombarded with moved wrongly or moved too fast console messages. REQUIRES RESTART!");
         builder.pop();
