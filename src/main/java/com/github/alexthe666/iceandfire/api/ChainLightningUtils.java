@@ -1,6 +1,8 @@
 package com.github.alexthe666.iceandfire.api;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
+import com.github.alexthe666.iceandfire.IafConfig;
+import com.github.alexthe666.iceandfire.compat.LycanitesMobsCompat;
 import com.github.alexthe666.iceandfire.entity.util.IDeadMob;
 import com.github.alexthe666.iceandfire.message.MessageChainLightningFX;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +29,7 @@ public final class ChainLightningUtils {
 
     public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
             float baseWeaponDamage) {
-        createChainLightning(level, target, attacker, baseWeaponDamage, true);
+        createChainLightning(level, target, attacker, baseWeaponDamage, true, true);
     }
 
     /**
@@ -37,6 +39,11 @@ public final class ChainLightningUtils {
      */
     public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
             float baseWeaponDamage, boolean applyPlayerCooldown) {
+        createChainLightning(level, target, attacker, baseWeaponDamage, applyPlayerCooldown, true);
+    }
+
+    public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
+            float baseWeaponDamage, boolean applyPlayerCooldown, boolean applyParalysis) {
         if (level.isClientSide)
             return;
         if (!target.isAttackable())
@@ -55,7 +62,9 @@ public final class ChainLightningUtils {
         int range = VoltageConfig.CHAIN_RANGE;
 
         int hop = 0;
-        attackWithLightning(level, attacker, target, damage[hop]);
+        if (attackWithLightning(level, attacker, target, damage[hop]) && applyParalysis) {
+            applyWeaponParalysis(target);
+        }
         com.github.alexthe666.iceandfire.effect.MobEffectVoltage.applyVoltage(
                 target, (LivingEntity) attacker,
                 com.github.alexthe666.iceandfire.effect.MobEffectVoltage.DURATION_TICKS,
@@ -86,7 +95,9 @@ public final class ChainLightningUtils {
                     e -> e.distanceToSqr(currentSource)));
             LivingEntity next = candidates.get(0);
 
-            attackWithLightning(level, attacker, next, damage[hop]);
+            if (attackWithLightning(level, attacker, next, damage[hop]) && applyParalysis) {
+                applyWeaponParalysis(next);
+            }
             com.github.alexthe666.iceandfire.effect.MobEffectVoltage.applyVoltage(
                     next, (LivingEntity) attacker,
                     com.github.alexthe666.iceandfire.effect.MobEffectVoltage.DURATION_TICKS,
@@ -103,7 +114,7 @@ public final class ChainLightningUtils {
     }
 
 
-    private static void attackWithLightning(Level level, Entity attacker,
+    private static boolean attackWithLightning(Level level, Entity attacker,
             LivingEntity target, float dmg) {
         DamageSource src;
         if (VoltageConfig.CHAIN_BYPASSES_ARMOR) {
@@ -111,13 +122,20 @@ public final class ChainLightningUtils {
         } else {
             src = level.damageSources().lightningBolt();
         }
-        target.hurt(src, dmg);
+        boolean damaged = target.hurt(src, dmg);
 
         if (target instanceof Creeper creeper && !creeper.isPowered()) {
             CompoundTag tag = new CompoundTag();
             creeper.addAdditionalSaveData(tag);
             tag.putBoolean("powered", true);
             creeper.readAdditionalSaveData(tag);
+        }
+        return damaged;
+    }
+
+    private static void applyWeaponParalysis(LivingEntity target) {
+        if (IafConfig.lightningDragonParalysis) {
+            LycanitesMobsCompat.applyParalysis(target, IafConfig.lightningDragonParalysisTicks);
         }
     }
 

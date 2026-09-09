@@ -26,7 +26,7 @@ public class ItemSilverArmor extends ArmorItem {
         consumer.accept(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity LivingEntity, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                return new ModelSilverArmor(armorSlot == EquipmentSlot.LEGS || armorSlot == EquipmentSlot.HEAD);
+                return new ModelSilverArmor(armorSlot == EquipmentSlot.LEGS);
             }
         });
     }

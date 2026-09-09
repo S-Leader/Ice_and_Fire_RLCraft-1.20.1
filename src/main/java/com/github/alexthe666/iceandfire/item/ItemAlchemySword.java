@@ -40,7 +40,8 @@ public class ItemAlchemySword extends SwordItem {
         if (this == IafItemRegistry.DRAGONBONE_SWORD_LIGHTNING.get() && IafConfig.dragonWeaponLightningAbility) {
             if (!attacker.level().isClientSide) {
                 float baseDamage = ((SwordItem) this).getDamage();
-                ChainLightningUtils.createChainLightning(attacker.level(), target, attacker, baseDamage);
+                ChainLightningUtils.createChainLightning(attacker.level(), target, attacker, baseDamage, true,
+                        attacker instanceof net.minecraft.world.entity.player.Player);
             }
             if (target instanceof EntityFireDragon || target instanceof EntityIceDragon) {
                 target.hurt(attacker.level().damageSources().lightningBolt(), 9.5F);
