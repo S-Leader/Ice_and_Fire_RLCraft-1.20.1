@@ -20,17 +20,22 @@ import com.github.alexthe666.iceandfire.item.ItemDragonBow;
 import com.github.alexthe666.iceandfire.item.ItemDragonHorn;
 import com.github.alexthe666.iceandfire.item.ItemSummoningCrystal;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -38,6 +43,7 @@ import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 
@@ -308,12 +314,35 @@ public class IafClientSetup {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public static void addLayers(EntityRenderersEvent.AddLayers event) {
+        for (EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES.getValues()) {
+            addBloodedArmorLayer(event, entityType);
+        }
+
         for (String skinName : event.getSkins()) {
             PlayerRenderer renderer = event.getSkin(skinName);
             if (renderer != null) {
                 renderer.addLayer(new LayerBloodedArmorOverlay<>(renderer));
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends LivingEntity> void addBloodedArmorLayer(EntityRenderersEvent.AddLayers event,
+                                                                       EntityType<?> entityType) {
+        try {
+            EntityRenderer<?> renderer = event.getRenderer((EntityType<T>) entityType);
+            if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer
+                    && livingRenderer.getModel() instanceof HumanoidModel<?>) {
+                addBloodedArmorLayer(livingRenderer);
+            }
+        } catch (ClassCastException ignored) {
+            // Non-living entity renderers cannot wear armor and are intentionally skipped.
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addBloodedArmorLayer(LivingEntityRenderer renderer) {
+        renderer.addLayer(new LayerBloodedArmorOverlay(renderer));
     }
 
 }

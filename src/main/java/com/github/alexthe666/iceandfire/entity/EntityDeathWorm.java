@@ -51,7 +51,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -242,13 +241,9 @@ public class EntityDeathWorm extends TamableAnimal implements ISyncMount, ICusto
             this.setAnimation(ANIMATION_BITE);
             this.playSound(this.getScale() > 3 ? IafSoundRegistry.DEATHWORM_GIANT_ATTACK : IafSoundRegistry.DEATHWORM_ATTACK, 1, 1);
         }
-        if (this.getRandom().nextInt(3) == 0 && this.getScale() > 1 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            if (!MinecraftForge.EVENT_BUS.post(new GenericGriefEvent(this, entityIn.getX(), entityIn.getY(), entityIn.getZ()))) {
-                BlockLaunchExplosion explosion = new BlockLaunchExplosion(level(), this, entityIn.getX(), entityIn.getY(), entityIn.getZ(), this.getScale());
-                explosion.explode();
-                explosion.finalizeExplosion(true);
-            }
-        }
+        // The actual melee hit is applied once at bite animation tick 5 in aiStep().
+        // Do not create a vanilla Explosion here: the attack goal calls this method every
+        // tick while in range, which previously stacked explosion damage onto a normal bite.
         return false;
     }
 
@@ -623,7 +618,7 @@ public class EntityDeathWorm extends TamableAnimal implements ISyncMount, ICusto
                 }
                 this.setAnimation(ANIMATION_BITE);
             }*/
-        if (this.getTarget() != null && this.distanceTo(this.getTarget()) < Math.min(4, 4D * getScale()) && this.getAnimation() == ANIMATION_BITE && this.getAnimationTick() == 5) {
+        if (!this.level().isClientSide && this.getTarget() != null && this.distanceTo(this.getTarget()) < Math.min(4, 4D * getScale()) && this.getAnimation() == ANIMATION_BITE && this.getAnimationTick() == 5) {
             float f = (float) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
             this.getTarget().hurt(this.level().damageSources().mobAttack(this), f);
             this.setDeltaMovement(this.getDeltaMovement().add(0, -0.4F, 0));
@@ -678,17 +673,10 @@ public class EntityDeathWorm extends TamableAnimal implements ISyncMount, ICusto
             if (this.getAnimation() != ANIMATION_BITE) {
                 this.setAnimation(ANIMATION_BITE);
                 this.playSound(this.getScale() > 3 ? IafSoundRegistry.DEATHWORM_GIANT_ATTACK : IafSoundRegistry.DEATHWORM_ATTACK, 1, 1);
-                if (this.getRandom().nextInt(3) == 0 && this.getScale() > 1) {
-                    float radius = 1.5F * this.getScale();
-                    float angle = (0.01745329251F * this.yBodyRot);
-                    double extraX = radius * Mth.sin((float) (Math.PI + angle));
-                    double extraZ = radius * Mth.cos(angle);
-                    BlockLaunchExplosion explosion = new BlockLaunchExplosion(level(), this, this.getX() + extraX, this.getY() - this.getEyeHeight(), this.getZ() + extraZ, this.getScale() * 0.75F);
-                    explosion.explode();
-                    explosion.finalizeExplosion(true);
-                }
             }
-            if (target != null) {
+            // Holding the mount attack key used to damage the target every game tick.
+            // Match the autonomous bite and apply one normal melee hit per animation.
+            if (!this.level().isClientSide && target != null && this.getAnimation() == ANIMATION_BITE && this.getAnimationTick() == 5) {
                 target.hurt(this.level().damageSources().mobAttack(this), ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue()));
             }
         }

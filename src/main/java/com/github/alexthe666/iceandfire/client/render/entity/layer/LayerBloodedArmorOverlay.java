@@ -22,16 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class LayerBloodedArmorOverlay<T extends LivingEntity, M extends HumanoidModel<T>>
-        extends RenderLayer<T, M> {
+public class LayerBloodedArmorOverlay<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 
     private static final int FRAME_COUNT = 8;
     private static final int TICKS_PER_FRAME = 4;
 
-    private static final EquipmentSlot[] ARMOR_SLOTS = {
-            EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-            EquipmentSlot.LEGS, EquipmentSlot.FEET
-    };
+    private static final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     /**
      * 每个 (元素, 槽位) 对应一个模型实例，避免每帧 new 对象。
@@ -64,16 +60,13 @@ public class LayerBloodedArmorOverlay<T extends LivingEntity, M extends Humanoid
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource,
-            int packedLight, @NotNull T entity, float limbSwing, float limbSwingAmount,
-            float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, @NotNull T entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
 
         M parentModel = this.getParentModel();
 
         for (EquipmentSlot slot : ARMOR_SLOTS) {
             ItemStack stack = entity.getItemBySlot(slot);
-            if (!(stack.getItem() instanceof ItemBloodedArmor blooded))
-                continue;
+            if (!(stack.getItem() instanceof ItemBloodedArmor blooded)) continue;
 
             BloodedDragonType.DragonElement element = blooded.getDragonType().getElement();
             boolean inner = slot == EquipmentSlot.LEGS || slot == EquipmentSlot.HEAD;
@@ -84,8 +77,7 @@ public class LayerBloodedArmorOverlay<T extends LivingEntity, M extends Humanoid
 
             // 将状态（蹲伏/游泳等）从父模型同步过来
             // T 运行时就是 LivingEntity，强转安全
-            @SuppressWarnings("unchecked")
-            HumanoidModel<T> typedArmorModel = (HumanoidModel<T>) armorModel;
+            @SuppressWarnings("unchecked") HumanoidModel<T> typedArmorModel = (HumanoidModel<T>) armorModel;
             parentModel.copyPropertiesTo(typedArmorModel);
 
             // 直接复制各骨骼旋转，与父模型完全同步，不受第三方动画 mod 影响
@@ -100,22 +92,16 @@ public class LayerBloodedArmorOverlay<T extends LivingEntity, M extends Humanoid
             setPartVisibility(armorModel, slot);
 
             ResourceLocation overlayTex = getOverlayTexture(blooded.getDragonType(), slot, entity);
-            VertexConsumer consumer = bufferSource.getBuffer(
-                    RenderType.armorCutoutNoCull(overlayTex));
-            armorModel.renderToBuffer(poseStack, consumer, packedLight,
-                    OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+            VertexConsumer consumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(overlayTex));
+            armorModel.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
         }
     }
 
-    private ResourceLocation getOverlayTexture(BloodedDragonType type,
-            EquipmentSlot slot, LivingEntity entity) {
-        int frame = (int) ((entity.tickCount / TICKS_PER_FRAME) % FRAME_COUNT) + 1;
+    private ResourceLocation getOverlayTexture(BloodedDragonType type, EquipmentSlot slot, LivingEntity entity) {
+        int frame = ((entity.tickCount / TICKS_PER_FRAME) % FRAME_COUNT) + 1;
         String prefix = type.getTexturePrefix();
-        String suffix = slot == EquipmentSlot.LEGS
-                ? "_armor_legs" + frame + ".png"
-                : "_armor" + frame + ".png";
-        return new ResourceLocation("iceandfire",
-                "textures/models/armor/" + prefix + suffix);
+        String suffix = slot == EquipmentSlot.LEGS ? "_armor_legs" + frame + ".png" : "_armor" + frame + ".png";
+        return new ResourceLocation("iceandfire", "textures/models/armor/" + prefix + suffix);
     }
 
     private static void setPartVisibility(HumanoidModel<?> model, EquipmentSlot slot) {

@@ -3,7 +3,6 @@ package com.github.alexthe666.iceandfire.entity;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.api.event.DragonFireDamageWorldEvent;
 import com.github.alexthe666.iceandfire.block.*;
-import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforgeInput;
 import com.github.alexthe666.iceandfire.entity.util.BlockLaunchExplosion;
@@ -95,14 +94,14 @@ public class IafDragonDestructionManager {
         float stageDamage = dragon.getDragonStage() * damageScale;
 
         level.getEntitiesOfClass(
-                LivingEntity.class,
-                new AABB(
-                        (double) center.getX() - damageRadius,
-                        (double) center.getY() - damageRadius,
-                        (double) center.getZ() - damageRadius,
-                        (double) center.getX() + damageRadius,
-                        (double) center.getY() + damageRadius,
-                        (double) center.getZ() + damageRadius))
+                        LivingEntity.class,
+                        new AABB(
+                                (double) center.getX() - damageRadius,
+                                (double) center.getY() - damageRadius,
+                                (double) center.getZ() - damageRadius,
+                                (double) center.getX() + damageRadius,
+                                (double) center.getY() + damageRadius,
+                                (double) center.getZ() + damageRadius))
                 .forEach(target -> {
                     if (!DragonUtils.onSameTeam(dragon, target) && !dragon.is(target)
                             && dragon.hasLineOfSight(target)) {
@@ -188,14 +187,14 @@ public class IafDragonDestructionManager {
         DamageSource damageSource = getDamageSource(dragon);
 
         level.getEntitiesOfClass(
-                LivingEntity.class,
-                new AABB(
-                        (double) center.getX() - x,
-                        (double) center.getY() - y,
-                        (double) center.getZ() - z,
-                        (double) center.getX() + x,
-                        (double) center.getY() + y,
-                        (double) center.getZ() + z))
+                        LivingEntity.class,
+                        new AABB(
+                                (double) center.getX() - x,
+                                (double) center.getY() - y,
+                                (double) center.getZ() - z,
+                                (double) center.getX() + x,
+                                (double) center.getY() + y,
+                                (double) center.getZ() + z))
                 .forEach(target -> {
                     if (!dragon.isAlliedTo(target) && !dragon.is(target) && dragon.hasLineOfSight(target)) {
                         target.hurt(damageSource, stageDamage);
@@ -242,7 +241,7 @@ public class IafDragonDestructionManager {
     }
 
     private static void attackBlock(final Level level, final EntityDragonBase dragon, final BlockPos position,
-            final BlockState state) {
+                                    final BlockState state) {
         if (state.getBlock() instanceof IDragonProof || !DragonUtils.canDragonBreak(state, dragon)) {
             return;
         }
@@ -289,12 +288,12 @@ public class IafDragonDestructionManager {
     }
 
     private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
-            int statusDuration) {
+                                          int statusDuration) {
         applyDragonEffect(target, dragon, statusDuration, dragon.dragonType);
     }
 
     private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
-            int statusDuration, final DragonType type) {
+                                          int statusDuration, final DragonType type) {
         if (type == DragonType.FIRE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.FIRE))
@@ -317,7 +316,7 @@ public class IafDragonDestructionManager {
     }
 
     private static void causeExplosion(Level world, BlockPos center, EntityDragonBase destroyer, DamageSource source,
-            int stage) {
+                                       int stage) {
         Explosion.BlockInteraction mode = ForgeEventFactory.getMobGriefingEvent(world, destroyer)
                 ? Explosion.BlockInteraction.DESTROY
                 : Explosion.BlockInteraction.KEEP;
@@ -328,7 +327,7 @@ public class IafDragonDestructionManager {
     }
 
     private static void destroyBlocks(Level world, BlockPos center, int x, int y, int z, double radius2,
-            Entity destroyer) {
+                                      Entity destroyer) {
         BlockPos.betweenClosedStream(center.offset(-x, -y, -z), center.offset(x, y, z)).forEach(pos -> {
             if (center.distSqr(pos) <= radius2) {
                 BlockState state = world.getBlockState(pos);

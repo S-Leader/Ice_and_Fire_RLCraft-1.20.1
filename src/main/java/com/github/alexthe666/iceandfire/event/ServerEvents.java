@@ -4,6 +4,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
+import com.github.alexthe666.iceandfire.effect.MobEffectChaos;
 import com.github.alexthe666.iceandfire.entity.*;
 import com.github.alexthe666.iceandfire.entity.ai.AiDebug;
 import com.github.alexthe666.iceandfire.entity.ai.EntitySheepAIFollowCyclops;
@@ -13,6 +14,8 @@ import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import com.github.alexthe666.iceandfire.entity.util.IAnimalFear;
 import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.item.*;
+import com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType;
+import com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor;
 import com.github.alexthe666.iceandfire.message.MessagePlayerHitMultipart;
 import com.github.alexthe666.iceandfire.message.MessageSwingArm;
 import com.github.alexthe666.iceandfire.message.MessageSyncPath;
@@ -243,7 +246,7 @@ public class ServerEvents {
     @SubscribeEvent
     public void onEntityDamage(LivingHurtEvent event) {
         if (event.getSource().getEntity() instanceof net.minecraft.world.entity.LivingEntity) {
-            float chaosAmp = com.github.alexthe666.iceandfire.effect.MobEffectChaos.getDamageAmplification(event.getEntity());
+            float chaosAmp = MobEffectChaos.getDamageAmplification(event.getEntity());
             if (chaosAmp > 0) {
                 event.setAmount(event.getAmount() * (1.0f + chaosAmp));
             }
@@ -267,15 +270,15 @@ public class ServerEvents {
         }
         if (IafConfig.scaleArmorBreathProtect && (event.getSource().is(IafDamageRegistry.DRAGON_FIRE_TYPE) || event.getSource().is(IafDamageRegistry.DRAGON_ICE_TYPE) || event.getSource().is(IafDamageRegistry.DRAGON_LIGHTNING_TYPE))) {
 
-            if (event.getSource().is(IafDamageRegistry.DRAGON_FIRE_TYPE) && com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(event.getEntity(), com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.FIRE)) {
+            if (event.getSource().is(IafDamageRegistry.DRAGON_FIRE_TYPE) && ItemBloodedArmor.hasFullArmorSet(event.getEntity(), BloodedDragonType.DragonElement.FIRE)) {
                 event.setCanceled(true);
                 return;
             }
-            if (event.getSource().is(IafDamageRegistry.DRAGON_ICE_TYPE) && com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(event.getEntity(), com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.ICE)) {
+            if (event.getSource().is(IafDamageRegistry.DRAGON_ICE_TYPE) && ItemBloodedArmor.hasFullArmorSet(event.getEntity(), BloodedDragonType.DragonElement.ICE)) {
                 event.setCanceled(true);
                 return;
             }
-            if (event.getSource().is(IafDamageRegistry.DRAGON_LIGHTNING_TYPE) && com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(event.getEntity(), com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.LIGHTNING)) {
+            if (event.getSource().is(IafDamageRegistry.DRAGON_LIGHTNING_TYPE) && ItemBloodedArmor.hasFullArmorSet(event.getEntity(), BloodedDragonType.DragonElement.LIGHTNING)) {
                 event.setCanceled(true);
                 return;
             }
