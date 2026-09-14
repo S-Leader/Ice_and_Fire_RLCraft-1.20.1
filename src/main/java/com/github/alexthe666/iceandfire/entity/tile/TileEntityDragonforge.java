@@ -413,9 +413,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
     }
 
     private boolean isDragonBoneBlock(BlockPos pos) {
-        Block block = level.getBlockState(pos).getBlock();
-        return block == IafBlockRegistry.DRAGON_BONE_BLOCK.get()
-                || block == IafBlockRegistry.ANCIENT_DRAGON_BONE_BLOCK.get();
+        return level.getBlockState(pos).is(IafBlockRegistry.DRAGON_BONE_BLOCK.get());
     }
 
     /**

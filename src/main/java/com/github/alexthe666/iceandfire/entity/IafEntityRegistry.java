@@ -51,6 +51,10 @@ public class IafEntityRegistry {
             EntityType.Builder.<EntityDragonArrow>of(EntityDragonArrow::new, MobCategory.MISC).sized(0.5F, 0.5F)
                     .setCustomClientFactory(EntityDragonArrow::new),
             "dragon_arrow");
+    public static final RegistryObject<EntityType<EntityDragonBreath>> DRAGON_BREATH = registerEntity(
+            EntityType.Builder.<EntityDragonBreath>of(EntityDragonBreath::new, MobCategory.MISC).sized(0.25F, 0.25F)
+                    .clientTrackingRange(4).updateInterval(10),
+            "dragon_breath");
     public static final RegistryObject<EntityType<EntityDragonSkull>> DRAGON_SKULL = registerEntity(
             EntityType.Builder.of(EntityDragonSkull::new, MobCategory.MISC).sized(0.9F, 0.65F), "dragon_skull");
     public static final RegistryObject<EntityType<EntityFireDragon>> FIRE_DRAGON = registerEntity(
@@ -220,7 +224,7 @@ public class IafEntityRegistry {
             "ghost_sword");
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(EntityType.Builder<T> builder,
-            String entityName) {
+                                                                                   String entityName) {
         return ENTITIES.register(entityName, () -> builder.build(entityName));
     }
 
@@ -280,6 +284,7 @@ public class IafEntityRegistry {
     }
 
     public static HashMap<String, Boolean> LOADED_ENTITIES;
+
     static {
         LOADED_ENTITIES = new HashMap<>();
         LOADED_ENTITIES.put("HIPPOGRYPH", false);

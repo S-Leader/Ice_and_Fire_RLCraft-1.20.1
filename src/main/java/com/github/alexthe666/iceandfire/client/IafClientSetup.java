@@ -75,6 +75,7 @@ public class IafClientSetup {
                 manager -> new RenderDragonBase(manager, FIRE_DRAGON_BASE_MODEL, 3));
         EntityRenderers.register(IafEntityRegistry.DRAGON_EGG.get(), RenderDragonEgg::new);
         EntityRenderers.register(IafEntityRegistry.DRAGON_ARROW.get(), RenderDragonArrow::new);
+        EntityRenderers.register(IafEntityRegistry.DRAGON_BREATH.get(), ThrownItemRenderer::new);
         EntityRenderers.register(IafEntityRegistry.DRAGON_SKULL.get(), manager -> new RenderDragonSkull(manager,
                 FIRE_DRAGON_BASE_MODEL, ICE_DRAGON_BASE_MODEL, LIGHTNING_DRAGON_BASE_MODEL));
         EntityRenderers.register(IafEntityRegistry.FIRE_DRAGON_CHARGE.get(),
@@ -328,7 +329,7 @@ public class IafClientSetup {
 
     @SuppressWarnings("unchecked")
     private static <T extends LivingEntity> void addBloodedArmorLayer(EntityRenderersEvent.AddLayers event,
-                                                                       EntityType<?> entityType) {
+                                                                      EntityType<?> entityType) {
         try {
             EntityRenderer<?> renderer = event.getRenderer((EntityType<T>) entityType);
             if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer

@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.server.item.CustomToolMaterial;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.datagen.tags.BannerPatternTagGenerator;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
+import com.github.alexthe666.iceandfire.entity.DragonType;
 import com.github.alexthe666.iceandfire.entity.EntityDragonArrow;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
 import com.github.alexthe666.iceandfire.enums.*;
@@ -340,6 +341,12 @@ public class IafItemRegistry {
             ItemGeneric::new);
     public static final RegistryObject<Item> GOLD_DRAGON_BLOOD = registerItem("gold_dragon_blood",
             ItemGeneric::new);
+    public static final RegistryObject<Item> FIRE_DRAGON_BREATH = registerItem("fire_dragon_breath",
+            () -> new ItemDragonBreath(DragonType.FIRE));
+    public static final RegistryObject<Item> ICE_DRAGON_BREATH = registerItem("ice_dragon_breath",
+            () -> new ItemDragonBreath(DragonType.ICE));
+    public static final RegistryObject<Item> LIGHTNING_DRAGON_BREATH = registerItem("lightning_dragon_breath",
+            () -> new ItemDragonBreath(DragonType.LIGHTNING));
     public static final RegistryObject<Item> DRAGON_STAFF = registerItem("dragon_stick",
             () -> new ItemDragonStaff());
     public static final RegistryObject<Item> DRAGON_HORN = registerItem("dragon_horn", () -> new ItemDragonHorn());

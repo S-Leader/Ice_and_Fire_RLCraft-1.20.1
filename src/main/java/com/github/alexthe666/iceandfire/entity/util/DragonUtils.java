@@ -4,6 +4,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.datagen.tags.IafBlockTags;
 import com.github.alexthe666.iceandfire.entity.*;
+import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.misc.IafTagRegistry;
 import com.google.common.base.Predicate;
 import net.minecraft.core.BlockPos;
@@ -11,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -19,6 +21,9 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,6 +40,40 @@ public class DragonUtils {
     // 护航飞行高度：比巡航低，便于跟随主人
     private static int getEscortFlightHeight() {
         return Math.max(8, IafConfig.dragonFlightHeight * 2 / 3);
+    }
+
+    public static void fillBottleWithDragonBreath(Player player, DragonType type) {
+        Item breathItem;
+        if (type == DragonType.FIRE) {
+            breathItem = IafItemRegistry.FIRE_DRAGON_BREATH.get();
+        } else if (type == DragonType.ICE) {
+            breathItem = IafItemRegistry.ICE_DRAGON_BREATH.get();
+        } else if (type == DragonType.LIGHTNING) {
+            breathItem = IafItemRegistry.LIGHTNING_DRAGON_BREATH.get();
+        } else {
+            return;
+        }
+
+        InteractionHand hand = InteractionHand.MAIN_HAND;
+        ItemStack bottle = player.getMainHandItem();
+        if (player.getOffhandItem().is(Items.GLASS_BOTTLE)) {
+            bottle = player.getOffhandItem();
+            hand = InteractionHand.OFF_HAND;
+        }
+        if (!bottle.is(Items.GLASS_BOTTLE) || player.getCooldowns().isOnCooldown(Items.GLASS_BOTTLE)) {
+            return;
+        }
+
+        if (!player.isCreative()) {
+            bottle.shrink(1);
+        }
+        ItemStack filledBottle = new ItemStack(breathItem);
+        if (bottle.isEmpty()) {
+            player.setItemInHand(hand, filledBottle);
+        } else if (!player.getInventory().add(filledBottle)) {
+            player.drop(filledBottle, false);
+        }
+        player.getCooldowns().addCooldown(Items.GLASS_BOTTLE, 20);
     }
 
     // 骏鹰体型小，巡航高度取龙的一半
@@ -56,9 +95,9 @@ public class DragonUtils {
             double angle = Math.PI * 2 * dragon.getRandom().nextDouble();
             double dist = 16 + dragon.getRandom().nextInt(16);
             return BlockPos.containing(
-                target.getX() + Math.sin(angle) * dist,
-                target.getY() + 16,
-                target.getZ() + Math.cos(angle) * dist);
+                    target.getX() + Math.sin(angle) * dist,
+                    target.getY() + 16,
+                    target.getZ() + Math.cos(angle) * dist);
         }
         return current;
     }
@@ -87,15 +126,15 @@ public class DragonUtils {
 
         BlockPos ground = dragon.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, escortPos);
         int maxHeight = getMaximumFlightHeightForPos(dragon.level(), escortPos);
-        
+
         int wanderDist = Math.max(5, IafConfig.dragonWanderFromHomeDistance / 2);
         for (int i = 0; i < 10; i++) {
             // 护航飞行高度固定，避免随机高度导致上下颠簸
             int targetY = Math.min(maxHeight, ground.getY() + getEscortFlightHeight());
             BlockPos pos = new BlockPos(
-                escortPos.getX() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2,
-                targetY,
-                (escortPos.getZ() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2));
+                    escortPos.getX() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2,
+                    targetY,
+                    (escortPos.getZ() + dragon.getRandom().nextInt(wanderDist) - wanderDist / 2));
             if (dragon.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !dragon.isTargetBlocked(Vec3.atCenterOf(pos))) {
                 return pos;
             }
@@ -186,7 +225,7 @@ public class DragonUtils {
         BlockPos newPos = new BlockPos(radialPos.getX(), targetY, radialPos.getZ());
         BlockPos pos = dragon.doesWantToLand() ? ground : newPos;
         BlockPos surface = dragon.level().getFluidState(newPos.below(2)).is(FluidTags.WATER) ? newPos.below(dragon.getRandom().nextInt(10) + 1) : newPos;
-        
+
         if (dragon.getRandom().nextInt(5) == 0) {
             // 偶尔跃出水面：高度固定，去除随机
             return surface.above(15);
@@ -256,9 +295,9 @@ public class DragonUtils {
                 // 骏鹰巡航高度：地面+8到地面+32
                 int targetY = Math.min(maxHeight, ground.getY() + getHippogryphFlightHeight());
                 BlockPos pos = BlockPos.containing(
-                    hippo.homePos.getX() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance) - IafConfig.dragonWanderFromHomeDistance,
-                    targetY,
-                    hippo.homePos.getZ() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance);
+                        hippo.homePos.getX() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance) - IafConfig.dragonWanderFromHomeDistance,
+                        targetY,
+                        hippo.homePos.getZ() + hippo.getRandom().nextInt(IafConfig.dragonWanderFromHomeDistance * 2) - IafConfig.dragonWanderFromHomeDistance);
                 if (hippo.distanceToSqr(Vec3.atCenterOf(pos)) > 6 && !hippo.isTargetBlocked(Vec3.atCenterOf(pos))) {
                     return pos;
                 }
@@ -389,7 +428,7 @@ public class DragonUtils {
     }
 
     public static boolean isVillager(Entity entity) {
-        var tags =  ForgeRegistries.ENTITY_TYPES.tags();
+        var tags = ForgeRegistries.ENTITY_TYPES.tags();
         if (tags == null)
             return false;
         return entity.getType().is(tags.createTagKey(IafTagRegistry.VILLAGERS));

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
@@ -118,6 +119,9 @@ public abstract class EntityDragonCharge extends Fireball implements IDragonProj
                         DamageSource source = causeDamage(cause);
 
                         entity.hurt(source, damageAmount);
+                        if (entity instanceof Player player) {
+                            DragonUtils.fillBottleWithDragonBreath(player, shootingDragon.dragonType);
+                        }
                         if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
                             ((EntityDragonBase) shootingEntity).randomizeAttacks();
                         }

@@ -21,8 +21,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import javax.annotation.Nullable;
 
 public class IafDragonDestructionManager {
     public static void destroyAreaBreath(final Level level, final BlockPos center, final EntityDragonBase dragon) {
@@ -111,7 +114,78 @@ public class IafDragonDestructionManager {
                             target.hurt(damageSource, stageDamage);
                             applyDragonEffect(target, dragon, statusDuration);
                         }
+                        if (target instanceof Player player) {
+                            DragonUtils.fillBottleWithDragonBreath(player, dragon.dragonType);
+                        }
                     }
+                });
+    }
+
+    /**
+     * Recreates the small elemental explosion produced by the throwable dragon-breath bottles
+     * from the 1.12.2 RLCraft build.  It deliberately uses the modern block transformations and
+     * block-protection checks so claims, dragon-proof blocks and the current blacklist continue
+     * to work.
+     */
+    public static void destroyAreaBreathItem(final Level level, final BlockPos center, final DragonType type,
+                                             final Entity projectile, @Nullable final Entity owner) {
+        if (type != DragonType.FIRE && type != DragonType.ICE && type != DragonType.LIGHTNING) {
+            return;
+        }
+
+        final Entity source = owner == null ? projectile : owner;
+        final int radius = 2;
+        final double radiusSquared = radius * radius;
+        final DragonForgeType forgeType = type == DragonType.FIRE ? DragonForgeType.FIRE
+                : type == DragonType.ICE ? DragonForgeType.ICE : DragonForgeType.LIGHTNING;
+
+        if (ForgeEventFactory.getMobGriefingEvent(level, source)) {
+            BlockPos.betweenClosedStream(center.offset(-radius, -radius, -radius),
+                            center.offset(radius, radius, radius))
+                    .filter(position -> center.distSqr(position) <= radiusSquared)
+                    .forEach(position -> {
+                        if (level.getBlockEntity(position) instanceof TileEntityDragonforgeInput forge) {
+                            forge.onHitWithFlame(forgeType);
+                        } else {
+                            attackBlock(level, type, source, position, level.getBlockState(position));
+                        }
+                    });
+        }
+
+        final double damageRadius = radius * 2.0D;
+        final Vec3 explosionCenter = Vec3.atCenterOf(center);
+        final DamageSource damageSource = getDamageSource(type, projectile, owner);
+
+        level.getEntitiesOfClass(LivingEntity.class,
+                        new AABB(center).inflate(damageRadius),
+                        target -> !target.is(source))
+                .forEach(target -> {
+                    double normalizedDistance = Math.sqrt(target.distanceToSqr(explosionCenter)) / damageRadius;
+                    if (normalizedDistance > 1.0D) {
+                        return;
+                    }
+
+                    double x = target.getX() - explosionCenter.x;
+                    double y = target.getEyeY() - explosionCenter.y;
+                    double z = target.getZ() - explosionCenter.z;
+                    double length = Math.sqrt(x * x + y * y + z * z);
+                    if (length == 0.0D) {
+                        return;
+                    }
+
+                    double exposure = Explosion.getSeenPercent(explosionCenter, target);
+                    double impact = (1.0D - normalizedDistance) * exposure;
+                    float damage = (float) ((int) (((impact * impact + impact) / 2.0D)
+                            * 7.0D * damageRadius + 1.0D)) / 3.0F;
+                    if (damage > 0.0F && target.hurt(damageSource, damage)) {
+                        applyDragonEffect(target, type, type == DragonType.FIRE ? 5
+                                : type == DragonType.ICE ? 200 : 3, source.getX(), source.getZ());
+                    }
+
+                    x /= length;
+                    y /= length;
+                    z /= length;
+                    target.setDeltaMovement(target.getDeltaMovement().add(x * impact, y * impact, z * impact));
                 });
     }
 
@@ -228,6 +302,19 @@ public class IafDragonDestructionManager {
         }
     }
 
+    private static DamageSource getDamageSource(final DragonType type, final Entity projectile,
+                                                @Nullable final Entity owner) {
+        if (type == DragonType.FIRE) {
+            return owner == null ? IafDamageRegistry.causeDragonFireDamage(projectile)
+                    : IafDamageRegistry.causeIndirectDragonFireDamage(projectile, owner);
+        } else if (type == DragonType.ICE) {
+            return owner == null ? IafDamageRegistry.causeDragonIceDamage(projectile)
+                    : IafDamageRegistry.causeIndirectDragonIceDamage(projectile, owner);
+        }
+        return owner == null ? IafDamageRegistry.causeDragonLightningDamage(projectile)
+                : IafDamageRegistry.causeIndirectDragonLightningDamage(projectile, owner);
+    }
+
     /**
      * Shivaxi breath replacement for the temporary three-element port.  The breath keeps the
      * lightning dragon's normal direct breath damage, but its status component is the legacy
@@ -242,17 +329,22 @@ public class IafDragonDestructionManager {
 
     private static void attackBlock(final Level level, final EntityDragonBase dragon, final BlockPos position,
                                     final BlockState state) {
-        if (state.getBlock() instanceof IDragonProof || !DragonUtils.canDragonBreak(state, dragon)) {
+        attackBlock(level, dragon.dragonType, dragon, position, state);
+    }
+
+    private static void attackBlock(final Level level, final DragonType type, final Entity source,
+                                    final BlockPos position, final BlockState state) {
+        if (state.getBlock() instanceof IDragonProof || !DragonUtils.canDragonBreak(state, source)) {
             return;
         }
 
         BlockState transformed;
 
-        if (dragon.dragonType == DragonType.FIRE) {
+        if (type == DragonType.FIRE) {
             transformed = transformBlockFire(state);
-        } else if (dragon.dragonType == DragonType.ICE) {
+        } else if (type == DragonType.ICE) {
             transformed = transformBlockIce(state);
-        } else if (dragon.dragonType == DragonType.LIGHTNING) {
+        } else if (type == DragonType.LIGHTNING) {
             transformed = transformBlockLightning(state);
         } else {
             return;
@@ -265,12 +357,12 @@ public class IafDragonDestructionManager {
         Block elementalBlock;
         boolean doPlaceBlock;
 
-        if (dragon.dragonType == DragonType.FIRE) {
+        if (type == DragonType.FIRE) {
             elementalBlock = Blocks.FIRE;
-            doPlaceBlock = dragon.getRandom().nextBoolean();
-        } else if (dragon.dragonType == DragonType.ICE) {
+            doPlaceBlock = level.random.nextBoolean();
+        } else if (type == DragonType.ICE) {
             elementalBlock = IafBlockRegistry.DRAGON_ICE_SPIKES.get();
-            doPlaceBlock = dragon.getRandom().nextInt(9) == 0;
+            doPlaceBlock = level.random.nextInt(9) == 0;
         } else {
             return;
         }
@@ -278,7 +370,7 @@ public class IafDragonDestructionManager {
         BlockState stateAbove = level.getBlockState(position.above());
 
         if (doPlaceBlock && transformed.isSolid() && stateAbove.getFluidState().isEmpty() && !stateAbove.canOcclude()
-                && state.canOcclude() && DragonUtils.canDragonBreak(stateAbove, dragon)) {
+                && state.canOcclude() && DragonUtils.canDragonBreak(stateAbove, source)) {
             level.setBlockAndUpdate(position.above(), elementalBlock.defaultBlockState());
         }
     }
@@ -294,6 +386,11 @@ public class IafDragonDestructionManager {
 
     private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
                                           int statusDuration, final DragonType type) {
+        applyDragonEffect(target, type, statusDuration, dragon.getX(), dragon.getZ());
+    }
+
+    private static void applyDragonEffect(final LivingEntity target, final DragonType type, int statusDuration,
+                                          double sourceX, double sourceZ) {
         if (type == DragonType.FIRE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.FIRE))
@@ -309,8 +406,8 @@ public class IafDragonDestructionManager {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.LIGHTNING))
                 return;
-            double x = dragon.getX() - target.getX();
-            double y = dragon.getZ() - target.getZ();
+            double x = sourceX - target.getX();
+            double y = sourceZ - target.getZ();
             target.knockback((double) statusDuration / 10, x, y);
         }
     }
