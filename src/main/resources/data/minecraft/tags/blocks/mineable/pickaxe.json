@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
+    "iceandfire:ancient_dragon_bone_block",
+    "iceandfire:ancient_dragon_bone_wall",
     "iceandfire:dragon_bone_block",
     "iceandfire:dragon_bone_wall",
     "iceandfire:dragonforge_brick",

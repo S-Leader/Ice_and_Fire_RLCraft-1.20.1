@@ -125,6 +125,8 @@ public class IafBlockRegistry {
     public static final RegistryObject<Block> DRAGON_SCALE_COPPER = register("dragonscale_copper", () -> new BlockDragonScales(EnumDragonEgg.COPPER));
     public static final RegistryObject<Block> DRAGON_SCALE_BLACK = register("dragonscale_black", () -> new BlockDragonScales(EnumDragonEgg.BLACK));
 
+    public static final RegistryObject<Block> ANCIENT_DRAGON_BONE_BLOCK = register("ancient_dragon_bone_block", BlockDragonBone::new);
+    public static final RegistryObject<Block> ANCIENT_DRAGON_BONE_BLOCK_WALL = register("ancient_dragon_bone_wall", () -> new BlockDragonBoneWall(BlockBehaviour.Properties.copy(ANCIENT_DRAGON_BONE_BLOCK.get()).strength(20F, 500F)));
     public static final RegistryObject<Block> DRAGON_BONE_BLOCK = register("dragon_bone_block", BlockDragonBone::new);
     public static final RegistryObject<Block> DRAGON_BONE_BLOCK_WALL = register("dragon_bone_wall", () -> new BlockDragonBoneWall(BlockBehaviour.Properties.copy(IafBlockRegistry.DRAGON_BONE_BLOCK.get())));
     public static final RegistryObject<Block> DRAGONFORGE_BRICK = register("dragonforge_brick", BlockDragonforgeBricks::new);

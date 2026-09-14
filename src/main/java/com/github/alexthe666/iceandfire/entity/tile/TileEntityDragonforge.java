@@ -248,7 +248,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
 
     private ItemStack getCurrentResult() {
         Optional<DragonForgeRecipe> recipe = getCurrentRecipe();
-        return recipe.map(DragonForgeRecipe::getResultItem)
+        return recipe.map(value -> value.assemble(this, level.registryAccess()))
                 .orElseGet(() -> new ItemStack(getDefaultOutput()));
     }
 
@@ -271,7 +271,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
             return false;
 
         ItemStack outputStack = this.forgeItemStacks.get(2);
-        if (!outputStack.isEmpty() && !ItemStack.isSameItem(outputStack, forgeRecipeOutput))
+        if (!outputStack.isEmpty() && !ItemStack.isSameItemSameTags(outputStack, forgeRecipeOutput))
             return false;
 
         int calculatedOutputCount = outputStack.getCount() + forgeRecipeOutput.getCount();
@@ -394,10 +394,14 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
 
     /** 检查四角是否为龙骨块 */
     private boolean checkBoneCorners(BlockPos pos) {
-        return doesBlockEqual(pos.north().east(), IafBlockRegistry.DRAGON_BONE_BLOCK.get())
-            && doesBlockEqual(pos.north().west(), IafBlockRegistry.DRAGON_BONE_BLOCK.get())
-            && doesBlockEqual(pos.south().east(), IafBlockRegistry.DRAGON_BONE_BLOCK.get())
-            && doesBlockEqual(pos.south().west(), IafBlockRegistry.DRAGON_BONE_BLOCK.get());
+        return isDragonBoneBlock(pos.north().east()) && isDragonBoneBlock(pos.north().west())
+            && isDragonBoneBlock(pos.south().east()) && isDragonBoneBlock(pos.south().west());
+    }
+
+    private boolean isDragonBoneBlock(BlockPos pos) {
+        Block block = level.getBlockState(pos).getBlock();
+        return block == IafBlockRegistry.DRAGON_BONE_BLOCK.get()
+            || block == IafBlockRegistry.ANCIENT_DRAGON_BONE_BLOCK.get();
     }
 
     /** 检查四角是否为悚怖石砖（中层） */

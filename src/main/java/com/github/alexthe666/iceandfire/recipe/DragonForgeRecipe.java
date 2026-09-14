@@ -5,6 +5,7 @@ import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforge;
 import com.google.gson.JsonObject;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -67,16 +68,30 @@ public class DragonForgeRecipe implements Recipe<TileEntityDragonforge> {
 
     @Override
     public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
-        return result;
+        return result.copy();
     }
 
     public @NotNull ItemStack getResultItem() {
-        return result;
+        return result.copy();
     }
 
     @Override
     public @NotNull ItemStack assemble(@NotNull TileEntityDragonforge dragonforge, RegistryAccess registryAccess) {
-        return result;
+        ItemStack output = result.copy();
+        ItemStack mainInput = dragonforge.getItem(0);
+        if (mainInput.isEmpty() || output.isEmpty()) {
+            return output;
+        }
+
+        // Match the 1.12.2 RLCraft forge behavior: construct the configured output
+        // item while carrying over all data from the primary input. Saving the full
+        // stack preserves Damage, enchantments, custom names, repair cost, arbitrary
+        // mod NBT, and Forge capability data; only the item id and recipe count change.
+        CompoundTag inheritedData = mainInput.save(new CompoundTag());
+        CompoundTag outputData = output.save(new CompoundTag());
+        inheritedData.putString("id", outputData.getString("id"));
+        inheritedData.putByte("Count", (byte) output.getCount());
+        return ItemStack.of(inheritedData);
     }
 
     @Override

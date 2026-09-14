@@ -3,6 +3,7 @@ package com.github.alexthe666.iceandfire.world.gen.processor;
 import com.github.alexthe666.iceandfire.block.BlockDragonforgeCore;
 import com.github.alexthe666.iceandfire.block.BlockDragonforgeBricks;
 import com.github.alexthe666.iceandfire.block.BlockDragonforgeInput;
+import com.github.alexthe666.iceandfire.block.BlockDreadBase;
 import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
@@ -15,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -33,6 +35,7 @@ public class DreadRuinProcessor extends StructureProcessor {
 
     public static final DreadRuinProcessor INSTANCE = new DreadRuinProcessor();
     public static final Codec<DreadRuinProcessor> CODEC = Codec.unit(() -> INSTANCE);
+    private static final ResourceLocation DREAD_CHEST_LOOT = new ResourceLocation("iceandfire", "chest/mausoleum_chest");
 
     /** 旧龙锻炉方块ID → 统一方块的映射 */
     private static final Map<String, BlockState> LEGACY_BLOCK_MAP = Map.ofEntries(
@@ -67,13 +70,17 @@ public class DreadRuinProcessor extends StructureProcessor {
 
     public static BlockState getRandomCrackedBlock(@Nullable BlockState prev, RandomSource random) {
         float rand = random.nextFloat();
+        BlockState result;
         if (rand < 0.5) {
-            return IafBlockRegistry.DREAD_STONE_BRICKS.get().defaultBlockState();
+            result = IafBlockRegistry.DREAD_STONE_BRICKS.get().defaultBlockState();
         } else if (rand < 0.9) {
-            return IafBlockRegistry.DREAD_STONE_BRICKS_CRACKED.get().defaultBlockState();
+            result = IafBlockRegistry.DREAD_STONE_BRICKS_CRACKED.get().defaultBlockState();
         } else {
-            return IafBlockRegistry.DREAD_STONE_BRICKS_MOSSY.get().defaultBlockState();
+            result = IafBlockRegistry.DREAD_STONE_BRICKS_MOSSY.get().defaultBlockState();
         }
+        boolean playerPlaced = prev != null && prev.hasProperty(BlockDreadBase.PLAYER_PLACED)
+            && prev.getValue(BlockDreadBase.PLAYER_PLACED);
+        return result.setValue(BlockDreadBase.PLAYER_PLACED, playerPlaced);
     }
 
     @Override
@@ -90,11 +97,18 @@ public class DreadRuinProcessor extends StructureProcessor {
         }
 
         if (block == IafBlockRegistry.DREAD_STONE_BRICKS.get()) {
-            BlockState state = getRandomCrackedBlock(null, random);
+            BlockState state = getRandomCrackedBlock(infoIn2.state(), random);
             return new StructureTemplate.StructureBlockInfo(infoIn2.pos(), state, null);
         }
+        if (block instanceof ChestBlock) {
+            CompoundTag tag = infoIn2.nbt() == null ? new CompoundTag() : infoIn2.nbt().copy();
+            tag.remove("Items");
+            tag.putString("LootTable", DREAD_CHEST_LOOT.toString());
+            tag.putLong("LootTableSeed", random.nextLong());
+            return new StructureTemplate.StructureBlockInfo(infoIn2.pos(), infoIn2.state(), tag);
+        }
         if (block == IafBlockRegistry.DREAD_SPAWNER.get()) {
-            CompoundTag tag = new CompoundTag();
+            CompoundTag tag = infoIn2.nbt() == null ? new CompoundTag() : infoIn2.nbt().copy();
             CompoundTag spawnData = new CompoundTag();
             ResourceLocation spawnerMobId = ForgeRegistries.ENTITY_TYPES.getKey(getRandomMobForMobSpawner(random));
             if (spawnerMobId != null) {

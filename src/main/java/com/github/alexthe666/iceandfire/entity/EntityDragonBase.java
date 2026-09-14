@@ -101,6 +101,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class EntityDragonBase extends TamableAnimal implements IPassabilityNavigator, ISyncMount, IFlyingMount, IMultipartEntity, IAnimatedEntity, IDragonFlute, IDeadMob, IVillagerFear, IAnimalFear, IDropArmor, IHasCustomizableAttributes, ICustomSizeNavigator, ICustomMoveController, ContainerListener {
 
     public static final int FLIGHT_CHANCE_PER_TICK = 1500;
+    private static final int GROUND_SUMMON_FLIGHT_COOLDOWN_TICKS = 100;
     protected static final EntityDataAccessor<Boolean> SWIMMING = SynchedEntityData.defineId(EntityDragonBase.class, EntityDataSerializers.BOOLEAN);
     private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     private static final EntityDataAccessor<Integer> HUNGER = SynchedEntityData.defineId(EntityDragonBase.class, EntityDataSerializers.INT);
@@ -214,6 +215,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     protected int flyHovering;
     // 飞行中横向碰撞的连续tick数，用于撞墙改道
     private int flightStuckTicks;
+    private int groundSummonFlightCooldown;
     protected boolean hasHadHornUse = false;
     protected int fireTicks;
     protected int blockBreakCounter;
@@ -550,7 +552,7 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     protected void tickDeath() {
         this.deathTime = 0;
         this.setModelDead(true);
-        this.ejectPassengers();
+        this.forceDismountAllRiders();
         if (this.getDeathStage() >= this.getAgeInDays() / 5) {
             this.remove(RemovalReason.KILLED);
             for (int k = 0; k < 40; ++k) {
@@ -993,6 +995,25 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     public void setFlying(boolean flying) {
         this.entityData.set(FLYING, flying);
+    }
+
+    public void prepareForGroundSummon() {
+        if (!this.isTame()) {
+            return;
+        }
+
+        this.airTarget = null;
+        this.setTackling(false);
+        this.flyTicks = 0;
+        this.hoverTicks = 0;
+        this.flyHovering = 0;
+        this.spacebarTicks = 0;
+        this.flightStuckTicks = 0;
+        this.groundSummonFlightCooldown = GROUND_SUMMON_FLIGHT_COOLDOWN_TICKS;
+        this.setDeltaMovement(Vec3.ZERO);
+        this.setNoGravity(false);
+        this.switchNavigator(0);
+        this.getNavigation().stop();
     }
 
     public boolean useFlyingPathFinder() {
@@ -1584,13 +1605,13 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     public void positionRider(@NotNull Entity passenger, @NotNull MoveFunction callback) {
         super.positionRider(passenger, callback);
         if (this.hasPassenger(passenger)) {
+            if (!this.isAlive() || this.isModelDead()) {
+                passenger.stopRiding();
+                return;
+            }
             if (this.getControllingPassenger() == null || !this.getControllingPassenger().getUUID().equals(passenger.getUUID())) {
                 updatePreyInMouth(passenger);
             } else {
-                if (this.isModelDead()) {
-                    passenger.stopRiding();
-                }
-
                 this.setYRot(passenger.getYRot());
                 this.setYHeadRot(passenger.getYHeadRot());
                 this.setXRot(passenger.getXRot());
@@ -1760,6 +1781,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide && this.groundSummonFlightCooldown > 0) {
+            this.groundSummonFlightCooldown--;
+        }
         refreshDimensions();
         updateParts();
         this.prevDragonPitch = getDragonPitch();
@@ -2608,7 +2632,18 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     @Override
     public void die(@NotNull DamageSource cause) {
         super.die(cause);
+        this.forceDismountAllRiders();
         this.setHunger(this.getHunger() + FoodUtils.getFoodPoints(this));
+    }
+
+    private void forceDismountAllRiders() {
+        for (Entity passenger : List.copyOf(this.getPassengers())) {
+            passenger.stopRiding();
+        }
+        if (this.isPassenger()) {
+            this.stopRiding();
+        }
+        this.ejectPassengers();
     }
 
     @Override
@@ -2954,7 +2989,10 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
     }
 
     public boolean isAllowedToTriggerFlight() {
-        return (this.hasFlightClearance() && this.onGround() || this.isInWater()) && !this.isOrderedToSit() && this.getPassengers().isEmpty() && !this.isBaby() && !this.isSleeping() && this.canMove();
+        return this.groundSummonFlightCooldown <= 0
+                && (this.hasFlightClearance() && this.onGround() || this.isInWater())
+                && !this.isOrderedToSit() && this.getPassengers().isEmpty()
+                && !this.isBaby() && !this.isSleeping() && this.canMove();
     }
 
     public BlockPos getEscortPosition() {
