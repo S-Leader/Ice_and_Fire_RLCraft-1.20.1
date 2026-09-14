@@ -5,11 +5,11 @@
   "refmap": "iceandfire.refmap.json",
   "plugin": "com.github.alexthe666.iceandfire.mixins.IceAndFireMixinPlugin",
   "mixins": [
-    "gen.NoLakesInStructuresMixin",
-    "gen.WorldGenRegionMixin",
+    "BookWyrmMixin",
     "DreadBlockDestroySpeedMixin",
     "EntityMeltFireMixin",
-    "BookWyrmMixin"
+    "gen.NoLakesInStructuresMixin",
+    "gen.WorldGenRegionMixin"
   ],
   "client": [
     "GameRendererMixin"

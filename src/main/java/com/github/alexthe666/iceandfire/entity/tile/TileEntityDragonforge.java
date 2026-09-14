@@ -1,8 +1,8 @@
 package com.github.alexthe666.iceandfire.entity.tile;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
-import com.github.alexthe666.iceandfire.block.BlockDragonforgeCore;
 import com.github.alexthe666.iceandfire.block.BlockDragonforgeBricks;
+import com.github.alexthe666.iceandfire.block.BlockDragonforgeCore;
 import com.github.alexthe666.iceandfire.block.DragonForgeType;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.inventory.ContainerDragonForge;
@@ -48,14 +48,16 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
     private static final int[] SLOTS_BOTTOM = new int[]{2};
     private static final int[] SLOTS_SIDES = new int[]{0, 1};
     private static final Direction[] HORIZONTALS = new Direction[]{
-        Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+            Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
-    /** 龙锻炉类型（从BlockState读取） */
+    /**
+     * 龙锻炉类型（从BlockState读取）
+     */
     public int fireType;
     public int cookTime;
     public int lastDragonFlameTimer = 0;
     net.minecraftforge.common.util.LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper
-        .create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+            .create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     private NonNullList<ItemStack> forgeItemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
     private boolean prevAssembled;
     private boolean canAddFlameAgain = true;
@@ -68,7 +70,9 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         }
     }
 
-    /** 获取当前龙锻炉类型枚举 */
+    /**
+     * 获取当前龙锻炉类型枚举
+     */
     public DragonForgeType getDragonForgeType() {
         BlockState state = this.getBlockState();
         if (state.hasProperty(BlockDragonforgeCore.TYPE)) {
@@ -124,7 +128,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
                 }
             } else if (!entityDragonforge.isBurning() && entityDragonforge.cookTime > 0) {
                 entityDragonforge.cookTime = Mth.clamp(entityDragonforge.cookTime - 2, 0,
-                    entityDragonforge.getMaxCookTime());
+                        entityDragonforge.getMaxCookTime());
             }
 
             if (flag != entityDragonforge.isBurning()) {
@@ -155,7 +159,9 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         return true;
     }
 
-    /** 更新周围砖块的GRILL和TYPE状态 */
+    /**
+     * 更新周围砖块的GRILL和TYPE状态
+     */
     private void updateGrills(boolean grill) {
         DragonForgeType currentType = getDragonForgeType();
         for (Direction facing : HORIZONTALS) {
@@ -164,8 +170,8 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
             if (grillState.getBlock() == IafBlockRegistry.DRAGONFORGE_BRICK.get()) {
                 DragonForgeType grillType = grill ? currentType : DragonForgeType.NONE;
                 BlockState newState = grillState
-                    .setValue(BlockDragonforgeBricks.GRILL, grill)
-                    .setValue(BlockDragonforgeBricks.TYPE, grillType);
+                        .setValue(BlockDragonforgeBricks.GRILL, grill)
+                        .setValue(BlockDragonforgeBricks.TYPE, grillType);
                 if (grillState != newState) {
                     level.setBlockAndUpdate(grillPos, newState);
                 }
@@ -192,7 +198,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
     public void setItem(int index, ItemStack stack) {
         ItemStack itemstack = this.forgeItemStacks.get(index);
         boolean flag = !stack.isEmpty() && ItemStack.isSameItem(stack, itemstack)
-            && ItemStack.matches(stack, itemstack);
+                && ItemStack.matches(stack, itemstack);
         this.forgeItemStacks.set(index, stack);
 
         if (stack.getCount() > this.getMaxStackSize()) {
@@ -200,7 +206,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         }
 
         if (index == 0 && !flag
-            || this.cookTime > this.getMaxCookTime()) {
+                || this.cookTime > this.getMaxCookTime()) {
             this.cookTime = 0;
             this.setChanged();
         }
@@ -233,7 +239,9 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         return this.cookTime > 0;
     }
 
-    /** 获取配方匹配用的类型ID字符串 */
+    /**
+     * 获取配方匹配用的类型ID字符串
+     */
     public String getTypeID() {
         return getDragonForgeType().getTypeId();
     }
@@ -276,7 +284,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
 
         int calculatedOutputCount = outputStack.getCount() + forgeRecipeOutput.getCount();
         return (calculatedOutputCount <= this.getMaxStackSize()
-            && calculatedOutputCount <= outputStack.getMaxStackSize());
+                && calculatedOutputCount <= outputStack.getMaxStackSize());
     }
 
     @Override
@@ -285,7 +293,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
             return false;
         } else {
             return player.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
-                this.worldPosition.getZ() + 0.5D) <= 64.0D;
+                    this.worldPosition.getZ() + 0.5D) <= 64.0D;
         }
     }
 
@@ -348,9 +356,9 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
 
     @Override
     public <T> net.minecraftforge.common.util.@NotNull LazyOptional<T> getCapability(
-        net.minecraftforge.common.capabilities.@NotNull Capability<T> capability, @Nullable Direction facing) {
+            net.minecraftforge.common.capabilities.@NotNull Capability<T> capability, @Nullable Direction facing) {
         if (!this.remove && facing != null
-            && capability == ForgeCapabilities.ITEM_HANDLER) {
+                && capability == ForgeCapabilities.ITEM_HANDLER) {
             if (facing == Direction.UP)
                 return handlers[0].cast();
             if (facing == Direction.DOWN)
@@ -366,7 +374,9 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         return Component.translatable("container.dragonforge");
     }
 
-    /** 接收龙吐息能量，同时设置Core的龙类型 */
+    /**
+     * 接收龙吐息能量，同时设置Core的龙类型
+     */
     public void transferPower(int i, DragonForgeType type) {
         if (!level.isClientSide) {
             if (type != null && type.isActive()) {
@@ -376,7 +386,7 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
             if (this.canSmelt()) {
                 if (canAddFlameAgain) {
                     cookTime = Math.min(this.getMaxCookTime() + 1,
-                        cookTime + i);
+                            cookTime + i);
                     canAddFlameAgain = false;
                 }
             } else {
@@ -387,44 +397,56 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
         lastDragonFlameTimer = 40;
     }
 
-    /** 兼容旧的无类型调用 */
+    /**
+     * 兼容旧的无类型调用
+     */
     public void transferPower(int i) {
         transferPower(i, getDragonForgeType());
     }
 
-    /** 检查四角是否为龙骨块 */
+    /**
+     * 检查四角是否为龙骨块
+     */
     private boolean checkBoneCorners(BlockPos pos) {
         return isDragonBoneBlock(pos.north().east()) && isDragonBoneBlock(pos.north().west())
-            && isDragonBoneBlock(pos.south().east()) && isDragonBoneBlock(pos.south().west());
+                && isDragonBoneBlock(pos.south().east()) && isDragonBoneBlock(pos.south().west());
     }
 
     private boolean isDragonBoneBlock(BlockPos pos) {
         Block block = level.getBlockState(pos).getBlock();
         return block == IafBlockRegistry.DRAGON_BONE_BLOCK.get()
-            || block == IafBlockRegistry.ANCIENT_DRAGON_BONE_BLOCK.get();
+                || block == IafBlockRegistry.ANCIENT_DRAGON_BONE_BLOCK.get();
     }
 
-    /** 检查四角是否为悚怖石砖（中层） */
+    /**
+     * 检查四角是否为悚怖石砖（中层）
+     */
     private boolean checkDreadCorners(BlockPos pos) {
         return isDreadBrick(pos.north().east()) && isDreadBrick(pos.north().west())
-            && isDreadBrick(pos.south().east()) && isDreadBrick(pos.south().west());
+                && isDreadBrick(pos.south().east()) && isDreadBrick(pos.south().west());
     }
 
-    /** 检查四边+中心是否为悚怖石砖（顶/底层） */
+    /**
+     * 检查四边+中心是否为悚怖石砖（顶/底层）
+     */
     private boolean checkDreadSlots(BlockPos pos) {
         return isDreadBrick(pos.north()) && isDreadBrick(pos.east())
-            && isDreadBrick(pos.west()) && isDreadBrick(pos.south());
+                && isDreadBrick(pos.west()) && isDreadBrick(pos.south());
     }
 
-    /** 检查方块是否为悚怖石砖（含裂纹、苔藓变种） */
+    /**
+     * 检查方块是否为悚怖石砖（含裂纹、苔藓变种）
+     */
     private boolean isDreadBrick(BlockPos pos) {
         Block block = level.getBlockState(pos).getBlock();
         return block == IafBlockRegistry.DREAD_STONE_BRICKS.get()
-            || block == IafBlockRegistry.DREAD_STONE_BRICKS_CRACKED.get()
-            || block == IafBlockRegistry.DREAD_STONE_BRICKS_MOSSY.get();
+                || block == IafBlockRegistry.DREAD_STONE_BRICKS_CRACKED.get()
+                || block == IafBlockRegistry.DREAD_STONE_BRICKS_MOSSY.get();
     }
 
-    /** 检查中层四边，至少3个为通风口（第4个可以是焰孔或通风口） */
+    /**
+     * 检查中层四边，至少3个为通风口（第4个可以是焰孔或通风口）
+     */
     private boolean checkVents(BlockPos pos) {
         Block vent = IafBlockRegistry.DRAGONFORGE_BRICK.get();
         int count = 0;
@@ -459,8 +481,8 @@ public class TileEntityDragonforge extends BaseContainerBlockEntity implements W
      */
     public boolean assembled() {
         return checkBoneCorners(worldPosition.below()) && checkDreadSlots(worldPosition.below()) && isDreadBrick(worldPosition.below())
-            && checkDreadCorners(worldPosition) && checkVents(worldPosition)
-            && checkBoneCorners(worldPosition.above()) && checkDreadSlots(worldPosition.above()) && isDreadBrick(worldPosition.above());
+                && checkDreadCorners(worldPosition) && checkVents(worldPosition)
+                && checkBoneCorners(worldPosition.above()) && checkDreadSlots(worldPosition.above()) && isDreadBrick(worldPosition.above());
     }
 
     private boolean doesBlockEqual(BlockPos pos, Block block) {

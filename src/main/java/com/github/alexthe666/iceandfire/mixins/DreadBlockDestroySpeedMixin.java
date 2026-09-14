@@ -17,8 +17,8 @@ public abstract class DreadBlockDestroySpeedMixin {
     private void iceandfire$getPlayerPlacedDreadDestroySpeed(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir) {
         BlockState state = (BlockState) (Object) this;
         if (state.getBlock() instanceof BlockDreadBase
-            && state.hasProperty(BlockDreadBase.PLAYER_PLACED)
-            && state.getValue(BlockDreadBase.PLAYER_PLACED)) {
+                && state.hasProperty(BlockDreadBase.PLAYER_PLACED)
+                && state.getValue(BlockDreadBase.PLAYER_PLACED)) {
             cir.setReturnValue(8.0F);
         }
     }

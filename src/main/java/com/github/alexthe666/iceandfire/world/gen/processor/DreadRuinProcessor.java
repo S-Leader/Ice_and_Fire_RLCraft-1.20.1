@@ -1,11 +1,6 @@
 package com.github.alexthe666.iceandfire.world.gen.processor;
 
-import com.github.alexthe666.iceandfire.block.BlockDragonforgeCore;
-import com.github.alexthe666.iceandfire.block.BlockDragonforgeBricks;
-import com.github.alexthe666.iceandfire.block.BlockDragonforgeInput;
-import com.github.alexthe666.iceandfire.block.BlockDreadBase;
-import com.github.alexthe666.iceandfire.block.DragonForgeType;
-import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
+import com.github.alexthe666.iceandfire.block.*;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
 import com.github.alexthe666.iceandfire.world.IafProcessors;
 import com.mojang.serialization.Codec;
@@ -37,32 +32,34 @@ public class DreadRuinProcessor extends StructureProcessor {
     public static final Codec<DreadRuinProcessor> CODEC = Codec.unit(() -> INSTANCE);
     private static final ResourceLocation DREAD_CHEST_LOOT = new ResourceLocation("iceandfire", "chest/mausoleum_chest");
 
-    /** 旧龙锻炉方块ID → 统一方块的映射 */
+    /**
+     * 旧龙锻炉方块ID → 统一方块的映射
+     */
     private static final Map<String, BlockState> LEGACY_BLOCK_MAP = Map.ofEntries(
-        Map.entry("iceandfire:dragonforge_fire_brick",
-            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_ice_brick",
-            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_lightning_brick",
-            IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_fire_input",
-            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_ice_input",
-            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_lightning_input",
-            IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_fire_core",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_ice_core",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_lightning_core",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_fire_core_disabled",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_ice_core_disabled",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
-        Map.entry("iceandfire:dragonforge_lightning_core_disabled",
-            IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE))
+            Map.entry("iceandfire:dragonforge_fire_brick",
+                    IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_ice_brick",
+                    IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_lightning_brick",
+                    IafBlockRegistry.DRAGONFORGE_BRICK.get().defaultBlockState().setValue(BlockDragonforgeBricks.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_fire_input",
+                    IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_ice_input",
+                    IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_lightning_input",
+                    IafBlockRegistry.DRAGONFORGE_INPUT.get().defaultBlockState().setValue(BlockDragonforgeInput.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_fire_core",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_ice_core",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_lightning_core",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_fire_core_disabled",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_ice_core_disabled",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE)),
+            Map.entry("iceandfire:dragonforge_lightning_core_disabled",
+                    IafBlockRegistry.DRAGONFORGE_CORE.get().defaultBlockState().setValue(BlockDragonforgeCore.TYPE, DragonForgeType.NONE))
     );
 
     public DreadRuinProcessor() {
@@ -79,7 +76,7 @@ public class DreadRuinProcessor extends StructureProcessor {
             result = IafBlockRegistry.DREAD_STONE_BRICKS_MOSSY.get().defaultBlockState();
         }
         boolean playerPlaced = prev != null && prev.hasProperty(BlockDreadBase.PLAYER_PLACED)
-            && prev.getValue(BlockDreadBase.PLAYER_PLACED);
+                && prev.getValue(BlockDreadBase.PLAYER_PLACED);
         return result.setValue(BlockDreadBase.PLAYER_PLACED, playerPlaced);
     }
 
