@@ -217,7 +217,16 @@ public class DragonServerTickManager {
                 if (dragon.getControllingPassenger() == null || dragon.getControllingPassenger() instanceof EntityDreadQueen) {
                     if (!dragon.isBeyondHeight()) {
                         double up = dragon.isInWater() ? 0.12D : 0.08D;
-                        dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, up, 0));
+                        if (dragon.isTame()) {
+                            // The old +0.08 lift was balanced by 1.12.2 gravity. Modern dragons
+                            // disable gravity while hovering, so repeatedly adding it makes a
+                            // tamed dragon accelerate straight into the sky. Keep only a fixed
+                            // takeoff velocity: AI flight still starts, but there is no skyrocket.
+                            Vec3 motion = dragon.getDeltaMovement();
+                            dragon.setDeltaMovement(motion.x, up, motion.z);
+                        } else {
+                            dragon.setDeltaMovement(dragon.getDeltaMovement().add(0, up, 0));
+                        }
                     } else if (!dragon.isInWater() && dragon.getDeltaMovement().y > 0.0D) {
                         // Kill leftover upward momentum at the local flight ceiling.  Without
                         // this, repeated hover/take-off cycles can still stair-step upward.

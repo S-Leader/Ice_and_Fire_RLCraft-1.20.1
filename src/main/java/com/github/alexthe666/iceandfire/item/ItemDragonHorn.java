@@ -105,9 +105,6 @@ public class ItemDragonHorn extends Item {
                     entity.setUUID(stack.getTag().getUUID("EntityUUID"));
 
                 entity.absMoveTo(context.getClickedPos().getX() + 0.5D, (context.getClickedPos().getY() + 1), context.getClickedPos().getZ() + 0.5D, 180 + (context.getHorizontalDirection()).toYRot(), 0.0F);
-                if (entity instanceof EntityDragonBase dragon) {
-                    dragon.prepareForGroundSummon();
-                }
                 if (world.addFreshEntity(entity)) {
                     CompoundTag tag = stack.getTag();
                     tag.remove("DragonHornEntityID");

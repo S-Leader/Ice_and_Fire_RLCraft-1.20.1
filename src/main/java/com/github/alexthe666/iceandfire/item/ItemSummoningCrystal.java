@@ -177,9 +177,8 @@ public class ItemSummoningCrystal extends Item {
 
     public void summonEntity(Entity entity, Level worldIn, BlockPos offsetPos, float yaw) {
         entity.moveTo(offsetPos.getX() + 0.5D, offsetPos.getY() + 0.5D, offsetPos.getZ() + 0.5D, yaw, 0);
-        if (entity instanceof EntityDragonBase dragon) {
-            dragon.setCrystalBound(false);
-            dragon.prepareForGroundSummon();
+        if (entity instanceof EntityDragonBase) {
+            ((EntityDragonBase) entity).setCrystalBound(false);
         }
         if (IafConfig.chunkLoadSummonCrystal) {
             DragonPosWorldData data = DragonPosWorldData.get(worldIn);
