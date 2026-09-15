@@ -1,6 +1,7 @@
 package com.github.alexthe666.iceandfire.mixins;
 
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
+import lykrast.defiledlands.common.util.CorruptionHelper;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +39,7 @@ public abstract class BookWyrmMixin extends Animal {
         if (!isGolden())
             return;
 
-        double chance = Math.min(getMaxLevel() / 60.0, 1.0);
+        double chance = Math.min(getMaxLevel() / (CorruptionHelper.wyrmMaxLevelCap * 500), 0.005);
 
         if (this.random.nextDouble() < chance) {
             this.spawnAtLocation(new ItemStack(IafItemRegistry.DRAGONEGG_GOLD.get()), 0.5F);
