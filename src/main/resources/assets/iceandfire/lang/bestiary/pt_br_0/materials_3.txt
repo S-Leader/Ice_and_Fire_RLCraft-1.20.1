@@ -1,0 +1,32 @@
+O sopro de dragão pode ser coletado
+segurando um frasco de vidro vazio
+em qualquer mão ao ser atingido pelo
+sopro ou disparo carregado. O sopro
+coletado pode ser arremessado ou
+lançado por um ejetor.
+
+
+
+O sopro de fogo causa Derretimento,
+queima e enfraquece a armadura. O de
+gelo congela a vítima. O de raio causa
+Voltagem e pode saltar entre inimigos
+próximos como um raio em cadeia.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<item><iceandfire:fire_dragon_breath 45 155 40 1.5>
+<item><iceandfire:ice_dragon_breath 100 155 40 1.5>
+<item><iceandfire:lightning_dragon_breath 155 155 40 1.5>

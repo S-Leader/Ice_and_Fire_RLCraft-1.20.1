@@ -1,0 +1,32 @@
+任意一只手拿着空玻璃瓶时，若被
+巨龙的吐息或蓄力吐息击中，便能将
+龙息收集进瓶中。收集的龙息既可以
+投掷，也可以由发射器发射。
+
+
+
+
+
+火龙息会施加熔化，使目标燃烧并
+削弱护甲。冰龙息会冻结目标。电龙息
+会施加电压，并以连锁闪电的形式在
+附近敌人之间跳跃。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<item><iceandfire:fire_dragon_breath 45 155 40 1.5>
+<item><iceandfire:ice_dragon_breath 100 155 40 1.5>
+<item><iceandfire:lightning_dragon_breath 155 155 40 1.5>

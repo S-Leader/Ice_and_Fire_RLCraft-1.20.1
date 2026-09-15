@@ -39,6 +39,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -80,6 +81,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -1583,12 +1585,15 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     @Override
     public void positionRider(@NotNull Entity passenger, @NotNull MoveFunction callback) {
+        // A dragon corpse deliberately reports itself as alive so it can be harvested.  Use
+        // the vanilla life state here and detach before the vanilla rider callback gets a
+        // chance to move a swallowed player back into the dragon's mouth.
+        if (!super.isAlive() || this.isModelDead()) {
+            passenger.stopRiding();
+            return;
+        }
         super.positionRider(passenger, callback);
         if (this.hasPassenger(passenger)) {
-            if (!this.isAlive() || this.isModelDead()) {
-                passenger.stopRiding();
-                return;
-            }
             if (this.getControllingPassenger() == null || !this.getControllingPassenger().getUUID().equals(passenger.getUUID())) {
                 updatePreyInMouth(passenger);
             } else {
@@ -1769,6 +1774,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
         isOverAir = isOverAirLogic();
         animationManager.updateDragonCommon();
         if (this.isModelDead()) {
+            if (!level().isClientSide && this.isVehicle()) {
+                this.forceDismountAllRiders();
+            }
             if (!level().isClientSide && level().isEmptyBlock(BlockPos.containing(this.getBlockX(), this.getBoundingBox().minY, this.getBlockZ())) && this.getY() > -1) {
                 this.move(MoverType.SELF, new Vec3(0, -0.2F, 0));
             }
@@ -2608,19 +2616,73 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     @Override
     public void die(@NotNull DamageSource cause) {
+        // Break the shake-prey mount before LivingEntity starts the death transition.  Doing
+        // this on both sides of super.die closes the one-tick window in which positionRider
+        // could otherwise attach the victim again.
+        this.forceDismountAllRiders();
         super.die(cause);
         this.forceDismountAllRiders();
         this.setHunger(this.getHunger() + FoodUtils.getFoodPoints(this));
     }
 
     private void forceDismountAllRiders() {
-        for (Entity passenger : List.copyOf(this.getPassengers())) {
+        this.currentAnimation = NO_ANIMATION;
+        this.animationTick = 0;
+        this.setBreathingFire(false);
+        this.setTarget(null);
+
+        List<Entity> formerPassengers = List.copyOf(this.getPassengers());
+        for (Entity passenger : formerPassengers) {
+            Vec3 dismountLocation = this.findSafeDeathDismount(passenger);
             passenger.stopRiding();
+            passenger.teleportTo(dismountLocation.x, dismountLocation.y, dismountLocation.z);
+            Vec3 movement = passenger.getDeltaMovement();
+            passenger.setDeltaMovement(movement.x, Math.max(0.0D, movement.y), movement.z);
+            passenger.fallDistance = 0.0F;
         }
         if (this.isPassenger()) {
             this.stopRiding();
         }
         this.ejectPassengers();
+
+        if (!formerPassengers.isEmpty() && this.level() instanceof ServerLevel serverLevel) {
+            // Explicitly clear the client-side passenger list as well.  This prevents stale
+            // mount state from visually and physically snapping the player back to the corpse.
+            serverLevel.getChunkSource().broadcastAndSend(this, new ClientboundSetPassengersPacket(this));
+        }
+    }
+
+    private Vec3 findSafeDeathDismount(final Entity passenger) {
+        double distance = Math.max(2.5D, this.getBbWidth() * 0.5D + passenger.getBbWidth() + 1.0D);
+        double[][] offsets = new double[][]{
+                {1.0D, 0.0D}, {-1.0D, 0.0D}, {0.0D, 1.0D}, {0.0D, -1.0D},
+                {0.707D, 0.707D}, {0.707D, -0.707D}, {-0.707D, 0.707D}, {-0.707D, -0.707D}
+        };
+        int baseY = Mth.floor(Math.max(this.getY(), passenger.getY()));
+
+        for (int verticalOffset = 0; verticalOffset <= 4; verticalOffset++) {
+            for (double[] offset : offsets) {
+                BlockPos feet = BlockPos.containing(
+                        this.getX() + offset[0] * distance,
+                        baseY + verticalOffset,
+                        this.getZ() + offset[1] * distance);
+                BlockPos support = feet.below();
+                Vec3 candidate = Vec3.atBottomCenterOf(feet);
+                AABB movedBounds = passenger.getBoundingBox().move(
+                        candidate.x - passenger.getX(),
+                        candidate.y - passenger.getY(),
+                        candidate.z - passenger.getZ());
+
+                if (this.level().getBlockState(support).isFaceSturdy(this.level(), support, Direction.UP)
+                        && this.level().noCollision(passenger, movedBounds)) {
+                    return candidate;
+                }
+            }
+        }
+
+        // A supported position is not always available in mid-air or a cramped cave.  The
+        // side fallback still puts the passenger outside the corpse instead of back in its mouth.
+        return new Vec3(this.getX() + distance, Math.max(this.getY() + 1.0D, passenger.getY()), this.getZ());
     }
 
     @Override
@@ -2811,6 +2873,9 @@ public abstract class EntityDragonBase extends TamableAnimal implements IPassabi
 
     @Override
     public @NotNull Vec3 getDismountLocationForPassenger(final LivingEntity passenger) {
+        if (!super.isAlive() || this.isModelDead()) {
+            return this.findSafeDeathDismount(passenger);
+        }
         if (passenger.isInWall()) {
             return this.position().add(0, 1, 0);
         }

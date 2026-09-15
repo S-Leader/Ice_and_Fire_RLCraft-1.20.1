@@ -133,24 +133,11 @@ public class DefaultBiomes {
 
     public static final SpawnBiomeData PIXIES = new SpawnBiomeData()
             .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_OVERWORLD.location().toString(), 0)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_RARE.location().toString(), 0)
+            .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_FOREST.location().toString(), 0)
             .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_MAGICAL.location().toString(), 0)
             .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_OVERWORLD.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_DENSE.location().toString(), 1)
             .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_FOREST.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, Tags.Biomes.IS_MOUNTAIN.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_HILL.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_WET_OVERWORLD.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_HOT.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_COLD.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_DRY.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.BIOME_TAG, true, IS_TAIGA.location().toString(), 1)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "terralith:siberian_taiga", 2)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "terralith:skylands", 3)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "terralith:mirage_isles", 4)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "byg:amaranth_fields", 5)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "byg:skyris_vale", 6)
-            .addBiomeEntry(BiomeEntryType.REGISTRY_NAME, false, "byg:rainbow_beach", 7);
+            .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_SPOOKY.location().toString(), 1);
 
     public static final SpawnBiomeData JUNGLE = new SpawnBiomeData()
             .addBiomeEntry(BiomeEntryType.BIOME_TAG, false, IS_OVERWORLD.location().toString(), 0)

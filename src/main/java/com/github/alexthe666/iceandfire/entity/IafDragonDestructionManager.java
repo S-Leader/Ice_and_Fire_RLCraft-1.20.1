@@ -1,8 +1,12 @@
 package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IafConfig;
+import com.github.alexthe666.iceandfire.api.ChainLightningUtils;
+import com.github.alexthe666.iceandfire.api.VoltageConfig;
 import com.github.alexthe666.iceandfire.api.event.DragonFireDamageWorldEvent;
 import com.github.alexthe666.iceandfire.block.*;
+import com.github.alexthe666.iceandfire.effect.MobEffectMelt;
+import com.github.alexthe666.iceandfire.effect.MobEffectVoltage;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
 import com.github.alexthe666.iceandfire.entity.tile.TileEntityDragonforgeInput;
 import com.github.alexthe666.iceandfire.entity.util.BlockLaunchExplosion;
@@ -28,6 +32,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import javax.annotation.Nullable;
 
 public class IafDragonDestructionManager {
+    private static final String BREATH_CHAIN_COOLDOWN = "IceAndFireDragonBreathChainCooldown";
+
     public static void destroyAreaBreath(final Level level, final BlockPos center, final EntityDragonBase dragon) {
         if (MinecraftForge.EVENT_BUS
                 .post(new DragonFireDamageWorldEvent(dragon, center.getX(), center.getY(), center.getZ()))) {
@@ -111,8 +117,11 @@ public class IafDragonDestructionManager {
                         if (dragon instanceof EntityShivaxiDragon shivaxi) {
                             damageShivaxiBreathTarget(target, shivaxi);
                         } else {
-                            target.hurt(damageSource, stageDamage);
-                            applyDragonEffect(target, dragon, statusDuration);
+                            if (target.hurt(damageSource, stageDamage)
+                                    && applyDragonEffect(target, dragon.dragonType, statusDuration, dragon, stageDamage)
+                                    && dragon.dragonType == DragonType.LIGHTNING) {
+                                tryCreateBreathChain(level, target, dragon, stageDamage);
+                            }
                         }
                         if (target instanceof Player player) {
                             DragonUtils.fillBottleWithDragonBreath(player, dragon.dragonType);
@@ -178,8 +187,11 @@ public class IafDragonDestructionManager {
                     float damage = (float) ((int) (((impact * impact + impact) / 2.0D)
                             * 7.0D * damageRadius + 1.0D)) / 3.0F;
                     if (damage > 0.0F && target.hurt(damageSource, damage)) {
-                        applyDragonEffect(target, type, type == DragonType.FIRE ? 5
-                                : type == DragonType.ICE ? 200 : 3, source.getX(), source.getZ());
+                        int duration = type == DragonType.FIRE ? 5 : type == DragonType.ICE ? 200 : 3;
+                        if (applyDragonEffect(target, type, duration, source, damage)
+                                && type == DragonType.LIGHTNING) {
+                            tryCreateBreathChain(level, target, source, damage);
+                        }
                     }
 
                     x /= length;
@@ -271,8 +283,11 @@ public class IafDragonDestructionManager {
                                 (double) center.getZ() + z))
                 .forEach(target -> {
                     if (!dragon.isAlliedTo(target) && !dragon.is(target) && dragon.hasLineOfSight(target)) {
-                        target.hurt(damageSource, stageDamage);
-                        applyDragonEffect(target, dragon, statusDuration);
+                        if (target.hurt(damageSource, stageDamage)
+                                && applyDragonEffect(target, dragon.dragonType, statusDuration, dragon, stageDamage)
+                                && dragon.dragonType == DragonType.LIGHTNING) {
+                            tryCreateBreathChain(level, target, dragon, stageDamage);
+                        }
                     }
                 });
 
@@ -379,37 +394,49 @@ public class IafDragonDestructionManager {
         attackBlock(level, dragon, position, level.getBlockState(position));
     }
 
-    private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
-                                          int statusDuration) {
-        applyDragonEffect(target, dragon, statusDuration, dragon.dragonType);
-    }
-
-    private static void applyDragonEffect(final LivingEntity target, final EntityDragonBase dragon,
-                                          int statusDuration, final DragonType type) {
-        applyDragonEffect(target, type, statusDuration, dragon.getX(), dragon.getZ());
-    }
-
-    private static void applyDragonEffect(final LivingEntity target, final DragonType type, int statusDuration,
-                                          double sourceX, double sourceZ) {
+    private static boolean applyDragonEffect(final LivingEntity target, final DragonType type, int statusDuration,
+                                             final Entity source, float baseDamage) {
+        LivingEntity livingSource = source instanceof LivingEntity living ? living : null;
         if (type == DragonType.FIRE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.FIRE))
-                return;
-            target.setSecondsOnFire(statusDuration);
+                return false;
+            MobEffectMelt.applyMelt(target, livingSource, baseDamage, statusDuration * 20);
         } else if (type == DragonType.ICE) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.ICE))
-                return;
+                return false;
             EntityDataProvider.getCapability(target)
                     .ifPresent(data -> data.frozenData.setFrozen(target, statusDuration));
         } else if (type == DragonType.LIGHTNING) {
             if (com.github.alexthe666.iceandfire.item.blooded.ItemBloodedArmor.hasFullArmorSet(target,
                     com.github.alexthe666.iceandfire.item.blooded.BloodedDragonType.DragonElement.LIGHTNING))
-                return;
-            double x = sourceX - target.getX();
-            double y = sourceZ - target.getZ();
+                return false;
+            MobEffectVoltage.applyVoltage(target, livingSource, MobEffectVoltage.DURATION_TICKS, baseDamage);
+            double x = source.getX() - target.getX();
+            double y = source.getZ() - target.getZ();
             target.knockback((double) statusDuration / 10, x, y);
+        } else {
+            return false;
         }
+        return true;
+    }
+
+    private static void tryCreateBreathChain(final Level level, final LivingEntity target,
+                                             final Entity source, float baseDamage) {
+        if (level.isClientSide) {
+            return;
+        }
+
+        long gameTime = level.getGameTime();
+        long nextAllowedTime = source.getPersistentData().getLong(BREATH_CHAIN_COOLDOWN);
+        if (nextAllowedTime > gameTime) {
+            return;
+        }
+
+        source.getPersistentData().putLong(BREATH_CHAIN_COOLDOWN,
+                gameTime + VoltageConfig.CHAIN_COOLDOWN_TICKS);
+        ChainLightningUtils.createChainLightning(level, target, source, baseDamage, false, false);
     }
 
     private static void causeExplosion(Level world, BlockPos center, EntityDragonBase destroyer, DamageSource source,

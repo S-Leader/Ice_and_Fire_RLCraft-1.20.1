@@ -107,7 +107,7 @@
         },
         {
           "type": "item",
-          "name": "minecraft:copper_ingot",
+          "name": "iceandfire:diamond_shard",
           "functions": [
             {
               "function": "set_count",
@@ -121,7 +121,7 @@
         },
         {
           "type": "item",
-          "name": "iceandfire:copper_nugget",
+          "name": "minecraft:diamond",
           "functions": [
             {
               "function": "set_count",

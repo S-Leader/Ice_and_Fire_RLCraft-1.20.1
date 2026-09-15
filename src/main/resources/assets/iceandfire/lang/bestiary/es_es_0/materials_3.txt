@@ -1,0 +1,33 @@
+El aliento de dragón se captura
+sosteniendo una botella de cristal
+vacía en cualquier mano cuando te
+alcanza el aliento o una descarga
+cargada. El aliento capturado puede
+lanzarse o dispararse con dispensador.
+
+
+
+El aliento de fuego causa Fusión,
+quema y debilita la armadura. El de
+hielo congela a su víctima. El de
+rayo causa Voltaje y puede saltar
+entre enemigos cercanos como un
+relámpago en cadena.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<item><iceandfire:fire_dragon_breath 45 155 40 1.5>
+<item><iceandfire:ice_dragon_breath 100 155 40 1.5>
+<item><iceandfire:lightning_dragon_breath 155 155 40 1.5>

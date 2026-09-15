@@ -1,6 +1,7 @@
 package com.github.alexthe666.iceandfire.world.gen;
 
 import com.github.alexthe666.iceandfire.IafConfig;
+import com.github.alexthe666.iceandfire.block.BlockCoinPile;
 import com.github.alexthe666.iceandfire.block.BlockGoldPile;
 import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
 import com.github.alexthe666.iceandfire.entity.util.HomePosition;
@@ -244,7 +245,7 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
                 if (position.distSqr(origin) <= circularArea) {
                     position = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, position);
 
-                    if (treasureBlock instanceof BlockGoldPile) {
+                    if (treasureBlock instanceof BlockGoldPile || treasureBlock instanceof BlockCoinPile) {
                         BlockState state = level.getBlockState(position);
                         boolean placed = false;
 
@@ -256,7 +257,7 @@ public abstract class WorldGenDragonRoosts extends Feature<NoneFeatureConfigurat
                             placed = true;
                         }
 
-                        if (placed && level.getBlockState(position.below()).getBlock() instanceof BlockGoldPile) {
+                        if (placed && level.getBlockState(position.below()).is(treasureBlock)) {
                             level.setBlock(position.below(), treasureBlock.defaultBlockState().setValue(BlockGoldPile.LAYERS, 8), Block.UPDATE_CLIENTS);
                         }
                     }

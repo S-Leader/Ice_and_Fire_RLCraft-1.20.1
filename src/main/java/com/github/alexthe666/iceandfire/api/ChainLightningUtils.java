@@ -37,6 +37,15 @@ public final class ChainLightningUtils {
      */
     public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
             float baseWeaponDamage, boolean applyPlayerCooldown) {
+        createChainLightning(level, target, attacker, baseWeaponDamage, applyPlayerCooldown, true);
+    }
+
+    /**
+     * Allows callers which already applied Voltage to the primary target to avoid adding a
+     * second stack while retaining Voltage on entities reached by later hops.
+     */
+    public static void createChainLightning(Level level, LivingEntity target, Entity attacker,
+            float baseWeaponDamage, boolean applyPlayerCooldown, boolean applyVoltageToInitialTarget) {
         if (level.isClientSide)
             return;
         if (!target.isAttackable())
@@ -53,13 +62,16 @@ public final class ChainLightningUtils {
 
         float[] damage = VoltageConfig.CHAIN_DAMAGE_PER_HOP;
         int range = VoltageConfig.CHAIN_RANGE;
+        LivingEntity livingAttacker = attacker instanceof LivingEntity living ? living : null;
 
         int hop = 0;
         attackWithLightning(level, attacker, target, damage[hop]);
-        com.github.alexthe666.iceandfire.effect.MobEffectVoltage.applyVoltage(
-                target, (LivingEntity) attacker,
-                com.github.alexthe666.iceandfire.effect.MobEffectVoltage.DURATION_TICKS,
-                baseWeaponDamage);
+        if (applyVoltageToInitialTarget) {
+            com.github.alexthe666.iceandfire.effect.MobEffectVoltage.applyVoltage(
+                    target, livingAttacker,
+                    com.github.alexthe666.iceandfire.effect.MobEffectVoltage.DURATION_TICKS,
+                    baseWeaponDamage);
+        }
         target.playSound(SoundEvents.LIGHTNING_BOLT_IMPACT, 0.5F, 1.0F);
 
         List<Vec3> chainPositions = new ArrayList<>();
@@ -88,7 +100,7 @@ public final class ChainLightningUtils {
 
             attackWithLightning(level, attacker, next, damage[hop]);
             com.github.alexthe666.iceandfire.effect.MobEffectVoltage.applyVoltage(
-                    next, (LivingEntity) attacker,
+                    next, livingAttacker,
                     com.github.alexthe666.iceandfire.effect.MobEffectVoltage.DURATION_TICKS,
                     baseWeaponDamage);
 

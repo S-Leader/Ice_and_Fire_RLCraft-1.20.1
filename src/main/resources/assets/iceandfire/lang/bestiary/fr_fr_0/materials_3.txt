@@ -1,0 +1,33 @@
+Le souffle draconique se capture
+avec une fiole vide dans une main
+lorsque le souffle ou un tir chargé
+d'un dragon vous frappe. Le souffle
+capturé peut être lancé ou tiré par
+un distributeur.
+
+
+
+Le souffle de feu inflige Fusion,
+brûle et affaiblit l'armure. Celui
+de glace gèle sa victime. Celui de
+foudre inflige Voltage et peut bondir
+entre les ennemis proches sous forme
+d'éclair en chaîne.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<item><iceandfire:fire_dragon_breath 45 155 40 1.5>
+<item><iceandfire:ice_dragon_breath 100 155 40 1.5>
+<item><iceandfire:lightning_dragon_breath 155 155 40 1.5>

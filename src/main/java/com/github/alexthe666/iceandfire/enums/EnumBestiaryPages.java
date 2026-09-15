@@ -17,7 +17,7 @@ public enum EnumBestiaryPages {
     LIGHTNINGDRAGON(5),
     LIGHTNINGDRAGONEGG(1),
     TAMEDDRAGONS(3),
-    MATERIALS(2),
+    MATERIALS(3),
     ALCHEMY(1),
     HIPPOGRYPH(1),
     GORGON(1),

@@ -1,0 +1,33 @@
+Dragon breath can be captured by
+holding an empty glass bottle in
+either hand when a dragon's breath
+or charged blast strikes you. The
+captured breath can be thrown or
+fired from a dispenser.
+
+
+
+Fire dragon breath inflicts Melt,
+weakening armor while burning its
+victim. Ice dragon breath freezes
+its victim. Lightning dragon breath
+inflicts Voltage and can leap among
+nearby enemies as chain lightning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<item><iceandfire:fire_dragon_breath 45 155 40 1.5>
+<item><iceandfire:ice_dragon_breath 100 155 40 1.5>
+<item><iceandfire:lightning_dragon_breath 155 155 40 1.5>

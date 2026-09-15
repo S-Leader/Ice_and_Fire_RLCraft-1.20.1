@@ -5,20 +5,24 @@ import com.github.alexthe666.iceandfire.block.BlockPixieHouse;
 import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.EntityPixie;
 import com.github.alexthe666.iceandfire.entity.IafEntityRegistry;
+import com.github.alexthe666.iceandfire.util.WorldUtil;
 import com.github.alexthe666.iceandfire.world.IafWorldData;
-import com.github.alexthe666.iceandfire.world.IafWorldRegistry;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraftforge.common.Tags;
 
 public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> implements TypedFeature {
     public WorldGenPixieVillage(Codec<NoneFeatureConfiguration> configFactoryIn) {
@@ -30,8 +34,16 @@ public class WorldGenPixieVillage extends Feature<NoneFeatureConfiguration> impl
         WorldGenLevel worldIn = context.level();
         RandomSource rand = context.random();
         BlockPos position = WorldGenChunkSafety.centeredSurfaceOrigin(worldIn, context.origin(), Heightmap.Types.WORLD_SURFACE_WG);
+        Holder<Biome> biome = worldIn.getBiome(position);
 
-        if (rand.nextInt(IafConfig.spawnPixiesChance) != 0 || !IafWorldRegistry.isFarEnoughFromSpawn(worldIn, position)) {
+        // The 1.12.2 generator required FOREST and either MAGICAL or SPOOKY.  The
+        // modern biome config had split those predicates into separate alternatives,
+        // which admitted ordinary dense forests and made villages appear everywhere.
+        boolean legacyBiomeMatch = biome.is(BiomeTags.IS_OVERWORLD)
+                && biome.is(BiomeTags.IS_FOREST)
+                && (biome.is(Tags.Biomes.IS_MAGICAL) || biome.is(Tags.Biomes.IS_SPOOKY));
+        if (!legacyBiomeMatch
+                || !WorldUtil.canGenerate(IafConfig.spawnPixiesChance, worldIn, rand, position, getId(), false)) {
             return false;
         }
 
