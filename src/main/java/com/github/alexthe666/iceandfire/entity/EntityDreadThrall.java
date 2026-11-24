@@ -123,8 +123,9 @@ public class EntityDreadThrall extends EntityDreadMob implements IAnimatedEntity
         if (random.nextFloat() < 0.75F) {
             double chance = random.nextFloat();
             if (chance < 0.0025F) {
-                //Removed dragonsteel ice sword so change to another
-                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(IafItemRegistry.DRAGONBONE_SWORD_ICE.get()));
+                // the original rare ice dragonsteel sword only when dragonsteel is enabled, otherwise an ice dragonbone sword
+                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(com.github.alexthe666.iceandfire.IafConfig.dragonsteelEnabled
+                        ? IafItemRegistry.DRAGONSTEEL_ICE_SWORD.get() : IafItemRegistry.DRAGONBONE_SWORD_ICE.get()));
             }
             if (chance < 0.01F) {
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));

@@ -2,6 +2,7 @@ package com.github.alexthe666.iceandfire.item;
 
 import com.github.alexthe666.citadel.server.item.CustomArmorMaterial;
 import com.github.alexthe666.citadel.server.item.CustomToolMaterial;
+import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.datagen.tags.BannerPatternTagGenerator;
 import com.github.alexthe666.iceandfire.datagen.tags.IafItemTags;
@@ -26,6 +27,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.*;
+
+import static com.github.alexthe666.iceandfire.item.DragonSteelTier.*;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -60,6 +63,29 @@ public class IafItemRegistry {
             new int[]{3, 7, 5, 2}, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 1F);
     public static CustomArmorMaterial TROLL_FROST_ARMOR_MATERIAL = new IafArmorMaterial("frost troll", 20,
             new int[]{3, 7, 5, 2}, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 1F);
+    // dragonsteel (off unless Enable Dragonsteel is on; see DragonsteelContent)
+    public static CustomArmorMaterial DRAGONSTEEL_FIRE_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_fire",
+            (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
+            new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
+                    IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
+            30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
+    public static CustomArmorMaterial DRAGONSTEEL_ICE_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_ice",
+            (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
+            new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
+                    IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
+            30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
+    public static CustomArmorMaterial DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_lightning", (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
+            new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
+                    IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
+            30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
+    public static CustomArmorMaterial DRAGONSTEEL_GOLD_ARMOR_MATERIAL = new DragonsteelArmorMaterial(
+            "dragonsteel_gold", (int) (0.02D * IafConfig.dragonsteelBaseDurabilityEquipment),
+            new int[] { IafConfig.dragonsteelBaseArmor - 6, IafConfig.dragonsteelBaseArmor - 3,
+                    IafConfig.dragonsteelBaseArmor, IafConfig.dragonsteelBaseArmor - 5 },
+            30, SoundEvents.ARMOR_EQUIP_DIAMOND, IafConfig.dragonsteelBaseArmorToughness);
     public static CustomToolMaterial SILVER_TOOL_MATERIAL = new CustomToolMaterial("silver", 2, 460, 1.0F, 11.0F,
             18);
     public static CustomToolMaterial COPPER_TOOL_MATERIAL = new CustomToolMaterial("copper", 2, 300, 0.0F, 0.7F,
@@ -326,6 +352,42 @@ public class IafItemRegistry {
     public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_SILVER_3 = registerItem(
             "dragonarmor_silver_" + ItemDragonArmor.getNameForSlot(3),
             () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.SILVER, 3));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_FIRE_0 = registerDragonsteel(
+            "dragonarmor_dragonsteel_fire_" + ItemDragonArmor.getNameForSlot(0),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.FIRE, 0));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_FIRE_1 = registerDragonsteel(
+            "dragonarmor_dragonsteel_fire_" + ItemDragonArmor.getNameForSlot(1),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.FIRE, 1));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_FIRE_2 = registerDragonsteel(
+            "dragonarmor_dragonsteel_fire_" + ItemDragonArmor.getNameForSlot(2),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.FIRE, 2));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_FIRE_3 = registerDragonsteel(
+            "dragonarmor_dragonsteel_fire_" + ItemDragonArmor.getNameForSlot(3),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.FIRE, 3));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_ICE_0 = registerDragonsteel(
+            "dragonarmor_dragonsteel_ice_" + ItemDragonArmor.getNameForSlot(0),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.ICE, 0));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_ICE_1 = registerDragonsteel(
+            "dragonarmor_dragonsteel_ice_" + ItemDragonArmor.getNameForSlot(1),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.ICE, 1));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_ICE_2 = registerDragonsteel(
+            "dragonarmor_dragonsteel_ice_" + ItemDragonArmor.getNameForSlot(2),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.ICE, 2));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_ICE_3 = registerDragonsteel(
+            "dragonarmor_dragonsteel_ice_" + ItemDragonArmor.getNameForSlot(3),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.ICE, 3));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_LIGHTNING_0 = registerDragonsteel(
+            "dragonarmor_dragonsteel_lightning_" + ItemDragonArmor.getNameForSlot(0),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.LIGHTNING, 0));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_LIGHTNING_1 = registerDragonsteel(
+            "dragonarmor_dragonsteel_lightning_" + ItemDragonArmor.getNameForSlot(1),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.LIGHTNING, 1));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_LIGHTNING_2 = registerDragonsteel(
+            "dragonarmor_dragonsteel_lightning_" + ItemDragonArmor.getNameForSlot(2),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.LIGHTNING, 2));
+    public static final RegistryObject<ItemDragonArmor> DRAGONARMOR_DRAGONSTEEL_LIGHTNING_3 = registerDragonsteel(
+            "dragonarmor_dragonsteel_lightning_" + ItemDragonArmor.getNameForSlot(3),
+            () -> new ItemDragonArmor(ItemDragonArmor.DragonArmorType.LIGHTNING, 3));
     public static final RegistryObject<Item> DRAGON_MEAL = registerItem("dragon_meal", ItemGeneric::new);
     public static final RegistryObject<Item> SICKLY_DRAGON_MEAL = registerItem("sickly_dragon_meal",
             () -> new ItemGeneric(1));
@@ -546,6 +608,102 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> CHAIN = registerItem("chain", () -> new ItemChain(false));
     public static final RegistryObject<Item> CHAIN_STICKY = registerItem("chain_sticky", () -> new ItemChain(true));
 
+    // dragonsteel ingots, tools and armor (off unless Enable Dragonsteel is on; see DragonsteelContent)
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_INGOT = registerDragonsteel("dragonsteel_fire_ingot",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_SWORD = registerDragonsteel("dragonsteel_fire_sword",
+            () -> new ItemModSword(DRAGONSTEEL_TIER_FIRE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_PICKAXE = registerDragonsteel("dragonsteel_fire_pickaxe",
+            () -> new ItemModPickaxe(DRAGONSTEEL_TIER_FIRE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_AXE = registerDragonsteel("dragonsteel_fire_axe",
+            () -> new ItemModAxe(DRAGONSTEEL_TIER_FIRE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_SHOVEL = registerDragonsteel("dragonsteel_fire_shovel",
+            () -> new ItemModShovel(DRAGONSTEEL_TIER_FIRE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_HOE = registerDragonsteel("dragonsteel_fire_hoe",
+            () -> new ItemModHoe(DRAGONSTEEL_TIER_FIRE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_HELMET = registerDragonsteel("dragonsteel_fire_helmet",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_CHESTPLATE = registerDragonsteel(
+            "dragonsteel_fire_chestplate",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_LEGGINGS = registerDragonsteel("dragonsteel_fire_leggings",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_FIRE_BOOTS = registerDragonsteel("dragonsteel_fire_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_FIRE_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_INGOT = registerDragonsteel("dragonsteel_ice_ingot",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_SWORD = registerDragonsteel("dragonsteel_ice_sword",
+            () -> new ItemModSword(DRAGONSTEEL_TIER_ICE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_PICKAXE = registerDragonsteel("dragonsteel_ice_pickaxe",
+            () -> new ItemModPickaxe(DRAGONSTEEL_TIER_ICE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_AXE = registerDragonsteel("dragonsteel_ice_axe",
+            () -> new ItemModAxe(DRAGONSTEEL_TIER_ICE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_SHOVEL = registerDragonsteel("dragonsteel_ice_shovel",
+            () -> new ItemModShovel(DRAGONSTEEL_TIER_ICE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_HOE = registerDragonsteel("dragonsteel_ice_hoe",
+            () -> new ItemModHoe(DRAGONSTEEL_TIER_ICE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_HELMET = registerDragonsteel("dragonsteel_ice_helmet",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_ICE_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_CHESTPLATE = registerDragonsteel("dragonsteel_ice_chestplate",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_ICE_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_LEGGINGS = registerDragonsteel("dragonsteel_ice_leggings",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_ICE_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_ICE_BOOTS = registerDragonsteel("dragonsteel_ice_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_ICE_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
+
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_INGOT = registerDragonsteel(
+            "dragonsteel_lightning_ingot",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SWORD = registerDragonsteel(
+            "dragonsteel_lightning_sword",
+            () -> new ItemModSword(DRAGONSTEEL_TIER_LIGHTNING));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_PICKAXE = registerDragonsteel(
+            "dragonsteel_lightning_pickaxe", () -> new ItemModPickaxe(DRAGONSTEEL_TIER_LIGHTNING));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_AXE = registerDragonsteel("dragonsteel_lightning_axe",
+            () -> new ItemModAxe(DRAGONSTEEL_TIER_LIGHTNING));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_SHOVEL = registerDragonsteel(
+            "dragonsteel_lightning_shovel",
+            () -> new ItemModShovel(DRAGONSTEEL_TIER_LIGHTNING));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_HOE = registerDragonsteel("dragonsteel_lightning_hoe",
+            () -> new ItemModHoe(DRAGONSTEEL_TIER_LIGHTNING));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_HELMET = registerDragonsteel(
+            "dragonsteel_lightning_helmet",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_CHESTPLATE = registerDragonsteel(
+            "dragonsteel_lightning_chestplate",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 1,
+                    ArmorItem.Type.CHESTPLATE));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_LEGGINGS = registerDragonsteel(
+            "dragonsteel_lightning_leggings",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 2,
+                    ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_LIGHTNING_BOOTS = registerDragonsteel(
+            "dragonsteel_lightning_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
+
+    // 金龙铭钢
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_INGOT = registerDragonsteel("dragonsteel_gold_ingot",
+            ItemGeneric::new);
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_SWORD = registerDragonsteel("dragonsteel_gold_sword",
+            () -> new ItemModSword(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_PICKAXE = registerDragonsteel("dragonsteel_gold_pickaxe",
+            () -> new ItemModPickaxe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_AXE = registerDragonsteel("dragonsteel_gold_axe",
+            () -> new ItemModAxe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_SHOVEL = registerDragonsteel("dragonsteel_gold_shovel",
+            () -> new ItemModShovel(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_HOE = registerDragonsteel("dragonsteel_gold_hoe",
+            () -> new ItemModHoe(DRAGONSTEEL_TIER_GOLD));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_HELMET = registerDragonsteel("dragonsteel_gold_helmet",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 0, ArmorItem.Type.HELMET));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_CHESTPLATE = registerDragonsteel(
+            "dragonsteel_gold_chestplate",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 1, ArmorItem.Type.CHESTPLATE));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_LEGGINGS = registerDragonsteel("dragonsteel_gold_leggings",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 2, ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> DRAGONSTEEL_GOLD_BOOTS = registerDragonsteel("dragonsteel_gold_boots",
+            () -> new ItemDragonsteelArmor(DRAGONSTEEL_GOLD_ARMOR_MATERIAL, 3, ArmorItem.Type.BOOTS));
+
     public static final RegistryObject<Item> WEEZER_BLUE_ALBUM = registerItem("weezer_blue_album",
             () -> new ItemGeneric(1, true));
     public static final RegistryObject<Item> DRAGON_DEBUG_STICK = registerItem("dragon_debug_stick",
@@ -701,6 +859,16 @@ public class IafItemRegistry {
         return registerItem(name, item, true);
     }
 
+    /**
+     * Registers a dragonsteel item. It's always registered (so worlds and other mods' recipes keep working), but it
+     * only goes in the creative tab, and its recipes only load, when Enable Dragonsteel is on.
+     */
+    public static <I extends Item> RegistryObject<I> registerDragonsteel(String name, Supplier<I> item) {
+        RegistryObject<I> itemRegistryObject = ITEMS.register(name, item);
+        DragonsteelContent.ITEMS.add(itemRegistryObject);
+        return itemRegistryObject;
+    }
+
     public static <I extends Item> RegistryObject<I> registerItem(String name, Supplier<I> item, boolean putInTab) {
         RegistryObject<I> itemRegistryObject = ITEMS.register(name, item);
         if (putInTab)
@@ -727,6 +895,10 @@ public class IafItemRegistry {
         for (EnumDragonArmor armor : EnumDragonArmor.values()) {
             armor.armorMaterial.setRepairMaterial(Ingredient.of(EnumDragonArmor.getScaleItem(armor)));
         }
+        IafItemRegistry.DRAGONSTEEL_FIRE_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(IafItemRegistry.DRAGONSTEEL_FIRE_INGOT.get()));
+        IafItemRegistry.DRAGONSTEEL_ICE_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(IafItemRegistry.DRAGONSTEEL_ICE_INGOT.get()));
+        IafItemRegistry.DRAGONSTEEL_LIGHTNING_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(IafItemRegistry.DRAGONSTEEL_LIGHTNING_INGOT.get()));
+        IafItemRegistry.DRAGONSTEEL_GOLD_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(IafItemRegistry.DRAGONSTEEL_GOLD_INGOT.get()));
         IafItemRegistry.SHEEP_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(Blocks.WHITE_WOOL));
         IafItemRegistry.EARPLUGS_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(Blocks.OAK_BUTTON));
         IafItemRegistry.DEATHWORM_0_ARMOR_MATERIAL.setRepairMaterial(Ingredient.of(IafItemRegistry.DEATH_WORM_CHITIN_YELLOW.get()));

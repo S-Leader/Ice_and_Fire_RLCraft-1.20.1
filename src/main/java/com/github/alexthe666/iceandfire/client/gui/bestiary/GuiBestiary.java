@@ -78,7 +78,12 @@ public class GuiBestiary extends Screen {
     }
 
     private static Item getItemByRegistryName(String registryName) {
-        return forgeBlockForMode(ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName)));
+        Item item = forgeBlockForMode(ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName)));
+        // dragonsteel pictures only when Enable Dragonsteel is on (an empty stack draws nothing)
+        if (item != null && !com.github.alexthe666.iceandfire.item.DragonsteelContent.shown(item)) {
+            return net.minecraft.world.item.Items.AIR;
+        }
+        return item;
     }
 
     /**

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "iceandfire:dragonsteel_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:bones/wither"
+    },
+    "M": {
+      "item": "iceandfire:dragonsteel_lightning_ingot"
+    }
+  },
+  "pattern": [
+    "M",
+    "M",
+    "H"
+  ],
+  "result": {
+    "item": "iceandfire:dragonsteel_lightning_sword"
+  },
+  "show_notification": true
+}

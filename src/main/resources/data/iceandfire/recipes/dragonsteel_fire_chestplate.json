@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "iceandfire:dragonsteel_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "iceandfire:dragonsteel_fire_ingot"
+    }
+  },
+  "pattern": [
+    "# #",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "iceandfire:dragonsteel_fire_chestplate"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "iceandfire:dragonsteel_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "iceandfire:dragonsteel_ice_ingot"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "iceandfire:dragonsteel_ice_block"
+  },
+  "show_notification": true
+}

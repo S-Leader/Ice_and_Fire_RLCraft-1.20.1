@@ -90,10 +90,16 @@ public class IceAndFire {
                 // send Dragonforge Mode to a joining player, or to everyone on /reload, before recipes and tags
                 MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.event.OnDatapackSyncEvent event) -> {
                         MessageSyncDragonforgeMode message = new MessageSyncDragonforgeMode("individual".equalsIgnoreCase(IafConfig.dragonforgeMode));
+                        // and Enable Dragonsteel, for the creative tab and JEI
+                        com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel dragonsteel = new com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel(IafConfig.dragonsteelEnabled);
                         if (event.getPlayer() != null) {
                                 sendMSGToPlayer(message, event.getPlayer());
+                                sendMSGToPlayer(dragonsteel, event.getPlayer());
                         } else {
-                                event.getPlayerList().getPlayers().forEach(player -> sendMSGToPlayer(message, player));
+                                event.getPlayerList().getPlayers().forEach(player -> {
+                                        sendMSGToPlayer(message, player);
+                                        sendMSGToPlayer(dragonsteel, player);
+                                });
                         }
                 });
 
@@ -123,6 +129,8 @@ public class IceAndFire {
                 modBus.addListener((net.minecraftforge.registries.RegisterEvent event) -> {
                         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
                                 net.minecraftforge.common.crafting.CraftingHelper.register(com.github.alexthe666.iceandfire.recipe.DragonforgeModeCondition.Serializer.INSTANCE);
+                                // recipe condition that loads dragonsteel recipes only when Enable Dragonsteel is on
+                                net.minecraftforge.common.crafting.CraftingHelper.register(com.github.alexthe666.iceandfire.recipe.DragonsteelEnabledCondition.Serializer.INSTANCE);
                         }
                 });
                 IafProcessors.PROCESSORS.register(modBus);
@@ -244,6 +252,10 @@ public class IceAndFire {
                 NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncDragonforgeMode.class,
                                 MessageSyncDragonforgeMode::write, MessageSyncDragonforgeMode::read,
                                 MessageSyncDragonforgeMode::handle, java.util.Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+                // Enable Dragonsteel sync, server to client only, after the Dragonforge Mode one
+                NETWORK_WRAPPER.registerMessage(packetsRegistered++, com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel.class,
+                                com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel::write, com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel::read,
+                                com.github.alexthe666.iceandfire.message.MessageSyncDragonsteel::handle, java.util.Optional.of(NetworkDirection.PLAY_TO_CLIENT));
                 ModCompatList.isEVon = ModList.get().isLoaded("enhancedvisuals");
                 if (ModList.get().isLoaded("firstaid")) {
                         FirstAidCompat.init();

@@ -151,6 +151,17 @@ public class IceAndFireJEIPlugin implements IModPlugin {
         net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(JEI_HIDDEN).forEach(item -> {
             if (!hidden.contains(item)) hidden.add(item);
         });
+        // dragonsteel when Enable Dragonsteel is off, and gold dragonsteel always
+        net.minecraftforge.registries.ForgeRegistries.ITEMS.getValues().stream()
+                .filter(item -> com.github.alexthe666.iceandfire.item.DragonsteelContent.isDragonsteel(item)
+                        && !com.github.alexthe666.iceandfire.item.DragonsteelContent.shown(item) && !hidden.contains(item))
+                .forEach(hidden::add);
+        // other mods' dragonsteel items join the iceandfire:dragonsteel tag to be hidden with it
+        if (!com.github.alexthe666.iceandfire.item.DragonsteelContent.enabled()) {
+            net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(com.github.alexthe666.iceandfire.item.DragonsteelContent.TAG).forEach(item -> {
+                if (!hidden.contains(item)) hidden.add(item);
+            });
+        }
         // the gold forge blocks are part of the secret, and the forge blocks of the other Dragonforge Mode aren't used
         for (com.github.alexthe666.iceandfire.block.DragonForgeType type : com.github.alexthe666.iceandfire.block.DragonForgeType.values()) {
             if (type == com.github.alexthe666.iceandfire.block.DragonForgeType.GOLD

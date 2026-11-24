@@ -21,8 +21,8 @@ lightning dragon drops.
 
 
 Such as: lightning dragon scale
-armos, blood bottles, dragonsteel,
-scale blocks, and more.
+armor, blood bottles, scale
+blocks, and more.
 
 <item><iceandfire:dragonscale_amethyst 100 120 40 1>
 <item><iceandfire:armor_amethyst_helmet 100 140 30 1>

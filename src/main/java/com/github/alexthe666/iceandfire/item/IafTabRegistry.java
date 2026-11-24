@@ -32,7 +32,8 @@ public class IafTabRegistry {
             // Add default items to tab
             .displayItems((params, output) -> {
                 // forge blocks of the Dragonforge Mode that isn't in use are left out
-                TAB_BLOCKS_LIST.stream().map(Supplier::get).filter(IafTabRegistry::forgeBlockInUse).forEach(output::accept);
+                TAB_BLOCKS_LIST.stream().map(Supplier::get).filter(IafTabRegistry::forgeBlockInUse)
+                        .filter(DragonsteelContent::shown).forEach(output::accept);
             })
             .build()
     );
@@ -56,6 +57,8 @@ public class IafTabRegistry {
             // Add default items to tab
             .displayItems((params, output) -> {
                 TAB_ITEMS_LIST.forEach(block -> output.accept(block.get()));
+                // dragonsteel only with Enable Dragonsteel on (gold dragonsteel never)
+                DragonsteelContent.ITEMS.stream().map(Supplier::get).filter(DragonsteelContent::shown).forEach(output::accept);
             })
             .build()
     );
