@@ -79,6 +79,8 @@ public class ClientProxy extends CommonProxy {
             particle = new ParticleDragonFlame(world, x, y, z, motX, motY, motZ, entityDragonBase, 0);
         } else if (name == EnumParticles.DragonIce) {
             particle = new ParticleDragonFrost(world, x, y, z, motX, motY, motZ, entityDragonBase, 0);
+        } else if (name == EnumParticles.DragonGold) {
+            particle = new ParticleDragonGoldFlame(world, x, y, z, motX, motY, motZ, entityDragonBase, 0);
         }
         if (particle != null) {
             Minecraft.getInstance().particleEngine.add(particle);
@@ -99,6 +101,9 @@ public class ClientProxy extends CommonProxy {
                 break;
             case DragonIce:
                 particle = new ParticleDragonFrost(world, x, y, z, motX, motY, motZ, size);
+                break;
+            case DragonGold:
+                particle = new ParticleDragonGoldFlame(world, x, y, z, motX, motY, motZ, size);
                 break;
             case Dread_Torch:
                 particle = new ParticleDreadTorch(world, x, y, z, motX, motY, motZ, size);

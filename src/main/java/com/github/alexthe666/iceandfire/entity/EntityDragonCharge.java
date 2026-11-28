@@ -157,6 +157,10 @@ public abstract class EntityDragonCharge extends Projectile implements IDragonPr
                 }
             }
             if (hitresult != HitResult.Type.MISS) {
+                // impact effects that don't touch blocks run whatever the griefing settings (only the gold charge uses it)
+                if (shootingEntity instanceof EntityDragonBase impactDragon) {
+                    onImpact(level(), center, impactDragon);
+                }
                 if (shootingEntity instanceof EntityDragonBase && DragonUtils.canGrief((EntityDragonBase) shootingEntity)) {
                     destroyArea(level(), center, ((EntityDragonBase) shootingEntity));
                 }
@@ -182,6 +186,13 @@ public abstract class EntityDragonCharge extends Projectile implements IDragonPr
      * matching the old projectile implementation.
      */
     protected void onDirectHit(LivingEntity target, EntityDragonBase dragon) {
+    }
+
+    /**
+     * Runs on every impact (block or entity), before destroyArea and NOT gated by the dragon griefing settings,
+     * so it must never change blocks. Default: nothing. The gold charge uses it for its magic blast.
+     */
+    protected void onImpact(Level world, BlockPos center, EntityDragonBase dragon) {
     }
 
     @Override

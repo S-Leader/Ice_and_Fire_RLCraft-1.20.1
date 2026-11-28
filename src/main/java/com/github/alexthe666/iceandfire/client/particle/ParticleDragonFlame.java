@@ -95,11 +95,15 @@ public class ParticleDragonFlame extends TextureSheetParticle {
             vector3f.mul(f4);
             vector3f.add(f, f1, f2);
         }
-        float f7 = 0;
-        float f8 = 1;
-        float f5 = 0;
-        float f6 = 1;
-        RenderSystem.setShaderTexture(0, DRAGONFLAME);
+        // UV box of the frame to draw: the whole image for a 1x1 "sheet" (fire), one cell of the grid otherwise
+        int sheetSize = getSheetSize();
+        int frame = getFrame(partialTicks);
+        float cell = 1.0F / sheetSize;
+        float f7 = (frame % sheetSize) * cell;
+        float f8 = f7 + cell;
+        float f5 = (frame / sheetSize) * cell;
+        float f6 = f5 + cell;
+        RenderSystem.setShaderTexture(0, getFlameTexture());
         int j = this.getLightColor(partialTicks);
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder vertexbuffer = tessellator.getBuilder();
@@ -109,6 +113,21 @@ public class ParticleDragonFlame extends TextureSheetParticle {
         vertexbuffer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         vertexbuffer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f7, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         Tesselator.getInstance().end();
+    }
+
+    /** Texture this flame draws; subclasses (e.g. the gold dragon's) swap in their own. */
+    protected ResourceLocation getFlameTexture() {
+        return DRAGONFLAME;
+    }
+
+    /** Frames per row/column of the texture's square grid; 1 means the texture is a single image. */
+    protected int getSheetSize() {
+        return 1;
+    }
+
+    /** Which grid cell to draw this frame, counted left to right, top to bottom. */
+    protected int getFrame(float partialTicks) {
+        return 0;
     }
 
     @Override

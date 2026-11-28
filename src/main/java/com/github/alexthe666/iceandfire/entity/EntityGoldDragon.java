@@ -6,6 +6,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.api.event.DragonFireEvent;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
+import com.github.alexthe666.iceandfire.enums.EnumParticles;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.message.MessageDragonSyncFire;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
@@ -317,17 +318,17 @@ public class EntityGoldDragon extends EntityDragonBase {
         // A double, so far-off targets can't wrap the counter around: as an int, increment reached Integer.MAX_VALUE
         // and i += increment went negative, so the loop never ended (server hang). At most ~100 steps either way.
         double increment = Math.max(1, Math.ceil(conqueredDistance / 100));
+        // same density as the fire dragon's stream: fewer flames per step for big dragons, whose flames are bigger
+        int particleCount = this.getDragonStage() <= 3 ? 6 : 3;
         for (double i = 0; i < conqueredDistance; i += increment) {
             double progressX = headPos.x + d2 * (i / (float) distance);
             double progressY = headPos.y + d3 * (i / (float) distance);
             double progressZ = headPos.z + d4 * (i / (float) distance);
             if (canPositionBeSeen(progressX, progressY, progressZ)) {
-                // 金龙使用附魔粒子
-                if (level().isClientSide && random.nextInt(3) == 0) {
-                    double vx = (random.nextDouble() - 0.5) * 0.5;
-                    double vy = (random.nextDouble() - 0.5) * 0.5;
-                    double vz = (random.nextDouble() - 0.5) * 0.5;
-                    level().addParticle(ParticleTypes.ENCHANT, progressX, progressY, progressZ, vx, vy, vz);
+                // gold flame stream: spawned at the head and flown to the breath target (burnParticleX/Y/Z),
+                // exactly like the fire dragon's stream, but drawn with the animated gold flame sheet
+                if (level().isClientSide && random.nextInt(particleCount) == 0) {
+                    IceAndFire.PROXY.spawnDragonParticle(EnumParticles.DragonGold, headPos.x, headPos.y, headPos.z, 0, 0, 0, this);
                 }
             } else {
                 // 金龙不破坏方块，只造成魔法伤害
@@ -356,18 +357,20 @@ public class EntityGoldDragon extends EntityDragonBase {
             if (canPositionBeSeen(burnX, burnY, burnZ)) {
                 IafDragonDestructionManager.destroyAreaBreath(level(), BlockPos.containing(burnX, burnY, burnZ), this);
             }
-            // 附魔粒子爆发
-            if (level().isClientSide) {
-                for (int k = 0; k < 8; k++) {
-                    double vx = (random.nextDouble() - 0.5) * 1.5;
-                    double vy = random.nextDouble() * 0.5;
-                    double vz = (random.nextDouble() - 0.5) * 1.5;
-                    level().addParticle(ParticleTypes.ENCHANT,
-                            burnX + random.nextFloat() * 3 - 1.5,
-                            burnY + random.nextFloat() * 2,
-                            burnZ + random.nextFloat() * 3 - 1.5,
-                            vx, vy, vz);
-                }
+        }
+        // gold flames flaring up where the breath lands (loose flames rise and drift, then burn out).
+        // Its own client-side block: it used to sit inside the server-only block above, so it never showed.
+        // Runs every tick the breath is hitting, so only 2 flames a tick.
+        if (burnProgress >= 40D && level().isClientSide && canPositionBeSeen(burnX, burnY, burnZ)) {
+            for (int k = 0; k < 2; k++) {
+                double vx = (random.nextDouble() - 0.5) * 0.3;
+                double vy = random.nextDouble() * 0.1;
+                double vz = (random.nextDouble() - 0.5) * 0.3;
+                IceAndFire.PROXY.spawnParticle(EnumParticles.DragonGold,
+                        burnX + random.nextFloat() * 3 - 1.5,
+                        burnY + random.nextFloat() * 2,
+                        burnZ + random.nextFloat() * 3 - 1.5,
+                        vx, vy, vz, 1.0F);
             }
         }
     }
